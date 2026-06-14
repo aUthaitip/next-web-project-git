@@ -73,7 +73,7 @@ export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
                   <AwardImage src="รางวัล3.png" alt="Cat-Friendly Clinic" />
                 </div>
                 <div className="award-text">
-                  <h3>การรับรอง "คลินิกที่เป็นมิตรต่อแมว"</h3>
+                  <h3>การรับรอง &quot;คลินิกที่เป็นมิตรต่อแมว&quot;</h3>
                   <p>ได้รับการรับรองมาตรฐาน Gold จากองค์กร International Society of Feline Medicine - ISFM โดยมีการจัดสรรพื้นที่รอตรวจ ห้องตรวจ และขั้นตอนการรักษาที่ช่วยลดความเครียดให้แก่น้องแมวโดยเฉพาะ</p>
                 </div>
               </div>

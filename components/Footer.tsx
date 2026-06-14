@@ -14,7 +14,7 @@ export default function Footer() {
         <div>
             <h4>ติดต่อเรา</h4>
             <ul className="contact-list">
-                <li className="contact-info">📞 **โทร: 02-XXX-XXXX**</li>
+                <li className="contact-info">📞 โทร: 02-XXX-XXXX**</li>
                 <li>📧 pawplanclinic@gmail.com</li>
                 <li>Line ID: @pawplan</li>
             </ul>

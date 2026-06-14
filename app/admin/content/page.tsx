@@ -30,6 +30,7 @@ interface AboutUsEntry {
   id: number;
   section: string;
   title: string;
+  category?: string;
   content: string;
   imageUrl?: string;
   published: boolean;
@@ -41,6 +42,7 @@ interface AboutUsEntry {
 interface AboutUsForm {
   section: string;
   title: string;
+  category: string;
   content: string;
   imageUrl: string;
   published: boolean;
@@ -57,14 +59,14 @@ const CATEGORIES = [
 ];
 const ABOUT_SECTIONS = [
   { value: 'awards_accreditation', label: '🏆 Awards & Accreditation' },
-  { value: 'news_activities',      label: '📰 News & Activities' },
+  { value: 'news_activities', label: '📰 News & Activities' },
 ];
 const emptyArticleForm: ArticleForm = {
   title: '', category: 'General', content: '', imageUrl: '', published: false,
 };
 
 const emptyAboutForm: AboutUsForm = {
-  section: 'awards_accreditation', title: '', content: '', imageUrl: '', published: false, sortOrder: 0,
+  section: 'awards_accreditation', title: '', category: '', content: '', imageUrl: '', published: false, sortOrder: 0,
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -172,7 +174,7 @@ export default function ContentAdminPage() {
 
   const openAboutNew = () => { setAboutForm(emptyAboutForm); setAboutSelected(null); setAboutIsNew(true); };
   const openAboutEdit = (e: AboutUsEntry) => {
-    setAboutForm({ section: e.section, title: e.title, content: e.content, imageUrl: e.imageUrl || '', published: e.published, sortOrder: e.sortOrder });
+    setAboutForm({ section: e.section, title: e.title, category: e.category || '', content: e.content, imageUrl: e.imageUrl || '', published: e.published, sortOrder: e.sortOrder });
     setAboutSelected(e); setAboutIsNew(false);
   };
   const closeAboutModal = () => { setAboutSelected(null); setAboutIsNew(false); };
@@ -265,9 +267,6 @@ export default function ContentAdminPage() {
             ))}
           </div>
 
-          {/* ════════════════════════════════════════════════════════════
-              TAB: Articles  (โค้ดเดิม 100% ไม่แตะ)
-          ════════════════════════════════════════════════════════════ */}
           {activeTab === 'articles' && (
             <>
               {/* Stats */}
@@ -512,7 +511,7 @@ export default function ContentAdminPage() {
               </div>
             </div>
             <div className="appt-modal__field">
-              <label className="appt-modal__label">ชื่อหัวข้อ *</label>
+              <label className="appt-modal__label">ชื่อหัวข้อ </label>
               <input required className="appt-modal__input" placeholder="เช่น ประวัติคลินิก" value={aboutForm.title} onChange={(e) => setAboutForm({ ...aboutForm, title: e.target.value })} />
             </div>
             <div className="appt-modal__row">

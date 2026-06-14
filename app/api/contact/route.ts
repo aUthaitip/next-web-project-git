@@ -13,9 +13,14 @@ export async function POST(req: Request) {
       },
     });
 
+    const recipient = process.env.EMAIL_TO || process.env.EMAIL_USER;
+    if (!recipient) {
+      throw new Error('No recipient email configured. Set EMAIL_TO or EMAIL_USER in environment variables.');
+    }
+
     await transporter.sendMail({
       from: `"Pawplan Website" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_TO,
+      to: recipient,
       subject: 'มีข้อความติดต่อใหม่จากเว็บไซต์',
       html: `
         <h3>ข้อมูลผู้ติดต่อ</h3>

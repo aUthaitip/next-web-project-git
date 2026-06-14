@@ -25,6 +25,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: 'DATABASE_URL is not configured. Please set it in your environment.' },
+        { status: 500 }
+      );
+    }
+
+    // Test database connection
+    try {
+      await prisma.$connect();
+    } catch (connectionError) {
+      console.error('Database connection failed:', connectionError);
+      return NextResponse.json(
+        { error: 'Database connection failed. Please check if the database server is running.' },
+        { status: 503 }
+      );
+    }
+
     const appointment = await prisma.appointment.create({
       data: {
         patient,
@@ -43,6 +61,7 @@ export async function POST(req: Request) {
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {
     console.error('POST /api/appointments error', error);
-    return NextResponse.json({ error: 'Error creating appointment' }, { status: 503 });
+    const message = error instanceof Error ? error.message : 'Error creating appointment';
+    return NextResponse.json({ error: message }, { status: 503 });
   }
 }

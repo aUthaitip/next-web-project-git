@@ -9,13 +9,12 @@ interface Doctor {
   id?: number;
   name: string;
   role?: string;
-  imageSrc?: string;
+  imageUrl?: string;
   specialty?: string;
   email?: string;
   bio?: string;
   availableDays?: string[];
 }
-
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function DoctorsAdminPage() {
@@ -55,7 +54,7 @@ export default function DoctorsAdminPage() {
     const body = JSON.stringify({
       name: selected.name,
       specialty: selected.role,
-      imageUrl: selected.imageSrc,
+      imageUrl: selected.imageUrl,
       email: selected.email,
       bio: selected.bio,
       availableDays: selected.availableDays || [],
@@ -80,6 +79,8 @@ export default function DoctorsAdminPage() {
     doc.specialty?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     doc.role?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const TODAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()];
+  const onlineDoctors = doctors.filter(doc => (doc.availableDays || []).includes(TODAY));
 
   return (
     <div className="admin-layout">
@@ -109,18 +110,12 @@ export default function DoctorsAdminPage() {
             </div>
             <div className="stat-card-new stat-green">
               <div className="stat-top"><div className="stat-label-text">พร้อมให้บริการ</div><div className="stat-icon-new">✅</div></div>
-              <div className="stat-value-new">{Math.ceil(doctors.length * 0.7)}</div>
+              <div className="stat-value-new">{onlineDoctors.length}</div>
               <div className="stat-desc-new">Online อยู่ขณะนี้</div>
             </div>
             <div className="stat-card-new stat-orange">
               <div className="stat-top"><div className="stat-label-text">เวลาทำการ</div><div className="stat-icon-new">⏰</div></div>
-              <div className="stat-value-new">{doctors.length > 0 ? '24/7' : 'N/A'}</div>
-              <div className="stat-desc-new">ตลอด 24 ชั่วโมง</div>
-            </div>
-            <div className="stat-card-new stat-blue">
-              <div className="stat-top"><div className="stat-label-text">คะแนนเฉลี่ย</div><div className="stat-icon-new">⭐</div></div>
-              <div className="stat-value-new">4.8</div>
-              <div className="stat-desc-new">จากรีวิวผู้ใช้</div>
+              <div className="stat-value-new">{doctors.length > 0 ? '10/6' : 'N/A'}</div>
             </div>
           </div>
 
@@ -146,14 +141,15 @@ export default function DoctorsAdminPage() {
               {filteredDoctors.map((doc: Doctor) => (
                 <div key={doc.id} className="doctor-card-admin">
                   <div className="doctor-card-admin__image">
-                    <img src={doc.imageSrc || `https://via.placeholder.com/400x300?text=${encodeURIComponent(doc.name)}`} alt={doc.name} />
+                    <img src={doc.imageUrl || `https://via.placeholder.com/400x300?text=${encodeURIComponent(doc.name)}`} alt={doc.name} />
                     <div className="doctor-card-admin__image-overlay" />
-                    <span className="doctor-card-admin__badge">● Online</span>
+                    {(doc.availableDays || []).includes(TODAY) && (
+                      <span className="doctor-card-admin__badge">● Online</span>
+                    )}
                   </div>
                   <div className="doctor-card-admin__body">
                     <div className="doctor-card-admin__name">{doc.name}</div>
-                    <div className="doctor-card-admin__specialty">🏥 {doc.specialty || doc.role || 'ไม่ระบุ'}</div>
-                    <div className="doctor-card-admin__rating">★★★★★ <span>(98)</span></div>
+                    <div className="doctor-card-admin__specialty">🏥 {doc.specialty || doc.role || ''}</div>
                     <div className="doctor-card-admin__actions">
                       <button onClick={() => setSelected(doc)} className="doctor-card-admin__btn-edit">✏️ แก้ไข</button>
                       <button onClick={() => deleteDoctor(doc.id!)} className="doctor-card-admin__btn-delete">🗑️ ลบ</button>
@@ -252,8 +248,8 @@ export default function DoctorsAdminPage() {
                 <input
                   className="doctors-modal__input"
                   placeholder="https://example.com/image.jpg"
-                  value={selected.imageSrc || ''}
-                  onChange={(e) => setSelected({ ...selected, imageSrc: e.target.value })}
+                  value={selected.imageUrl || ''}
+                  onChange={(e) => setSelected({ ...selected, imageUrl: e.target.value })}
                 />
               </div>
 

@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
+
 // POST /api/about-us
 export async function POST(req: NextRequest) {
   try {
