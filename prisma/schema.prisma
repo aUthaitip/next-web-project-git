@@ -32,7 +32,6 @@ model Appointment {
   service   String
   date      String
   time      String
-  owner     String
   phone     String
   petName   String
   petType   String

@@ -10,7 +10,6 @@ interface Appointment {
   service: string;
   date: string;
   time: string;
-  owner: string;
   phone: string;
   petName: string;
   petType: string;
@@ -22,7 +21,6 @@ interface Appointment {
 interface NewAppointmentForm {
   patientName: string;
   date: string;
-  doctor: string;
   status: string;
   reason: string;
   notes: string;
@@ -39,7 +37,6 @@ export default function AppointmentPage() {
   const [form, setForm] = useState<NewAppointmentForm>({
     patientName: '',
     date: new Date().toISOString().split('T')[0],
-    doctor: '',
     status: 'pending',
     reason: '',
     notes: '',
@@ -89,7 +86,6 @@ export default function AppointmentPage() {
           service: form.reason,
           date: form.date,
           time: '09:00',
-          owner: form.doctor,
           phone: '-',
           notes: form.notes,
           status: form.status,
@@ -98,7 +94,7 @@ export default function AppointmentPage() {
       if (res.ok) {
         await fetchAppointments();
         setShowModal(false);
-        setForm({ patientName: '', date: new Date().toISOString().split('T')[0], doctor: '', status: 'pending', reason: '', notes: '' });
+        setForm({ patientName: '', date: new Date().toISOString().split('T')[0], status: 'pending', reason: '', notes: '' });
       }
     } catch (error) {
       console.error('Save error:', error);
@@ -188,7 +184,6 @@ export default function AppointmentPage() {
                   <tr>
                     <th>Patient</th>
                     <th>Date & Time</th>
-                    <th>Doctor</th>
                     <th>Status</th>
                     <th>Reason</th>
                     <th>Actions</th>
@@ -210,12 +205,6 @@ export default function AppointmentPage() {
                         <div className="date-time">
                           <div className="date-value">{apt.date}</div>
                           <div className="time-value">{apt.time}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="doctor-cell">
-                          <div className="doctor-avatar">D</div>
-                          <span>Dr. {apt.owner}</span>
                         </div>
                       </td>
                       <td>
@@ -265,10 +254,6 @@ export default function AppointmentPage() {
               <div className="appt-modal__field">
                 <label className="appt-modal__label">Date</label>
                 <input type="date" required className="appt-modal__input" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-              </div>
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">Doctor</label>
-                <input className="appt-modal__input" placeholder="Select a doctor" value={form.doctor} onChange={(e) => setForm({ ...form, doctor: e.target.value })} />
               </div>
             </div>
             <div className="appt-modal__field">
