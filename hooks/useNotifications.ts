@@ -16,22 +16,34 @@ interface SessionUser {
 export function useNotifications(user: SessionUser | null) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const fetchNotifications = useCallback(async () => {
-    if (!user) return;
-    try {
-      const res = await fetch('/api/notifications');
-      if (!res.ok) return;
-      const data = await res.json();
-      setNotifications(data.notifications ?? []);
-    } catch {}
-  }, [user]);
-
   useEffect(() => {
-    fetchNotifications();
-    if (!user) { setNotifications([]); return; }
-    const interval = setInterval(fetchNotifications, 30_000);
-    return () => clearInterval(interval);
-  }, [fetchNotifications, user]);
+    if (!user) {
+      setTimeout(() => {
+        setNotifications((prev) => (prev.length > 0 ? [] : prev));
+      }, 0);
+      return;
+    }
+
+    let isMounted = true;
+    const fetchNotifs = async () => {
+      try {
+        const res = await fetch('/api/notifications');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted) {
+          setNotifications(data.notifications ?? []);
+        }
+      } catch {}
+    };
+
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 30_000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [user]);
 
   const markRead = useCallback(async (id: number) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
