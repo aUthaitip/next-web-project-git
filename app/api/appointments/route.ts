@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
+import { getIronSession } from 'iron-session';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
+import { sessionOptions, SessionData } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -20,8 +23,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { patient, service, date, time, owner, phone, petName, petType, notes } = body;
 
+    const ownerValue = owner || patient || '';
+    const patientValue = patient || owner || '';
+
     // Validate required fields
-    if (!patient || !service || !date || !time || !owner || !phone || !petName || !petType) {
+    if (!patientValue || !service || !date || !time || !phone || !petName || !petType) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -43,18 +49,23 @@ export async function POST(req: Request) {
       );
     }
 
+    // Get current user session to link appointment if logged in
+    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
+    const userId = session.isLoggedIn ? session.userId : null;
+
     const appointment = await prisma.appointment.create({
       data: {
-        patient,
+        patient: patientValue,
         service,
         date,
         time,
-        owner,
+        owner: ownerValue,
         phone,
         petName,
         petType,
         notes: notes || '',
         status: 'pending',
+        userId,
       },
     });
 

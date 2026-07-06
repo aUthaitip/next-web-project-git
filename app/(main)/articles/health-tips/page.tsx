@@ -3,6 +3,7 @@
 import { SetStateAction, useState, useEffect } from 'react';
 import CategoryTabs from '@/components/CategoryTabs';
 import ArticleCard from '@/components/ArticleCard';
+import { useLanguage } from '@/context/LanguageContext';
 
 type Article = {
   id?: string;
@@ -12,57 +13,58 @@ type Article = {
   category?: string;
 };
 
-// ข้อมูลเดิม (hardcode) — ไม่ได้แตะ
-const initialArticles: Article[] = [
-  {
-    category: "🦷 สุขภาพช่องปากและฟัน",
-    title: "5 ขั้นตอนง่าย ๆ ในการแปรงฟันสุนัขและแมว",
-    snippet: "โรคปริทันต์ (Periodontal Disease) เป็นภัยเงียบที่พบในสัตว์เลี้ยงกว่า 80% ที่มีอายุ 3 ปีขึ้นไป การแปรงฟันทุกวันคือการป้องกันที่ดีที่สุด แต่ทำอย่างไรให้ง่ายและสัตว์เลี้ยงยอมให้ความร่วมมือ?",
-    image: "/assets/tip1.png",
-  },
-  {
-    category: "🦷 สุขภาพช่องปากและฟัน",
-    title: "อาหารและขนมช่วยขัดฟัน: ใช้ได้ผลจริงหรือไม่?",
-    snippet: "ขนมขัดฟัน (Dental Chews) และอาหารสูตรดูแลช่องปาก (Dental Diets) เป็นตัวเลือกยอดนิยม แต่สิ่งเหล่านี้สามารถทดแทนการแปรงฟันได้จริงหรือ? มาฟังคำแนะนำจากสัตวแพทย์ Pawplan",
-    image: "/assets/tip2.png",
-  },
-  {
-    category: "⚖️ การควบคุมน้ำหนัก",
-    title: "ประเมินภาวะอ้วนในสัตว์เลี้ยง: ลูกของคุณ 'อวบ' หรือ 'อ้วน' เกินไป?",
-    snippet: "ภาวะน้ำหนักเกินนำไปสู่ปัญหาสุขภาพร้ายแรง เช่น โรคเบาหวาน โรคข้ออักเสบ และโรคหัวใจ การประเมินน้ำหนักจึงสำคัญกว่าแค่การขึ้นชั่งน้ำหนัก โดยใช้หลัก Body Condition Score (BCS)",
-    image: "/assets/tip3.png",
-  },
-  {
-    category: "💉 การป้องกันประจำปี",
-    title: "ตารางวัคซีนที่ครบถ้วนสำหรับสัตว์เลี้ยงในเมืองไทย",
-    snippet: "การฉีดวัคซีนไม่ใช่แค่เรื่องของการปฏิบัติตามกฎหมาย (วัคซีนพิษสุนัขบ้า) แต่คือเกราะป้องกันที่สำคัญที่สุดจากโรคติดต่อร้ายแรงในสภาพอากาศเขตร้อนของประเทศไทย",
-    image: "/assets/tip4.png",
-  },
-  {
-    category: "🧠 สุขภาพจิตและพฤติกรรม",
-    title: "จัดสภาพแวดล้อม (Enrichment) อย่างไรให้สัตว์เลี้ยงไม่เบื่อ",
-    snippet: "สัตว์เลี้ยงที่ถูกปล่อยให้อยู่ลำพังเป็นเวลานานอาจเกิดความเบื่อหน่าย ซึ่งนำไปสู่พฤติกรรมทำลายข้าวของ หรือภาวะเครียด (Anxiety) การจัดสภาพแวดล้อมที่กระตุ้นสัญชาตญาณจึงสำคัญต่อสุขภาพจิต",
-    image: "/assets/tip5.png",
-  },
-  {
-    category: "🌡️ การปฐมพยาบาลเบื้องต้น",
-    title: "กล่องยาฉุกเฉิน (First Aid Kit) สำหรับสัตว์เลี้ยง: ต้องมีอะไรบ้าง?",
-    snippet: "อุบัติเหตุเกิดขึ้นได้เสมอ การมีชุดปฐมพยาบาลเบื้องต้นสำหรับสัตว์เลี้ยงที่พร้อมใช้งานจะช่วยบรรเทาอาการบาดเจ็บเบื้องต้นก่อนนำส่งคลินิกได้",
-    image: "/assets/tip6.png",
-  },
-];
-
-const staticCategories = [
-  "ทั้งหมด",
-  "🦷 สุขภาพช่องปากและฟัน",
-  "⚖️ การควบคุมน้ำหนัก",
-  "💉 การป้องกันประจำปี",
-  "🧠 สุขภาพจิตและพฤติกรรม",
-  "🌡️ การปฐมพยาบาลเบื้องต้น",
-];
-
 export default function HealthTipsPage() {
-  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+  const { t } = useLanguage();
+
+  const initialArticles: Article[] = [
+    {
+      category: t('healthTips.cat1'),
+      title: t('healthTips.art1title'),
+      snippet: t('healthTips.art1snippet'),
+      image: "/assets/tip1.png",
+    },
+    {
+      category: t('healthTips.cat1'),
+      title: t('healthTips.art2title'),
+      snippet: t('healthTips.art2snippet'),
+      image: "/assets/tip2.png",
+    },
+    {
+      category: t('healthTips.cat2'),
+      title: t('healthTips.art3title'),
+      snippet: t('healthTips.art3snippet'),
+      image: "/assets/tip3.png",
+    },
+    {
+      category: t('healthTips.cat3'),
+      title: t('healthTips.art4title'),
+      snippet: t('healthTips.art4snippet'),
+      image: "/assets/tip4.png",
+    },
+    {
+      category: t('healthTips.cat4'),
+      title: t('healthTips.art5title'),
+      snippet: t('healthTips.art5snippet'),
+      image: "/assets/tip5.png",
+    },
+    {
+      category: t('healthTips.cat5'),
+      title: t('healthTips.art6title'),
+      snippet: t('healthTips.art6snippet'),
+      image: "/assets/tip6.png",
+    },
+  ];
+
+  const staticCategories = [
+    t('healthTips.allCat'),
+    t('healthTips.cat1'),
+    t('healthTips.cat2'),
+    t('healthTips.cat3'),
+    t('healthTips.cat4'),
+    t('healthTips.cat5'),
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState(t('healthTips.allCat'));
   const [apiArticles, setApiArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,7 +81,7 @@ export default function HealthTipsPage() {
             .filter((a) => a.published)
             .map((a) => ({
               id: String(a.id),
-              category: '📝 บทความจาก Admin',
+              category: t('healthTips.adminCat'),
               title: a.title,
               snippet: a.content,
               image: a.imageUrl || '/assets/tip1.png',
@@ -93,21 +95,21 @@ export default function HealthTipsPage() {
 
   const allArticles = [...initialArticles, ...apiArticles];
   const allCategories = apiArticles.length > 0
-    ? [...staticCategories, '📝 บทความจาก Admin']
+    ? [...staticCategories, t('healthTips.adminCat')]
     : staticCategories;
 
   const filteredArticles = allArticles.filter(article =>
-    selectedCategory === 'ทั้งหมด' || article.category === selectedCategory
+    selectedCategory === t('healthTips.allCat') || article.category === selectedCategory
   );
 
   return (
     <section className="content-section dog-page page-animate">
       <div className="container">
-        <h2 className="page-title">Wellness Tips: เคล็ดลับสุขภาพและชีวิตยืนยาว</h2>
+        <h2 className="page-title">{t('healthTips.title')}</h2>
         <div className="section-deco">
           <span className="decorative-bar" aria-hidden="true" />
         </div>
-        <p className="intro-text page-subtitle">คู่มือการดูแลสัตว์เลี้ยงอย่างเข้าใจ เพื่อสุขภาพกายและใจที่ดีในทุกวัน เรียนรู้เคล็ดลับที่สัตวแพทย์ Pawplan อยากให้คุณรู้</p>
+        <p className="intro-text page-subtitle">{t('healthTips.subtitle')}</p>
 
         <CategoryTabs
           categories={allCategories}
@@ -118,13 +120,13 @@ export default function HealthTipsPage() {
         <hr />
 
         <div className="article-card-grid page-content">
-          {loading && <p>กำลังโหลด...</p>}
+          {loading && <p>{t('healthTips.loading')}</p>}
           {filteredArticles.length > 0 ? (
             filteredArticles.map((article, index) => (
               <ArticleCard key={article.id ?? `${article.title}-${index}`} article={article} />
             ))
           ) : (
-            !loading && <p className="no-articles">ไม่พบข้อมูลบทความในหมวดหมู่ &quot;{selectedCategory}&quot;</p>
+            !loading && <p className="no-articles">{t('healthTips.noArticles')} &quot;{selectedCategory}&quot;</p>
           )}
         </div>
       </div>

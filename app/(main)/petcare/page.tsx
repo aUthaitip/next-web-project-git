@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import {
     Scissors,
@@ -7,28 +8,31 @@ import {
     CalendarDays,
     Waves
 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function PetcarePage() {
+    const { t } = useLanguage();
+
     const services = [
         {
             icon: <Scissors size={28} />,
-            title: "ตัดขนสไตล์พรีเมียม",
-            desc: "ออกแบบทรงขนให้เข้ากับบุคลิกและสายพันธุ์ โดยช่างผู้ชำนาญการที่มีประสบการณ์สูง"
+            title: t('petcare.svc1Title'),
+            desc: t('petcare.svc1Desc'),
         },
         {
             icon: <Bath size={28} />,
-            title: "อาบน้ำโอโซน",
-            desc: "ทำความสะอาดล้ำลึกด้วยน้ำโอโซน ช่วยกำจัดแบคทีเรียและกลิ่นตัวได้อย่างมีประสิทธิภาพ"
+            title: t('petcare.svc2Title'),
+            desc: t('petcare.svc2Desc'),
         },
         {
             icon: <Sparkles size={28} />,
-            title: "สปาบำรุงขน",
-            desc: "ทรีทเมนท์สูตรพิเศษช่วยให้เส้นขนเงางาม นุ่มสลวย และลดการพันกันของเส้นขน"
+            title: t('petcare.svc3Title'),
+            desc: t('petcare.svc3Desc'),
         },
         {
             icon: <ShieldCheck size={28} />,
-            title: "กำจัดเห็บหมัด",
-            desc: "โปรแกรมดูแลความสะอาดและป้องกันปรสิตภายนอก ด้วยผลิตภัณฑ์ที่ปลอดภัยต่อสัตว์เลี้ยง"
+            title: t('petcare.svc4Title'),
+            desc: t('petcare.svc4Desc'),
         }
     ];
 
@@ -42,8 +46,7 @@ export default function PetcarePage() {
                 </h2>
                 <div className="divider"></div>
                 <p className="text-content">
-                    เรามุ่งเน้นการดูแลที่คำนึงถึง &quot;สุขภาพผิวหนังและอารมณ์&quot; ของเพื่อนรักเป็นอันดับแรก
-                    เพื่อให้ทุกการดูแลเป็นช่วงเวลาแห่งความสุขของเด็กๆ
+                    {t('petcare.subtitle')}
                 </p>
 
                 <div className="pc-grid">
@@ -60,14 +63,14 @@ export default function PetcarePage() {
 
                 <div className="pc-footer">
                     <h3 className="pc-subtitle" style={{ fontWeight: 700, color: '#1e293b' }}>
-                        💖 ทำไมต้องเลือก Pawplan Pet Care?
+                        {t('petcare.whyTitle')}
                     </h3>
                     <p className="pc-subtitle" style={{ fontSize: '1rem', marginTop: '5px' }}>
-                        เพราะเราเชื่อว่าการดูแลที่ดีคือส่วนหนึ่งของเวชศาสตร์ป้องกัน
+                        {t('petcare.whyDesc')}
                     </p>
                     <Link href="/appointment" className="pc-cta-btn">
                         <CalendarDays size={20} />
-                        จองบริการล่วงหน้า
+                        {t('petcare.ctaBtn')}
                     </Link>
                 </div>
 

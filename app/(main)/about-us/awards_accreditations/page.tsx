@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import AwardsSlider from '@/components/AwardsSlider';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ApiEntry {
   id: number;
@@ -13,6 +14,7 @@ interface ApiEntry {
 }
 
 export default function AwardsPage() {
+  const { t } = useLanguage();
   const [apiEntries, setApiEntries] = useState<ApiEntry[]>([]);
 
   useEffect(() => {
@@ -29,9 +31,9 @@ export default function AwardsPage() {
   return (
     <section className="content-section awards_accreditations-page page-animate">
       <div className="content-container">
-        <h2 className="page-title">🏆 รางวัลและการรับรอง</h2>
+        <h2 className="page-title">{t('awards.title')}</h2>
         <div className="divider"></div>
-        <p className="intro-text page-subtitle">มุ่งสู่ความเป็นเลิศ ในการดูแลสุขภาพและยกระดับคุณภาพชีวิตสัตว์เลี้ยง</p>
+        <p className="intro-text page-subtitle">{t('awards.subtitle')}</p>
         <AwardsSlider apiEntries={apiEntries} />
       </div>
     </section>

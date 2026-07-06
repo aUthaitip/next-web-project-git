@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import HideHeader from '@/components/HideHeader';
-import HideFooter from '@/components/HideFooter';
+import HideHeader from '@/components/layout/HideHeader';
+import HideFooter from '@/components/layout/HideFooter';
 import AdminSidebar from '@/components/AdminSidebar';
 
 interface Doctor {

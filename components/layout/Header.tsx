@@ -166,7 +166,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
           <div className="header-actions">
             <button
               onClick={toggleLanguage}
-              title={lang === 'th' ? 'Switch to English' : 'เปลี่ยนเป็นไทย'}
+              title={lang === 'th' ? t('common.switchToEnglish') : t('common.switchToThai')}
               style={{
                 background: 'none',
                 border: '1.5px solid currentColor',
@@ -229,7 +229,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
             )}
 
             {/* General Hamburger Button visible on mobile screens */}
-            <button className="hdr-hamburger" onClick={() => setMobileNavOpen(true)} title={lang === 'th' ? 'เมนู' : 'Menu'}>
+            <button className="hdr-hamburger" onClick={() => setMobileNavOpen(true)} title={t('common.menu')}>
               <Menu size={24} strokeWidth={2} />
             </button>
           </div>

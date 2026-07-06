@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import HideHeader from '@/components/HideHeader';
-import HideFooter from '@/components/HideFooter';
+import HideHeader from '@/components/layout/HideHeader';
+import HideFooter from '@/components/layout/HideFooter';
 import AdminSidebar from '@/components/AdminSidebar';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Appointment {
   id: number;
@@ -16,6 +17,7 @@ interface Appointment {
   notes?: string;
   status?: string;
   createdAt?: string;
+  userId?: number;
 }
 
 interface NewAppointmentForm {
@@ -27,6 +29,7 @@ interface NewAppointmentForm {
 }
 
 export default function AppointmentPage() {
+  const { lang, toggleLanguage } = useLanguage();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +44,9 @@ export default function AppointmentPage() {
     reason: '',
     notes: '',
   });
+
+  const [suggestAppt, setSuggestAppt] = useState<Appointment | null>(null);
+  const [suggestForm, setSuggestForm] = useState({ date: '', time: '09:00', service: '' });
 
   // ✅ ดึงข้อมูลจาก API แทน localStorage
   const fetchAppointments = async () => {
@@ -128,6 +134,35 @@ export default function AppointmentPage() {
     }
   };
 
+  const handleSuggestAppointment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!suggestAppt || !suggestAppt.userId) return;
+    try {
+      const res = await fetch('/api/admin/suggest-appointment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: suggestAppt.userId,
+          patient: suggestAppt.patient,
+          owner: suggestAppt.patient,
+          phone: suggestAppt.phone,
+          petName: suggestAppt.petName,
+          petType: suggestAppt.petType,
+          service: suggestForm.service,
+          date: suggestForm.date,
+          time: suggestForm.time,
+        }),
+      });
+      if (res.ok) {
+        await fetchAppointments();
+        setSuggestAppt(null);
+        setSuggestForm({ date: '', time: '09:00', service: '' });
+      }
+    } catch (error) {
+      console.error('Suggest error:', error);
+    }
+  };
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'confirmed': return '#10b981';
@@ -152,32 +187,37 @@ export default function AppointmentPage() {
         <div className="admin-content-new">
           <div className="admin-header-new">
             <div>
-              <h1>Appointments</h1>
-              <p>Manage patient visits and schedules.</p>
+              <h1>{lang === 'th' ? 'จัดการนัดหมาย' : 'Appointments'}</h1>
+              <p>{lang === 'th' ? 'จัดการตารางนัดและข้อมูลการเข้ารับบริการ' : 'Manage patient visits and schedules.'}</p>
             </div>
-            <button className="admin-btn admin-btn-primary" onClick={() => setShowModal(true)}>
-              + New Appointment
-            </button>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={toggleLanguage} className="admin-btn admin-btn-secondary" style={{ padding: '6px 12px' }}>
+                {lang === 'th' ? 'EN' : 'TH'}
+              </button>
+              <button className="admin-btn admin-btn-primary" onClick={() => setShowModal(true)}>
+                + {lang === 'th' ? 'เพิ่มนัดหมาย' : 'New Appointment'}
+              </button>
+            </div>
           </div>
 
           <div className="appointments-toolbar">
             <div className="search-box-new">
               <span className="search-icon-new">🔍</span>
-              <input type="text" placeholder="Search patients..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="search-input-new" />
+              <input type="text" placeholder={lang === 'th' ? 'ค้นหาชื่อเจ้าของ, สัตว์เลี้ยง...' : 'Search patients...'} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="search-input-new" />
             </div>
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="filter-select-new">
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">{lang === 'th' ? 'ทุกสถานะ' : 'All Status'}</option>
+              <option value="pending">{lang === 'th' ? 'รอยืนยัน' : 'Pending'}</option>
+              <option value="confirmed">{lang === 'th' ? 'ยืนยันแล้ว' : 'Confirmed'}</option>
+              <option value="cancelled">{lang === 'th' ? 'ยกเลิกแล้ว' : 'Cancelled'}</option>
             </select>
           </div>
 
           <div className="table-container-new">
             {loading ? (
-              <div className="table-empty">⏳ Loading appointments...</div>
+              <div className="table-empty">⏳ {lang === 'th' ? 'กำลังโหลดข้อมูล...' : 'Loading appointments...'}</div>
             ) : filteredAppointments.length === 0 ? (
-              <div className="table-empty">📭 No appointments found.</div>
+              <div className="table-empty">📭 {lang === 'th' ? 'ไม่พบข้อมูลนัดหมาย' : 'No appointments found.'}</div>
             ) : (
               <table className="appointments-table">
                 <thead>
@@ -224,6 +264,9 @@ export default function AppointmentPage() {
                               {apt.status !== 'cancelled' && (
                                 <button className="dropdown-item cancel" onClick={() => handleStatusChange(apt, 'cancelled')}>✕ Cancel</button>
                               )}
+                              {apt.userId && (
+                                <button className="dropdown-item" onClick={() => { setSuggestAppt(apt); setActiveMenu(null); }}>📅 Suggest Next</button>
+                              )}
                               <button className="dropdown-item delete" onClick={() => handleDelete(apt)}>🗑️ Delete</button>
                             </div>
                           )}
@@ -265,8 +308,15 @@ export default function AppointmentPage() {
               </select>
             </div>
             <div className="appt-modal__field">
-              <label className="appt-modal__label">Reason for Visit</label>
-              <input className="appt-modal__input" placeholder="Checkup, Vaccination, etc." value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} />
+              <label className="appt-modal__label">{lang === 'th' ? 'ประเภทบริการ' : 'Reason for Visit'}</label>
+              <select className="appt-modal__input" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} required>
+                <option value="">{lang === 'th' ? 'กรุณาเลือกบริการ' : 'Please select a service'}</option>
+                <option value="ตรวจสุขภาพทั่วไป">{lang === 'th' ? 'ตรวจสุขภาพทั่วไป' : 'General Health Check'}</option>
+                <option value="ฉีดวัคซีน">{lang === 'th' ? 'ฉีดวัคซีน' : 'Vaccination'}</option>
+                <option value="ทำหมัน">{lang === 'th' ? 'ทำหมัน' : 'Neutering'}</option>
+                <option value="ทันตกรรม">{lang === 'th' ? 'ทันตกรรม' : 'Dentistry'}</option>
+                <option value="อื่นๆ">{lang === 'th' ? 'อื่นๆ' : 'Other'}</option>
+              </select>
             </div>
             <div className="appt-modal__field">
               <label className="appt-modal__label">Internal Notes</label>
@@ -274,7 +324,47 @@ export default function AppointmentPage() {
             </div>
             <div className="appt-modal__footer">
               <button type="button" className="admin-btn admin-btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-              <button type="submit" className="admin-btn admin-btn-primary">Save Appointment</button>
+              <button type="submit" className="appt-modal__submit">Save Appointment</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Suggest Next Appointment Modal */}
+      {suggestAppt && (
+        <div className="appt-modal-overlay" onClick={() => setSuggestAppt(null)}>
+          <form className="appt-modal" onSubmit={handleSuggestAppointment} onClick={(e) => e.stopPropagation()}>
+            <div className="appt-modal__header">
+              <h2 className="appt-modal__title">Suggest Next Appointment</h2>
+              <button type="button" className="appt-modal__close" onClick={() => setSuggestAppt(null)}>✕</button>
+            </div>
+            <div style={{ marginBottom: 16, color: '#6b7280', fontSize: 14 }}>
+              Creating a next appointment for <strong>{suggestAppt.petName}</strong> (Owner: {suggestAppt.patient}). The user will be notified to confirm.
+            </div>
+            <div className="appt-modal__field">
+              <label className="appt-modal__label">{lang === 'th' ? 'ประเภทบริการ' : 'Service / Reason'}</label>
+              <select className="appt-modal__input" value={suggestForm.service} onChange={e => setSuggestForm({ ...suggestForm, service: e.target.value })} required>
+                <option value="">{lang === 'th' ? 'กรุณาเลือกบริการ' : 'Please select a service'}</option>
+                <option value="ตรวจสุขภาพทั่วไป">{lang === 'th' ? 'ตรวจสุขภาพทั่วไป' : 'General Health Check'}</option>
+                <option value="ฉีดวัคซีน">{lang === 'th' ? 'ฉีดวัคซีน' : 'Vaccination'}</option>
+                <option value="ทำหมัน">{lang === 'th' ? 'ทำหมัน' : 'Neutering'}</option>
+                <option value="ทันตกรรม">{lang === 'th' ? 'ทันตกรรม' : 'Dentistry'}</option>
+                <option value="อื่นๆ">{lang === 'th' ? 'อื่นๆ' : 'Other'}</option>
+              </select>
+            </div>
+            <div className="appt-modal__field" style={{ display: 'flex', gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <label className="appt-modal__label">Date</label>
+                <input type="date" className="appt-modal__input" value={suggestForm.date} onChange={e => setSuggestForm({ ...suggestForm, date: e.target.value })} required />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label className="appt-modal__label">Time</label>
+                <input type="time" className="appt-modal__input" value={suggestForm.time} onChange={e => setSuggestForm({ ...suggestForm, time: e.target.value })} required />
+              </div>
+            </div>
+            <div className="appt-modal__actions">
+              <button type="button" className="appt-modal__cancel" onClick={() => setSuggestAppt(null)}>Cancel</button>
+              <button type="submit" className="appt-modal__submit">Send Suggestion</button>
             </div>
           </form>
         </div>

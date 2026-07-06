@@ -1,24 +1,16 @@
 import { NextResponse } from 'next/server';
-import * as nodemailer from 'nodemailer';
+import { sendMail } from '@/lib/mailer';
 
 export async function POST(req: Request) {
   try {
     const { name, phone, email, service, message } = await req.json();
-
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
 
     const recipient = process.env.EMAIL_TO || process.env.EMAIL_USER;
     if (!recipient) {
       throw new Error('No recipient email configured. Set EMAIL_TO or EMAIL_USER in environment variables.');
     }
 
-    await transporter.sendMail({
+    await sendMail({
       from: `"Pawplan Website" <${process.env.EMAIL_USER}>`,
       to: recipient,
       subject: 'มีข้อความติดต่อใหม่จากเว็บไซต์',

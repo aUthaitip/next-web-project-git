@@ -41,6 +41,19 @@ model Appointment {
   updatedAt DateTime @updatedAt
   userId    Int?
   user      User?    @relation(fields: [userId], references: [id])
+  owner     String?
+}
+
+model Doctor {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String?
+  expertise     String?
+  imageUrl      String?
+  bio           String?
+  availableDays String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Article {

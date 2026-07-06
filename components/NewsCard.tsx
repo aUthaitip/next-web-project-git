@@ -28,6 +28,7 @@ export default function NewsCard({ imgSrc, imgAlt, title, description, onOpen }:
                     href="#"
                     className="card-link"
                     onClick={(e) => {
+                        console.log('NewsCard Clicked! Title:', title);
                         e.preventDefault(); // ป้องกันหน้าเว็บเลื่อนขึ้น
                         onOpen(); // เรียกฟังก์ชันที่ส่งมาจาก parent เพื่อเปิด Modal
                     }}

@@ -1,22 +1,27 @@
+'use client';
+
 // components/Footer.tsx
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer id="contact">
       <div className="container footer-grid">
         <div>
-            <h4>🐾 Pawplan คลินิก</h4>
-            <p className="contact-info">&quot;วางแผนสุขภาพที่ดีที่สุด&quot;</p>
-            <p>เลขที่ 99/9 ถ.สุขใจ เขตสุขุมวิท กรุงเทพฯ</p>
+            <h4>{t('footer.clinicName')}</h4>
+            <p className="contact-info">{t('footer.tagline')}</p>
+            <p>{t('footer.address')}</p>
         </div>
         
         <div>
-            <h4>ติดต่อเรา</h4>
+            <h4>{t('footer.contactUs')}</h4>
             <ul className="contact-list">
-                <li className="contact-info">📞 โทร: 02-XXX-XXXX**</li>
-                <li>📧 pawplanclinic@gmail.com</li>
-                <li>Line ID: @pawplan</li>
+                <li className="contact-info">{t('footer.phone')}</li>
+                <li>{t('footer.email')}</li>
+                <li>{t('footer.lineId')}</li>
             </ul>
 
             <div className="social-icons" style={{ marginTop: '20px' }}>
@@ -28,24 +33,24 @@ export default function Footer() {
         </div>
         
         <div>
-            <h4>เวลาทำการ</h4>
-            <p>จันทร์ - ศุกร์: 10:00 - 20:00 น.</p>
-            <p>เสาร์ : 11:00 - 20:00 น.</p>
-            <p>ปิดทุกวันอาทิตย์</p>
+            <h4>{t('footer.hours')}</h4>
+            <p>{t('footer.hoursMonFri')}</p>
+            <p>{t('footer.hoursSat')}</p>
+            <p>{t('footer.hoursSun')}</p>
         </div>
         
         <div>
-            <h4>ลิงก์ด่วน</h4>
+            <h4>{t('footer.quickLinks')}</h4>
             <ul>
-                <li><Link href="/appointment">จองนัดหมาย</Link></li>
-                <li><a href="#">บทความสุขภาพ</a></li>
-                <li><a href="#">นโยบายความเป็นส่วนตัว</a></li>
+                <li><Link href="/appointment">{t('footer.bookAppointment')}</Link></li>
+                <li><a href="#">{t('footer.healthArticles')}</a></li>
+                <li><a href="#">{t('footer.privacyPolicy')}</a></li>
             </ul>
         </div>
       </div>
       
       <div className="container footer-bottom">
-        <p>© 2025 Pawplan Clinic. All rights reserved.</p>
+        <p>{t('footer.copyright')}</p>
       </div>
     </footer>
   );

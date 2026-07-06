@@ -18,6 +18,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       where: { id },
       data: { status: body.status },
     });
+
+    // แจ้งเตือนผู้ใช้เมื่อ admin เปลี่ยนสถานะ
+    if (updated.userId) {
+      let msg = `นัดหมายของคุณมีการเปลี่ยนสถานะเป็น: ${body.status}`;
+      if (body.status === 'confirmed') msg = `คลินิกได้ยืนยันการนัดหมาย: ${updated.service} สำหรับน้อง ${updated.petName} เรียบร้อยแล้ว`;
+      else if (body.status === 'cancelled') msg = `คลินิกได้ยกเลิกนัดหมาย: ${updated.service} สำหรับน้อง ${updated.petName}`;
+      
+      await prisma.notification.create({
+        data: {
+          userId: updated.userId,
+          message: msg,
+        }
+      });
+    }
+
     return NextResponse.json(updated);
   } catch (err) {
     console.error(err);
@@ -31,6 +46,18 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const id = parseInt(idStr);
   if (isNaN(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
   try {
+    const appt = await prisma.appointment.findUnique({ where: { id } });
+    
+    // แจ้งเตือนผู้ใช้เมื่อ admin ลบนัดหมาย
+    if (appt && appt.userId) {
+      await prisma.notification.create({
+        data: {
+          userId: appt.userId,
+          message: `คลินิกได้ลบข้อมูลนัดหมาย: ${appt.service} สำหรับน้อง ${appt.petName} ออกจากระบบ`,
+        }
+      });
+    }
+
     await prisma.appointment.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -48,7 +75,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const id = parseInt(idStr);
   if (isNaN(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
 
-  const { status, date, time } = await req.json();
+  const { status, date, time, petName, petType, service, notes } = await req.json();
 
   // เช็คว่าเป็นนัดของ user คนนี้จริงๆ
   const appt = await prisma.appointment.findFirst({
@@ -62,6 +89,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(status && { status }),
       ...(date && { date }),
       ...(time && { time }),
+      ...(petName && { petName }),
+      ...(petType && { petType }),
+      ...(service && { service }),
+      ...(notes !== undefined && { notes }),
     },
   });
 

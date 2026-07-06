@@ -10,7 +10,10 @@ import {
   HandPlatter, Calendar, ArrowRight, PhoneCall, Star, ChevronDown,
   Send, MessageSquare, Mail
 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+
 export default function HomePage() {
+  const { t } = useLanguage();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const toggleFaq = (index: number) => {
@@ -18,24 +21,23 @@ export default function HomePage() {
   };
 
   const services = [
-    { icon: <Stethoscope size={32} className="text-[#248f9b]" />, title: "เวชศาสตร์ป้องกัน", description: "การฉีดวัคซีน, ตรวจสุขภาพประจำปี และการให้คำปรึกษาด้านโภชนาการ" },
-    { icon: <Brain size={32} className="text-[#248f9b]" />, title: "คลินิกทันตกรรมย่อย", description: "บริการขูดหินปูน ดูแลช่องปาก และป้องกันโรคเหงือก" },
-    { icon: <HeartPulse size={32} className="text-[#248f9b]" />, title: "คลินิกโรคหัวใจ", description: "วินิจฉัยและรักษาโรคหัวใจในสัตว์เลี้ยง" },
-    { icon: <Bath size={32} className="text-[#248f9b]" />, title: "Pawplan Pet Care", description: "บริการอาบน้ำ ตัดขน และบริการฝากเลี้ยงระยะสั้น" },
-    { icon: <HandPlatter size={32} className="text-[#248f9b]" />, title: "Other Services", description: "ฝังไมโครชิป และบริการอื่นๆ ที่ตอบโจทย์คุณ" },
+    { icon: <Stethoscope size={32} className="text-[#248f9b]" />, title: t('home.svc1Title'), description: t('home.svc1Desc') },
+    { icon: <Brain size={32} className="text-[#248f9b]" />, title: t('home.svc2Title'), description: t('home.svc2Desc') },
+    { icon: <HeartPulse size={32} className="text-[#248f9b]" />, title: t('home.svc3Title'), description: t('home.svc3Desc') },
+    { icon: <Bath size={32} className="text-[#248f9b]" />, title: t('home.svc4Title'), description: t('home.svc4Desc') },
+    { icon: <HandPlatter size={32} className="text-[#248f9b]" />, title: t('home.svc5Title'), description: t('home.svc5Desc') },
   ];
 
   const faqData = [
-    { q: "ต้องเตรียมอะไรบ้างเมื่อต้องพาสัตว์เลี้ยงมาตรวจ?", a: "กรุณานำประวัติสุขภาพ/วัคซีน และตัวอย่างปัสสาวะ/อุจจาระ (ถ้ามี) เพื่อการวินิจฉัยที่แม่นยำ" },
-    { q: "วิธีติดต่อฉุกเฉินในเวลากลางคืน?", a: "ท่านสามารถโทรติดต่อเลขด่วน 24 ชม. ได้ที่เบอร์ 02-XXX-XXXX หรือช่องทาง Line Official" }
+    { q: t('home.faq1q'), a: t('home.faq1a') },
+    { q: t('home.faq2q'), a: t('home.faq2a') },
   ];
 
   // ข้อมูลสำหรับ Team Section (Quick CTA Team)
   const quickTeam = [
-    // ข้อมูลเหล่านี้ถูกใช้เพื่อเติมเต็ม <article class="vet-card">
-    { name: "สพ.ญ. ปาริฉัตร วงศ์วาน", role: "สัตวแพทย์หลัก / เวชศาสตร์ป้องกัน", imageSrc: "/assets/June.png" },
-    { name: "สพ.ดร. ณัฐพงศ์ ศิริรัตน์", role: "ทันตกรรม", imageSrc: "/assets/Nut.png" },
-    { name: "สพ.อริยา พงษ์ไพศาล", role: "โรคผิวหนังและภูมิแพ้", imageSrc: "/assets/Ari.png" },
+    { name: t('home.team1Name'), role: t('home.team1Role'), imageSrc: '/assets/June.png' },
+    { name: t('home.team2Name'), role: t('home.team2Role'), imageSrc: '/assets/Nut.png' },
+    { name: t('home.team3Name'), role: t('home.team3Role'), imageSrc: '/assets/Ari.png' },
   ];
       const [form, setForm] = useState({
       name: '',
@@ -64,9 +66,9 @@ export default function HomePage() {
           body: JSON.stringify(form),
         });
 
-        if (!res.ok) throw new Error('ส่งไม่สำเร็จ');
+        if (!res.ok) throw new Error(t('home.sendError'));
 
-        alert('ส่งข้อความเรียบร้อยแล้ว');
+        alert(t('home.sendSuccess'));
         setForm({
           name: '',
           phone: '',
@@ -75,7 +77,7 @@ export default function HomePage() {
           message: '',
         });
       } catch (err) {
-        alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+        alert(t('home.sendError'));
       }
     };
 
@@ -86,10 +88,9 @@ export default function HomePage() {
         <div className="container hero-layout">
           <div className="hero-content">
             <h1 className="hero-title">Pawplan</h1>
-            <p className="hero-subtitle">สร้างความรู้สึกว่าคลินิกคือบ้านหลังที่สองของสัตว์เลี้ยง</p>
+            <p className="hero-subtitle">{t('home.heroSubtitle')}</p>
             <p className="hero-description">
-              ดูแลสมาชิกครอบครัวด้วยหัวใจ วางแผนป้องกันทุกช่วงวัย
-              เพื่อสุขภาพที่แข็งแรงและรอยยิ้มที่สดใสของเพื่อนรัก
+              {t('home.heroDesc')}
             </p>
           </div>
 
@@ -97,7 +98,7 @@ export default function HomePage() {
             <div className="hero-image-container">
               <img
                 src="/assets/1.png"
-                alt="Pawplan Veterinary Clinic"
+                alt={t('home.heroImageAlt')}
                 className="hero-image"
               />
               <div className="hero-image-glow"></div>
@@ -112,7 +113,7 @@ export default function HomePage() {
 
             {/* -------------------- 2. Specialized Features -------------------- */}
             <section className="specialized-features" style={{ paddingTop: 0 }}>
-              <h2 style={{ textAlign: 'left', marginBottom: '50px' }}>ศูนย์เฉพาะทางที่พร้อมให้บริการคุณ</h2>
+              <h2 style={{ textAlign: 'left', marginBottom: '50px' }}>{t('home.specializedTitle')}</h2>
               <div className="feature-grid">
 
                 {/* CARD 1: Eye Care Center - โครงสร้างสมบูรณ์ */}
@@ -122,12 +123,12 @@ export default function HomePage() {
                       <Eye size={60} strokeWidth={2} className="text-blue-500" />
                     </span>
                     <div className="feature-content">
-                      <h3>Eye Care Center</h3>
-                      <p>มองเห็นความรักผ่านดวงตาที่สดใส</p>
+                      <h3>{t('home.eyeCareTitle')}</h3>
+                      <p>{t('home.eyeCareDesc')}</p>
                     </div>
                   </div>
                   <div className="feature-image-wrapper">
-                    <img src="/assets/2.png" alt="Eye Care Center" />
+                    <img src="/assets/2.png" alt={t('home.eyeCareTitle')} />
                   </div>
                 </Link>
 
@@ -138,12 +139,12 @@ export default function HomePage() {
                       <Brain size={60} strokeWidth={2} className="text-blue-500" />
                     </span>
                     <div className="feature-content">
-                      <h3>Neurological Center</h3>
-                      <p>ให้เขากลับมาใช้ชีวิตอย่างมีความสุขอีกครั้ง</p>
+                      <h3>{t('home.neuroCenterTitle')}</h3>
+                      <p>{t('home.neuroCenterDesc')}</p>
                     </div>
                   </div>
                   <div className="feature-image-wrapper">
-                    <img src="/assets/3.png" alt="Neurological Center" />
+                    <img src="/assets/3.png" alt={t('home.neuroCenterTitle')} />
                   </div>
                 </Link>
 
@@ -154,12 +155,12 @@ export default function HomePage() {
                       <HeartPulse size={60} strokeWidth={2} className="text-blue-500" />
                     </span>
                     <div className="feature-content">
-                      <h3>Cardio Center</h3>
-                      <p>คลีนิคจัดการโรคหัวใจได้ทุกระยะ</p>
+                      <h3>{t('home.cardioCenterTitle')}</h3>
+                      <p>{t('home.cardioCenterDesc')}</p>
                     </div>
                   </div>
                   <div className="feature-image-wrapper">
-                    <img src="/assets/4.png" alt="Cardio Center" />
+                    <img src="/assets/4.png" alt={t('home.cardioCenterTitle')} />
                   </div>
                 </Link>
 
@@ -170,12 +171,12 @@ export default function HomePage() {
                       <Radiation size={60} strokeWidth={2} />
                     </span>
                     <div className="feature-content">
-                      <h3>Diagnostic Imaging</h3>
-                      <p>วินิจฉัยแม่นยำเพื่อการรักษาที่ตรงจุด</p>
+                      <h3>{t('home.diagImagingTitle')}</h3>
+                      <p>{t('home.diagImagingDesc')}</p>
                     </div>
                   </div>
                   <div className="feature-image-wrapper">
-                    <img src="/assets/2.png" alt="Diagnostic Imaging" />
+                    <img src="/assets/2.png" alt={t('home.diagImagingTitle')} />
                   </div>
                 </Link>
               </div>
@@ -185,7 +186,7 @@ export default function HomePage() {
             {/* 3. Medical Services */}
             <section id="services" className="services-section">
               <div className="container">
-                <h2 className="section-title">บริการทางการแพทย์พื้นฐาน</h2>
+                <h2 className="section-title">{t('home.servicesTitle')}</h2>
                 <div className="service-grid">
                   {services.map((service, index) => (
                     <ServiceCard key={index} {...service} />
@@ -199,15 +200,15 @@ export default function HomePage() {
               <div className="container" style={{ padding: 0 }}>
                 <div className="clinic-info">
                   <div className="clinic-image">
-                    <img src="/assets/4.png" alt="ทีมสัตวแพทย์ Pawplan" />
+                    <img src="/assets/4.png" alt={t('home.aboutImageAlt')} />
                   </div>
                   <div className="clinic-text">
-                    <h2>การดูแลที่ใส่ใจ เริ่มต้นที่ความเข้าใจ</h2>
-                    <p>ทีมแพทย์ของเรานำโดย **สพ.ญ. ปาริฉัตร วงศ์วาน (หมอจูน)** ผู้มีประสบการณ์กว่า 10 ปี เราเน้นการดูแลแบบ **Pawplan** คือการวางแผนสุขภาพในระยะยาว ไม่ใช่เพียงแค่การรักษาอาการป่วยฉุกเฉินเท่านั้น</p>
+                    <h2>{t('home.aboutTitle')}</h2>
+                    <p>{t('home.aboutText')}</p>
                     <ul>
-                      <li>แพทย์เวชปฏิบัติหลักประจำคลินิก</li>
-                      <li>ระบบนัดหมายที่แม่นยำ</li>
-                      <li>เครื่องมือวินิจฉัยพื้นฐานครบครัน (X-ray, Lab)</li>
+                      <li>{t('home.aboutLi1')}</li>
+                      <li>{t('home.aboutLi2')}</li>
+                      <li>{t('home.aboutLi3')}</li>
                     </ul>
                   </div>
                 </div>
@@ -225,35 +226,35 @@ export default function HomePage() {
                   <div className="cta-card">
                     <div className="cta-header">
                       <Calendar size={28} className="text-blue-600" />
-                      <h3>นัดหมายออนไลน์</h3>
+                      <h3>{t('home.ctaOnlineTitle')}</h3>
                     </div>
-                    <p>จองเวลาพบสัตวแพทย์ได้ทันที เลือกบริการและวันที่สะดวก</p>
-                    <Link href="/appointment" className="btn-primary-blue">จองนัดหมาย</Link>
+                    <p>{t('home.ctaOnlineDesc')}</p>
+                    <Link href="/appointment" className="btn-primary-blue">{t('home.ctaOnlineBtn')}</Link>
                   </div>
 
                   {/* Box 2: ฉุกเฉิน (มีขอบแดงด้านบน) */}
                   <div className="cta-card emergency-border">
                     <div className="cta-header">
                       <PhoneCall size={28} className="text-red-500" />
-                      <h3>ฉุกเฉิน/ติดต่อด่วน</h3>
+                      <h3>{t('home.ctaEmergencyTitle')}</h3>
                     </div>
                     <div className="emergency-info">
                       <span className="phone-num">02-XXX-XXXX</span>
-                      <span className="badge-red">โทรด่วน 24 ชม.</span>
+                      <span className="badge-red">{t('home.ctaEmergencyBadge')}</span>
                     </div>
-                    <p className="sub-text">บริการฉุกเฉินและแผนการรักษาเร่งด่วน</p>
+                    <p className="sub-text">{t('home.ctaEmergencyDesc')}</p>
                   </div>
 
                   {/* Box 3: บริการยอดนิยม */}
                   <div className="cta-card">
                     <div className="cta-header">
                       <Star size={28} className="text-yellow-500" />
-                      <h3>บริการยอดนิยม</h3>
+                      <h3>{t('home.ctaPopularTitle')}</h3>
                     </div>
                     <ul className="cta-link-list">
-                      <li><Link href="#"><ArrowRight size={16} /> วัคซีน & เวชศาสตร์ป้องกัน</Link></li>
-                      <li><Link href="#"><ArrowRight size={16} /> Grooming & Boarding</Link></li>
-                      <li><Link href="#"><ArrowRight size={16} /> โปรไฟล์สัตวแพทย์</Link></li>
+                      <li><Link href="#"><ArrowRight size={16} /> {t('home.ctaLink1')}</Link></li>
+                      <li><Link href="#"><ArrowRight size={16} /> {t('home.ctaLink2')}</Link></li>
+                      <li><Link href="#"><ArrowRight size={16} /> {t('home.ctaLink3')}</Link></li>
                     </ul>
                   </div>
 
@@ -263,7 +264,7 @@ export default function HomePage() {
 
             {/* -------------------- 7. Testimonials, Gallery, Location, FAQ, Contact Form -------------------- */}
             <section id="location" className="container section-location">
-              <h2>แผนที่และที่ตั้ง</h2>
+              <h2>{t('home.locationTitle')}</h2>
               <div className="map-wrap">
                 <iframe
                   src="https://www.google.com/maps?q=Rangsit+University&output=embed"
@@ -280,7 +281,7 @@ export default function HomePage() {
             {/* FAQ Section  */}
             <section className="faq-section">
               <div className="container">
-                <h2 className="section-header-left">คำถามที่พบบ่อย</h2>
+                <h2 className="section-header-left">{t('home.faqTitle')}</h2>
                 <div className="header-line"></div>
                 {faqData.map((item, index) => (
                   <div key={index} className={`faq-item-box ${openFaq === index ? 'active' : ''}`}>
@@ -298,15 +299,15 @@ export default function HomePage() {
             </section>
 
             {/* -------------------- Contact Form Section -------------------- */}
-            <section className="contact-section">
+            <section id="contact" className="contact-section">
               <div className="container">
                 <div className="contact-card-wrapper">
 
                   {/* ฝั่งซ้าย: ข้อมูลการติดต่อ */}
                   <div className="contact-info-panel">
                     <div className="info-content">
-                      <h2>ติดต่อเรา</h2>
-                      <p className="subtitle">เราพร้อมดูแลสัตว์เลี้ยงตัวโปรดของคุณ ตลอดเวลาทำการ</p>
+                      <h2>{t('home.contactTitle')}</h2>
+                      <p className="subtitle">{t('home.contactSubtitle')}</p>
 
                       <div className="meta-info-list">
                         <div className="info-item">
@@ -330,7 +331,7 @@ export default function HomePage() {
                         <input 
                           type="text" 
                           name="name" 
-                          placeholder="ชื่อ-นามสกุล" 
+                          placeholder={t('home.namePlaceholder')}
                           required 
                           value={form.name}
                           onChange={handleChange}
@@ -340,7 +341,7 @@ export default function HomePage() {
                         <input 
                           type="tel" 
                           name="phone" 
-                          placeholder="เบอร์โทรศัพท์" 
+                          placeholder={t('home.phonePlaceholder')}
                           required 
                           value={form.phone}
                           onChange={handleChange}
@@ -350,7 +351,7 @@ export default function HomePage() {
                         <input 
                           type="email" 
                           name="email" 
-                          placeholder="อีเมล" 
+                          placeholder={t('home.emailPlaceholder')}
                           required
                           value={form.email}
                           onChange={handleChange}
@@ -359,17 +360,17 @@ export default function HomePage() {
                       <div className="input-group full-width">
                         <select defaultValue="">
                         <option value="" disabled>
-                          เลือกบริการที่ต้องการ
+                          {t('home.selectService')}
                         </option>
-                        <option value="checkup">วัคซีน/ตรวจสุขภาพ</option>
-                        <option value="emergency">ฉุกเฉิน</option>
-                        <option value="grooming">ตัดขน/อาบน้ำ</option>
+                        <option value="checkup">{t('home.svcCheckup')}</option>
+                        <option value="emergency">{t('home.svcEmergency')}</option>
+                        <option value="grooming">{t('home.svcGrooming')}</option>
                         </select>
                       </div>
                       <div className="input-group full-width">
                         <textarea 
                           name="message" 
-                          placeholder="รายละเอียดเพิ่มเติม..." 
+                          placeholder={t('home.notesPlaceholder')}
                           rows={4}
                           value={form.message}
                           onChange={handleChange}
@@ -379,7 +380,7 @@ export default function HomePage() {
                     </div>
 
                     <button type="submit" className="btn-send-now">
-                      <span>ส่งข้อความ</span>
+                      <span>{t('home.sendBtn')}</span>
                       <Send size={16} className="send-icon" />
                     </button>
 

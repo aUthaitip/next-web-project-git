@@ -1,9 +1,9 @@
-// app/layout.tsx
-// @ts-ignore
 import './globals.css';
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ScrollToTop from '@/components/layout/ScrollToTop';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 // Metadata สำหรับเว็บไซต์ทั้งหมด
 export const metadata: Metadata = {
@@ -22,14 +22,18 @@ export default function RootLayout({
   return (
     <html lang="th">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         {/* Font และ Icons ภายนอก */}
         <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       </head>
       <body>
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <LanguageProvider>
+          <Header />
+          <main className="container">{children}</main>
+          <Footer />
+          <ScrollToTop />
+        </LanguageProvider>
       </body>
     </html>
   );

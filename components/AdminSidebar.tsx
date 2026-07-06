@@ -3,17 +3,20 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Calendar, FileText, Stethoscope, BookOpen, LogOut } from 'lucide-react';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
-    { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/admin/appointment' },
-    { id: 'history', label: 'History', icon: FileText, href: '/admin/history' },
-    { id: 'doctors', label: 'Doctors', icon: Stethoscope, href: '/admin/doctors' },
-    { id: 'content', label: 'Content', icon: BookOpen, href: '/admin/content' },
+    { id: 'dashboard', labelEn: 'Dashboard', labelTh: 'แดชบอร์ด', icon: LayoutDashboard, href: '/admin' },
+    { id: 'appointments', labelEn: 'Appointments', labelTh: 'นัดหมาย', icon: Calendar, href: '/admin/appointment' },
+    { id: 'history', labelEn: 'History', labelTh: 'ประวัติ', icon: FileText, href: '/admin/history' },
+    { id: 'doctors', labelEn: 'Doctors', labelTh: 'แพทย์', icon: Stethoscope, href: '/admin/doctors' },
+    { id: 'content', labelEn: 'Content', labelTh: 'จัดการเนื้อหา', icon: BookOpen, href: '/admin/content' },
 ];
 
 export default function AdminSidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { lang } = useLanguage();
 
     return (
         <div className="admin-sidebar-new">
@@ -23,7 +26,7 @@ export default function AdminSidebar() {
                 <div className="brand-circle">🐾</div>
                 <div>
                     <div className="brand-name">Pawplan</div>
-                    <div className="brand-desc">Vet Clinic Admin</div>
+                    <div className="brand-desc">{lang === 'th' ? 'ระบบจัดการคลินิก' : 'Vet Clinic Admin'}</div>
                 </div>
             </div>
 
@@ -38,7 +41,7 @@ export default function AdminSidebar() {
                             className={`nav-item ${pathname === item.href ? 'active' : ''}`}
                         >
                             <Icon size={18} className="nav-icon" />
-                            <span className="nav-label">{item.label}</span>
+                            <span className="nav-label">{lang === 'th' ? item.labelTh : item.labelEn}</span>
                         </Link>
                     );
                 })}
