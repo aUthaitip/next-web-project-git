@@ -230,6 +230,7 @@ export default function MyAppointmentsPage() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
+    window.dispatchEvent(new Event('user-auth-change'));
     router.push('/login');
     router.refresh();
   };
@@ -262,7 +263,6 @@ export default function MyAppointmentsPage() {
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <Link href="/book" style={{ ...outlineBtnStyle }}>{t('myAppts.newBooking')}</Link>
-            <button onClick={handleLogout} style={{ ...ghostBtnStyle }}>{t('myAppts.logout')}</button>
           </div>
         </div>
         

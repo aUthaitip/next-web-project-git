@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/backend/prisma';
 
 // GET /api/content?category=Cat
 export async function GET(req: NextRequest) {

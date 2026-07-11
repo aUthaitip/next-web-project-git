@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import prisma from '@/backend/prisma';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -29,7 +29,7 @@ const doctorSchema = z.object({
   specialty: z.string().optional().nullable(),
   expertise: z.string().optional().nullable(),
   email: z.string().email().optional().nullable(),
-  imageUrl: z.string().url().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
   bio: z.string().optional().nullable(),
   availableDays: z.array(z.string()).optional(),
 });

@@ -11,8 +11,6 @@ type SendMailOptions = {
   text?: string;
 };
 
-// transporter จริง ใช้ config เดียวกับ SMTP_* ใน .env
-// (lib/email.ts และ app/api/contact/route.ts เรียกผ่านฟังก์ชันนี้ทั้งคู่ ไม่สร้าง transporter ซ้ำ)
 const realTransporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: Number(process.env.SMTP_PORT) || 587,
@@ -25,7 +23,6 @@ const realTransporter = nodemailer.createTransport({
 
 export async function sendMail({ from, to, subject, html, text }: SendMailOptions) {
   if (useMock) {
-    // dev mode: ไม่ส่งจริง แค่ log ออก console เพื่อไม่ต้องพึ่ง Gmail app password จากทีม
     console.log("\n📧 [MOCK EMAIL] ------------------------------");
     console.log("From:    ", from ?? process.env.EMAIL_USER);
     console.log("To:      ", to);

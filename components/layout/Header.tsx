@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Menu, User, CalendarDays, LogOut, UserLock, ChevronDown } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -13,6 +13,7 @@ export interface SessionUser {
   id: number;
   name: string;
   email: string;
+  image?: string | null;
 }
 
 
@@ -39,12 +40,21 @@ export default function Header({ initialUser = null }: HeaderProps) {
   const { t, lang, toggleLanguage } = useLanguage();
   const [user, setUser] = useState<SessionUser | null>(initialUser);
 
-  useEffect(() => {
+  const fetchUser = useCallback(() => {
     fetch('/api/me')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => setUser(data?.user ?? null))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [pathname, fetchUser]);
+
+  useEffect(() => {
+    window.addEventListener('user-auth-change', fetchUser);
+    return () => window.removeEventListener('user-auth-change', fetchUser);
+  }, [fetchUser]);
 
   const navItems: NavItem[] = [
     { label: t('nav.home'), href: '/' },
@@ -87,7 +97,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
     { label: t('nav.myAppointments'), href: '/my-appointments' },
   ];
 
-  const isBookingFlow = pathname === '/book' || pathname === '/my-appointments' || pathname === '/appointment';
+  const isBookingFlow = pathname === '/book' || pathname === '/my-appointments' || pathname === '/profile';
   const currentNavItems = isBookingFlow ? appointmentNavItems : navItems;
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -132,7 +142,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
     <header>
       <div className="container">
         <div className="navbar">
-          <Link href="/" className="hdr-logo">🐾 Pawplan</Link>
+          <Link href={pathname === '/my-appointments' ? '/my-appointments' : '/'} className="hdr-logo">🐾 Pawplan</Link>
 
           <nav className="hdr-desktop-nav">
             <ul className="nav-links">
@@ -192,7 +202,13 @@ export default function Header({ initialUser = null }: HeaderProps) {
                     className="hdr-user-trigger"
                     onClick={() => { setMenuOpen((v) => !v); }}
                   >
-                    <span className="hdr-avatar">{getInitial(user.name)}</span>
+                    <span className="hdr-avatar" style={{ overflow: 'hidden' }}>
+                      {user.image ? (
+                        <img src={user.image} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        getInitial(user.name)
+                      )}
+                    </span>
                     <span className="hdr-username">{user.name}</span>
                     <ChevronDown size={14} strokeWidth={2.5} className="hdr-arrow" />
                   </button>
@@ -242,7 +258,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
           <div className="hdr-mobile-backdrop" onClick={() => setMobileNavOpen(false)} />
           <div className="hdr-mobile-overlay">
             <div className="hdr-mobile-header">
-              <Link href="/" className="hdr-logo" onClick={() => setMobileNavOpen(false)}>🐾 Pawplan</Link>
+              <Link href={pathname === '/my-appointments' ? '/my-appointments' : '/'} className="hdr-logo" onClick={() => setMobileNavOpen(false)}>🐾 Pawplan</Link>
               <button className="hdr-mobile-close" onClick={() => setMobileNavOpen(false)}>✕</button>
             </div>
             <div className="hdr-mobile-nav">

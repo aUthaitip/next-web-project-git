@@ -14,17 +14,9 @@ export default function ArticleCard({ article }: { article: Article }) {
   return (
     <div className="article-card">
       <div className="card-image-wrapper">
-        {/*
-          Build image path defensively:
-          - If article.image already starts with '/', treat it as a public-root path
-            (e.g. '/assets/dog1.png'). The `public` folder is served at '/'.
-          - Otherwise assume the file is under /images/articles/dog/<filename>.
-          This makes the component work with both styles and avoids missing-image issues.
-        */}
         {
           (() => {
             const img = article?.image || '';
-            // fix https:/ → https://
             const fixedImg = img.replace(/^https:\/([^/])/, 'https://$1').replace(/^http:\/([^/])/, 'http://$1');
             const imageSrc = fixedImg.startsWith('/') || fixedImg.startsWith('http') ? fixedImg : `/images/articles/${fixedImg}`;
             return (

@@ -3,7 +3,7 @@ import React from 'react';
 interface ServiceProps {
   title: string;
   description: string;
-  icon?: React.ReactNode; // เปลี่ยนจาก string เป็น ReactNode เพื่อรับ Component ไอคอน
+  icon?: React.ReactNode;
 }
 
 export default function ServiceCard({ title, description, icon }: ServiceProps) {

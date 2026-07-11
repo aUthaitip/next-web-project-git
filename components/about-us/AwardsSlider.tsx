@@ -27,14 +27,13 @@ interface AwardsSliderProps {
 export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
   const [activeGrid, setActiveGrid] = useState(0);
 
-  // แบ่ง apiEntries เป็นกลุ่มละ 3
   const chunkSize = 3;
   const apiChunks: ApiEntry[][] = [];
   for (let i = 0; i < apiEntries.length; i += chunkSize) {
     apiChunks.push(apiEntries.slice(i, i + chunkSize));
   }
 
-  const totalSlides = 2 + apiChunks.length; // 2 slides เดิม + slides จาก API
+  const totalSlides = 2 + apiChunks.length;
 
   return (
     <div className="slider-viewport">
@@ -47,7 +46,7 @@ export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
             transition: 'transform 0.5s ease-in-out',
           }}
         >
-          {/* Grid ที่ 1 (เดิม) */}
+          {/* Grid ที่ 1 */}
           <div className="slider-grid" style={{ width: '100%', flexShrink: 0 }}>
             <div className="awards-grid">
               <div className="award-item">
@@ -80,7 +79,7 @@ export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
             </div>
           </div>
 
-          {/* Grid ที่ 2 (เดิม) */}
+          {/* Grid ที่ 2 */}
           <div className="slider-grid" style={{ width: '100%', flexShrink: 0 }}>
             <div className="awards-grid">
               <div className="award-item">
@@ -113,7 +112,7 @@ export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
             </div>
           </div>
 
-          {/* Slides จาก API — ต่อจากเดิม */}
+          {/* Slides จาก API */}
           {apiChunks.map((chunk, chunkIndex) => (
             <div key={chunkIndex} className="slider-grid" style={{ width: '100%', flexShrink: 0 }}>
               <div className="awards-grid">
@@ -140,7 +139,7 @@ export default function AwardsSlider({ apiEntries = [] }: AwardsSliderProps) {
         </div>
       </div>
 
-      {/* Pagination Dots — dynamic ตาม totalSlides */}
+      {/* Pagination Dots */}
       <div className="pagination-dots">
         {Array.from({ length: totalSlides }).map((_, i) => (
           <span

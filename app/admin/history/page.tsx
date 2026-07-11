@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import HideHeader from '@/components/layout/HideHeader';
 import HideFooter from '@/components/layout/HideFooter';
-import AdminSidebar from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 
 interface Appointment {
   id: number;
@@ -22,8 +22,8 @@ interface Appointment {
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Appointment[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<string>('');
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,11 +31,16 @@ export default function HistoryPage() {
       try {
         const res = await fetch('/api/appointments');
         const data = await res.json();
-        // กรองเฉพาะ status Confirmed (case-insensitive)
         const confirmed = data.filter(
           (a: Appointment) => a.status?.toLowerCase() === 'confirmed'
         );
+        confirmed.sort((a: Appointment, b: Appointment) =>
+          (b.date || '').localeCompare(a.date || '')
+        );
         setHistory(confirmed);
+        if (confirmed.length > 0) {
+          setSelectedDate(confirmed[0].date?.split('T')[0] || '');
+        }
       } catch (error) {
         console.error('Failed to load history:', error);
       } finally {
@@ -45,128 +50,220 @@ export default function HistoryPage() {
     fetchHistory();
   }, []);
 
-  const filteredHistory = history.filter((a) => {
-    // date จาก DB อาจเป็น ISO string เช่น "2026-03-01T00:00:00.000Z" หรือ "2026-03-01"
-    const apptDate = a.date?.split('T')[0]; // normalize เป็น YYYY-MM-DD
-    const matchDate = !selectedDate || apptDate === selectedDate;
-    const matchPatient = !selectedPatient || a.patient === selectedPatient;
-    return matchDate && matchPatient;
+  // Group by date
+  const dateGroups: Record<string, Appointment[]> = {};
+  history.forEach((a) => {
+    const d = a.date?.split('T')[0] || 'unknown';
+    if (!dateGroups[d]) dateGroups[d] = [];
+    dateGroups[d].push(a);
   });
+
+  const sortedDates = Object.keys(dateGroups).sort((a, b) => b.localeCompare(a));
+  const apptForSelectedDate = selectedDate ? (dateGroups[selectedDate] || []) : [];
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr || dateStr === 'unknown') return 'ไม่ระบุวันที่';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('th-TH', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  const formatDateFull = (dateStr: string) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  const isToday = (dateStr: string) => dateStr === new Date().toISOString().split('T')[0];
 
   return (
     <div className="admin-layout">
       <HideHeader />
-
       <div className="admin-container-new">
-
         <AdminSidebar />
 
-        {/* ===== MAIN CONTENT ===== */}
         <div className="admin-content-new">
 
+          {/* Header */}
           <div className="admin-header-new">
             <div>
-              <h1>Appointment History</h1>
-              <p>All <strong>{history.length}</strong> items · All Appointments</p>
+              <h1>📋 ประวัติการนัดหมาย</h1>
+              <p>ทั้งหมด <strong>{history.length}</strong> รายการ · {sortedDates.length} วัน</p>
             </div>
-            <span className="history-header-badge">All Appointments</span>
-          </div>
-
-          <div className="stat-card-new stat-blue history-filter-card">
-            <h3 className="history-filter-title">🔍 ตัวกรอง</h3>
-            <div className="history-filter-row">
-              <label className="history-filter-label">
-                📅 ค้นหาตามวันที่:
-                <input
-                  type="date"
-                  className="history-date-input"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                />
-              </label>
-            </div>
+            <span style={{ background: 'linear-gradient(135deg,#0d9488,#0369a1)', color: '#fff', padding: '6px 16px', borderRadius: 20, fontSize: 14, fontWeight: 600 }}>
+              Confirmed Only
+            </span>
           </div>
 
           {loading ? (
-            <div className="stat-card-new history-loading-state">
-              <p>⏳ กำลังโหลดข้อมูล...</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300, flexDirection: 'column', gap: 16, color: '#64748b' }}>
+              <div style={{ width: 48, height: 48, border: '4px solid #e2e8f0', borderTopColor: '#0d9488', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <p>กำลังโหลดข้อมูล...</p>
             </div>
-
-          ) : filteredHistory.length === 0 ? (
-            <div className="stat-card-new history-empty-state">
-              <p className="history-empty-text">📭 ไม่มีข้อมูลการจองในวันที่นี้</p>
+          ) : history.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '80px 24px', color: '#94a3b8' }}>
+              <div style={{ fontSize: 64, marginBottom: 16 }}>📭</div>
+              <h3 style={{ fontSize: 18, fontWeight: 600, color: '#475569', marginBottom: 8 }}>ยังไม่มีประวัติการนัดหมาย</h3>
+              <p style={{ fontSize: 14 }}>ประวัติจะปรากฏเมื่อมีนัดหมายที่ถูก Confirm แล้ว</p>
             </div>
-
           ) : (
-            <div className="history-content-grid">
+            <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 20, alignItems: 'start' }}>
 
-              <div className="stat-card-new stat-blue">
-                <h3 className="history-section-title">👥 รายชื่อผู้จอง</h3>
-                <div className="history-patient-list">
-                  <button
-                    onClick={() => setSelectedPatient('')}
-                    className={`history-patient-btn ${selectedPatient === '' ? 'active' : ''}`}
-                  >
-                    <span>All</span>
-                    <span className="admin-status-badge admin-status-confirmed">{filteredHistory.length}</span>
-                  </button>
-                  {[...new Set(filteredHistory.map((a) => a.patient))].map((patient) => {
-                    const count = filteredHistory.filter((a) => a.patient === patient).length;
+              {/* LEFT: Date list */}
+              <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', overflow: 'hidden', position: 'sticky', top: 20 }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', background: 'linear-gradient(135deg,#f0fdfa,#f0f9ff)' }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>📅 เลือกวันที่</h3>
+                  <p style={{ fontSize: 12, color: '#64748b', margin: '4px 0 0' }}>{sortedDates.length} วันที่มีนัดหมาย</p>
+                </div>
+                <div style={{ maxHeight: 560, overflowY: 'auto' }}>
+                  {sortedDates.map((date) => {
+                    const count = dateGroups[date].length;
+                    const isSelected = selectedDate === date;
+                    const todayMark = isToday(date);
                     return (
                       <button
-                        key={patient}
-                        onClick={() => setSelectedPatient(patient)}
-                        className={`history-patient-btn ${selectedPatient === patient ? 'active' : ''}`}
+                        key={date}
+                        onClick={() => { setSelectedDate(date); setSelectedAppt(null); }}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '14px 20px',
+                          background: isSelected ? 'linear-gradient(135deg,#0d9488,#0369a1)' : 'transparent',
+                          color: isSelected ? '#fff' : '#334155',
+                          border: 'none',
+                          borderBottom: '1px solid #f1f5f9',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
                       >
-                        <strong>{patient}</strong>
-                        <span className="admin-status-badge admin-status-confirmed">{count}</span>
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                            {formatDate(date)}
+                            {todayMark && (
+                              <span style={{ fontSize: 10, background: isSelected ? 'rgba(255,255,255,0.25)' : '#dcfce7', color: isSelected ? '#fff' : '#16a34a', padding: '1px 6px', borderRadius: 8, fontWeight: 700 }}>
+                                วันนี้
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <span style={{
+                          minWidth: 26, height: 26,
+                          background: isSelected ? 'rgba(255,255,255,0.25)' : '#e0f2fe',
+                          color: isSelected ? '#fff' : '#0369a1',
+                          borderRadius: 13,
+                          fontSize: 12, fontWeight: 700,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          {count}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="stat-card-new stat-green">
-                <h3 className="history-section-title">📅 รายละเอียด</h3>
-                {selectedPatient ? (
-                  <div className="history-details-list">
-                    {filteredHistory
-                      .filter((a) => a.patient === selectedPatient)
-                      .map((appt) => (
-                        <div key={appt.id} className="admin-card">
-                          <div className="admin-list-item history-detail-item">
-                            <span><strong>🏥 บริการ:</strong></span><span>{appt.service}</span>
-                          </div>
-                          <div className="admin-list-item history-detail-item">
-                            <span><strong>📅 วันเวลา:</strong></span><span>{appt.date?.split('T')[0]} @ {appt.time}</span>
-                          </div>
-                          <div className="admin-list-item history-detail-item">
-                            <span><strong>🐾 สัตว์:</strong></span><span>{appt.petName} ({appt.petType})</span>
-                          </div>
-                          <div className="admin-list-item history-detail-item">
-                            <span><strong>📞 เบอร์:</strong></span><span>{appt.phone}</span>
-                          </div>
-                          {appt.notes && (
-                            <div className="admin-list-item history-detail-item">
-                              <span><strong>📝 หมายเหตุ:</strong></span><span>{appt.notes}</span>
+              {/* RIGHT: Appointment list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                {/* Selected date header */}
+                {selectedDate && (
+                  <div style={{ background: 'linear-gradient(135deg,#0d9488,#0369a1)', color: '#fff', borderRadius: 12, padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ fontSize: 18, fontWeight: 700 }}>{formatDateFull(selectedDate)}</div>
+                      <div style={{ fontSize: 13, opacity: 0.85, marginTop: 2 }}>มีนัดหมาย {apptForSelectedDate.length} รายการ</div>
+                    </div>
+                    {isToday(selectedDate) && (
+                      <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600 }}>📍 วันนี้</span>
+                    )}
+                  </div>
+                )}
+
+                {/* Cards */}
+                <div style={{ display: 'grid', gap: 12 }}>
+                  {[...apptForSelectedDate]
+                    .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+                    .map((appt) => {
+                      const isExpanded = selectedAppt?.id === appt.id;
+                      return (
+                        <div key={appt.id} style={{
+                          background: '#fff',
+                          borderRadius: 14,
+                          border: isExpanded ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                          boxShadow: isExpanded ? '0 4px 20px rgba(13,148,136,0.12)' : '0 2px 8px rgba(0,0,0,0.04)',
+                          overflow: 'hidden',
+                          transition: 'all 0.2s ease',
+                        }}>
+                          {/* Summary row — click to expand */}
+                          <button
+                            onClick={() => setSelectedAppt(isExpanded ? null : appt)}
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                          >
+                            {/* Time */}
+                            <div style={{
+                              minWidth: 64, height: 56,
+                              background: isExpanded ? 'linear-gradient(135deg,#0d9488,#0369a1)' : '#f0fdfa',
+                              color: isExpanded ? '#fff' : '#0d9488',
+                              borderRadius: 12,
+                              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 13, fontWeight: 700,
+                            }}>
+                              <span style={{ fontSize: 10, opacity: 0.7, marginBottom: 2 }}>เวลา</span>
+                              {appt.time || '-'}
+                            </div>
+
+                            {/* Info */}
+                            <div style={{ flex: 1 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                                <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>👤 {appt.patient}</span>
+                                <span style={{ fontSize: 11, background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: 8, fontWeight: 600 }}>✓ Confirmed</span>
+                              </div>
+                              <div style={{ fontSize: 13, color: '#64748b', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                                <span>🏥 {appt.service}</span>
+                                <span>🐾 {appt.petName} ({appt.petType})</span>
+                                <span>📞 {appt.phone}</span>
+                              </div>
+                            </div>
+
+                            {/* Chevron */}
+                            <div style={{
+                              width: 28, height: 28, background: '#f1f5f9', borderRadius: '50%',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 11, color: '#64748b',
+                              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease',
+                            }}>▼</div>
+                          </button>
+
+                          {/* Expanded detail */}
+                          {isExpanded && (
+                            <div style={{ borderTop: '1px solid #e2e8f0', padding: '16px 20px', background: '#fafafa', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                              {[
+                                { label: 'เจ้าของ', value: appt.owner || appt.patient, icon: '👤' },
+                                { label: 'เบอร์โทร', value: appt.phone, icon: '📞' },
+                                { label: 'สัตว์เลี้ยง', value: `${appt.petName} (${appt.petType})`, icon: '🐾' },
+                                { label: 'บริการ', value: appt.service, icon: '🏥' },
+                                { label: 'วันที่', value: appt.date?.split('T')[0], icon: '📅' },
+                                { label: 'เวลา', value: appt.time, icon: '🕐' },
+                              ].map(({ label, value, icon }) => (
+                                <div key={label} style={{ background: '#fff', borderRadius: 8, padding: '10px 14px', border: '1px solid #e2e8f0' }}>
+                                  <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 4 }}>{icon} {label}</div>
+                                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{value || '-'}</div>
+                                </div>
+                              ))}
+                              {appt.notes && (
+                                <div style={{ gridColumn: '1 / -1', background: '#fffbeb', borderRadius: 8, padding: '10px 14px', border: '1px solid #fde68a' }}>
+                                  <div style={{ fontSize: 11, color: '#92400e', marginBottom: 4 }}>📝 หมายเหตุ</div>
+                                  <div style={{ fontSize: 13, color: '#78350f' }}>{appt.notes}</div>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="history-appointments-grid">
-                    {filteredHistory.map((appt) => (
-                      <div key={appt.id} className="history-appointment-card">
-                        <div><strong>👤 ชื่อ:</strong> {appt.patient}</div>
-                        <div><strong>🏥 บริการ:</strong> {appt.service}</div>
-                        <div><strong>📅 เวลา:</strong> {appt.time}</div>
-                        <div><strong>🐾 สัตว์:</strong> {appt.petName} ({appt.petType})</div>
-                        <div><strong>📞 เบอร์:</strong> {appt.phone}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      );
+                    })}
+                </div>
               </div>
 
             </div>
@@ -174,7 +271,6 @@ export default function HistoryPage() {
 
         </div>
       </div>
-
       <HideFooter />
     </div>
   );

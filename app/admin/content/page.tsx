@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import HideHeader from '@/components/layout/HideHeader';
 import HideFooter from '@/components/layout/HideFooter';
-import AdminSidebar from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

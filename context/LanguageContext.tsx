@@ -1,9 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { translations } from '@/lib/translations';
+import th from '@/locales/th.json';
+import en from '@/locales/en.json';
 
 type Language = 'th' | 'en';
+
+const translations: Record<Language, any> = { th, en };
 
 interface LanguageContextType {
   lang: Language;
