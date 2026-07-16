@@ -142,7 +142,11 @@ export default function Header({ initialUser = null }: HeaderProps) {
     <header>
       <div className="container">
         <div className="navbar">
-          <Link href={pathname === '/my-appointments' ? '/my-appointments' : '/'} className="hdr-logo">🐾 Pawplan</Link>
+          {pathname === '/my-appointments' ? (
+            <a href="#" onClick={(e) => { e.preventDefault(); window.location.reload(); }} className="hdr-logo">🐾 Pawplan</a>
+          ) : (
+            <Link href="/" className="hdr-logo">🐾 Pawplan</Link>
+          )}
 
           <nav className="hdr-desktop-nav">
             <ul className="nav-links">
@@ -258,7 +262,11 @@ export default function Header({ initialUser = null }: HeaderProps) {
           <div className="hdr-mobile-backdrop" onClick={() => setMobileNavOpen(false)} />
           <div className="hdr-mobile-overlay">
             <div className="hdr-mobile-header">
-              <Link href={pathname === '/my-appointments' ? '/my-appointments' : '/'} className="hdr-logo" onClick={() => setMobileNavOpen(false)}>🐾 Pawplan</Link>
+              {pathname === '/my-appointments' ? (
+                <a href="#" onClick={(e) => { e.preventDefault(); setMobileNavOpen(false); window.location.reload(); }} className="hdr-logo">🐾 Pawplan</a>
+              ) : (
+                <Link href="/" className="hdr-logo" onClick={() => setMobileNavOpen(false)}>🐾 Pawplan</Link>
+              )}
               <button className="hdr-mobile-close" onClick={() => setMobileNavOpen(false)}>✕</button>
             </div>
             <div className="hdr-mobile-nav">

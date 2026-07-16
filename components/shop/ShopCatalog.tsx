@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Search, ShoppingBag, MessageSquare, Truck, ShieldCheck, HelpCircle, Star, X } from 'lucide-react';
+import { Search, ShoppingBag, MessageSquare, Truck, ShieldCheck, HelpCircle, Star, X, Heart } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -24,92 +24,22 @@ export default function ShopCatalog() {
   const { t, lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [ads, setAds] = useState<any[]>([]);
 
-  const products: Product[] = [
-    {
-      id: 1,
-      nameTh: 'อาหารสุนัข Premium Renal Care (2kg)',
-      nameEn: 'Premium Renal Care Dog Kibbles (2kg)',
-      category: 'food',
-      price: 1250,
-      originalPrice: 1450,
-      tagTh: 'แนะนำโดยหมอ',
-      tagEn: 'Vet Recommended',
-      image: 'https://images.unsplash.com/photo-1589722244358-f0ec9c024517?auto=format&fit=crop&q=80&w=400',
-      rating: 4.9,
-      reviewsCount: 42,
-      descTh: 'อาหารประกอบการรักษาโรคไตสำหรับสุนัข สูตรไขมันและโปรตีนควบคุม ช่วยลดภาระการทำงานของไต คัดสรรส่วนผสมเกรดพรีเมียมย่อยง่าย',
-      descEn: 'Veterinary diet formulated for dogs with chronic kidney disease. Controlled phosphorus and protein levels help reduce kidney workload. Made with high-quality digestible ingredients.',
-    },
-    {
-      id: 2,
-      nameTh: 'แชมพูสูตรออร์แกนิกสูตรผิวบอบบาง (500ml)',
-      nameEn: 'Organic Sensitive Skin Shampoo (500ml)',
-      category: 'grooming',
-      price: 390,
-      tagTh: 'ขายดี',
-      tagEn: 'Best Seller',
-      image: 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=400',
-      rating: 4.8,
-      reviewsCount: 128,
-      descTh: 'แชมพูสูตรสมุนไพรออร์แกนิกสำหรับสุนัขและแมวที่มีผิวบอบบางแพ้ง่าย ปราศจากสารพาราเบนและน้ำหอมสังเคราะห์ ช่วยบำรุงเส้นขนให้นุ่มสลวยลดอาการคัน',
-      descEn: 'Organic herbal shampoo for dogs and cats with sensitive skin. Paraben-free and synthetic fragrance-free. Nourishes coat, reduces itching, and leaves fur soft and shiny.',
-    },
-    {
-      id: 3,
-      nameTh: 'วิตามินบำรุงข้อต่อสัตว์เลี้ยง Joint Care (60 เม็ด)',
-      nameEn: 'Pet Joint Care Supplement (60 Tabs)',
-      category: 'health',
-      price: 790,
-      originalPrice: 890,
-      tagTh: 'ขายดี',
-      tagEn: 'Hot',
-      image: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&q=80&w=400',
-      rating: 4.7,
-      reviewsCount: 86,
-      descTh: 'วิตามินเสริมอาหารบำรุงข้อต่อสำหรับสัตว์เลี้ยงอายุเยอะ หรือสายพันธุ์ที่เสี่ยงต่อโรคข้อเสื่อม มีกลูโคซามีนและคอนดรอยตินช่วยเสริมสร้างน้ำหล่อเลี้ยงข้อต่อ',
-      descEn: 'Premium joint support supplement containing Glucosamine and Chondroitin. Formulated for senior pets or breeds prone to hip and joint dysplasia to improve mobility.',
-    },
-    {
-      id: 4,
-      nameTh: 'ของเล่นฝึกทักษะ Interactive Treat Dispenser',
-      nameEn: 'Interactive Treat Dispenser Toy',
-      category: 'toys',
-      price: 450,
-      image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400',
-      rating: 4.6,
-      reviewsCount: 37,
-      descTh: 'ของเล่นฝึกทักษะและเสริมพัฒนาการสมองสัตว์เลี้ยง ช่วยลดความเครียดและความเบื่อหน่ายจากการอยู่บ้านคนเดียว เพียงใส่อาหารเม็ดหรือขนมด้านใน',
-      descEn: 'Educational and brain stimulation toy for pets. Helps relieve anxiety and boredom by rewarding your pet with treats as they roll and play with the dispenser.',
-    },
-    {
-      id: 5,
-      nameTh: 'ขนมแมวเลียสูตรบำรุงขนเงางาม (20 ซอง)',
-      nameEn: 'Shiny Coat Cat Puree Treats (20 Packs)',
-      category: 'food',
-      price: 280,
-      tagTh: 'ใหม่',
-      tagEn: 'New',
-      image: 'https://images.unsplash.com/photo-1569591159212-b02ea8a9f239?auto=format&fit=crop&q=80&w=400',
-      rating: 4.9,
-      reviewsCount: 64,
-      descTh: 'ขนมครีมแมวเลียเกรดโฮลิสติก ทำจากปลาทูน่าและแซลมอนแท้ ผสมโอเมก้า 3 และ 6 ช่วยบำรุงเส้นขนให้หนานุ่มและเงางามเป็นพิเศษ',
-      descEn: 'Holistic puree cat treat made from real tuna and salmon. Enriched with Omega 3 & 6 to improve coat thickness, reduce shedding, and boost shine.',
-    },
-    {
-      id: 6,
-      nameTh: 'วิตามินรวมสำหรับสัตว์เลี้ยงบำรุงภูมิคุ้มกัน (100ml)',
-      nameEn: 'Pet Immune Booster Multivitamin (100ml)',
-      category: 'health',
-      price: 520,
-      image: 'https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&q=80&w=400',
-      rating: 4.8,
-      reviewsCount: 51,
-      descTh: 'วิตามินรวมชนิดน้ำสำหรับทานง่าย ช่วยกระตุ้นระบบภูมิคุ้มกันของสัตว์เลี้ยง ป้องกันการเจ็บป่วย ฟื้นฟูร่างกายหลังการผ่าตัดหรือเจ็บป่วย',
-      descEn: 'Liquid multivitamin supplement for pets. Boosts natural immunity, protects against illnesses, and aids recovery after veterinary surgeries or illness.',
-    }
-  ];
+
+  
+  useEffect(() => {
+    fetch('/api/shop-ads')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAds(data.filter((ad: any) => ad.isActive));
+        }
+      })
+      .catch(err => console.error('Error fetching ads', err));
+  }, []);
+
+  const products: Product[] = [];
 
   const categories = [
     { id: 'all', labelTh: 'ทั้งหมด', labelEn: 'All Products' },
@@ -119,10 +49,10 @@ export default function ShopCatalog() {
     { id: 'toys', labelTh: 'ของเล่นสัตว์เลี้ยง', labelEn: 'Toys & Accessories' }
   ];
 
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    const name = lang === 'th' ? product.nameTh : product.nameEn;
-    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredAds = ads.filter(ad => {
+    const matchesCategory = selectedCategory === 'all' || ad.category === 'all' || ad.category === selectedCategory;
+    const adTitle = lang === 'th' ? ad.titleTh : ad.titleEn;
+    const matchesSearch = adTitle?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -301,9 +231,10 @@ export default function ShopCatalog() {
 
         </div>
 
-        {/* Product Grid Area */}
+        {/* Ads Grid Area */}
         <div>
-          {filteredProducts.length === 0 ? (
+          
+          {filteredAds.length === 0 ? (
             <div style={{
               background: 'white',
               borderRadius: 20,
@@ -314,129 +245,89 @@ export default function ShopCatalog() {
             }}>
               <ShoppingBag size={48} style={{ margin: '0 auto 16px', color: '#94a3b8' }} />
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#334155' }}>
-                {lang === 'th' ? 'ไม่พบสินค้าที่ตรงกับการค้นหา' : 'No products match your search'}
+                {lang === 'th' ? 'ไม่พบข้อมูลที่ตรงกับการค้นหา' : 'No items match your search'}
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 14 }}>
-                {lang === 'th' ? 'โปรดลองใช้คำค้นหาอื่น หรือเลือกหมวดหมู่อื่น' : 'Please try a different search term or filter'}
-              </p>
             </div>
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
               gap: 24
             }}>
-              {filteredProducts.map(product => (
+              {filteredAds.map(ad => (
                 <div
-                  key={product.id}
-                  onClick={() => setSelectedProduct(product)}
+                  key={ad.id}
                   style={{
                     background: 'white',
-                    borderRadius: 16,
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-                    border: '1px solid #f1f5f9',
+                    borderRadius: 20,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
+                    border: '1px solid #f8fafc',
                     overflow: 'hidden',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s',
                     display: 'flex',
                     flexDirection: 'column',
-                    position: 'relative'
+                    position: 'relative',
+                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), boxShadow 0.3s',
                   }}
-                  className="product-card-hover"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-8px)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(13, 148, 136, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.06)';
+                  }}
                 >
-                  {(product.tagTh || product.tagEn) && (
-                    <span style={{
-                      position: 'absolute',
-                      top: 12,
-                      left: 12,
-                      background: '#0d9488',
-                      color: 'white',
-                      padding: '4px 10px',
-                      borderRadius: 30,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      zIndex: 2,
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-                    }}>
-                      {lang === 'th' ? product.tagTh : product.tagEn}
-                    </span>
-                  )}
-
-                  <div style={{ width: '100%', height: 200, overflow: 'hidden', backgroundColor: '#f8fafc', position: 'relative' }}>
+                  <div style={{ width: '100%', height: 240, overflow: 'hidden', position: 'relative' }}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)', zIndex: 1 }} />
                     <img
-                      src={product.image}
-                      alt={lang === 'th' ? product.nameTh : product.nameEn}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
-                      className="product-img"
+                      src={ad.imageUrl}
+                      alt={lang === 'th' ? ad.titleTh : ad.titleEn}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </div>
 
-                  <div style={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', marginBottom: 8 }}>
+                      {categories.find(c => c.id === ad.category)?.labelTh || 'โฆษณา'}
+                    </span>
                     <h4 style={{
                       margin: 0,
-                      fontSize: 14.5,
-                      fontWeight: 700,
+                      fontSize: 18,
+                      fontWeight: 800,
                       color: '#1e293b',
-                      lineHeight: 1.45,
-                      height: 42,
-                      overflow: 'hidden',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical'
+                      lineHeight: 1.4,
                     }}>
-                      {lang === 'th' ? product.nameTh : product.nameEn}
+                      {lang === 'th' ? ad.titleTh : ad.titleEn}
                     </h4>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8, marginBottom: 12 }}>
-                      <div style={{ display: 'flex', gap: 1 }}>
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={12}
-                            fill={i < Math.floor(product.rating) ? '#f59e0b' : 'none'}
-                            color={i < Math.floor(product.rating) ? '#f59e0b' : '#cbd5e1'}
-                          />
-                        ))}
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#475569' }}>{product.rating}</span>
-                      <span style={{ fontSize: 11.5, color: '#94a3b8' }}>({product.reviewsCount})</span>
-                    </div>
-
-                    <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span style={{ fontSize: 18, fontWeight: 800, color: '#0d9488' }}>
-                        ฿{product.price.toLocaleString()}
-                      </span>
-                      {product.originalPrice && (
-                        <span style={{ fontSize: 13, textDecoration: 'line-through', color: '#94a3b8' }}>
-                          ฿{product.originalPrice.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-
-                    <button
-                      style={{
-                        marginTop: 14,
-                        width: '100%',
-                        padding: '9px',
-                        background: 'linear-gradient(135deg, #0d9488, #14b8a6)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 10,
-                        fontSize: 13,
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        fontFamily: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 6
-                      }}
-                    >
-                      <ShoppingBag size={14} />
-                      {lang === 'th' ? 'สั่งซื้อผ่าน LINE' : 'Order via LINE'}
-                    </button>
+                    {ad.linkUrl && (
+                      <a
+                        href={ad.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          marginTop: 24,
+                          width: '100%',
+                          padding: '12px',
+                          background: 'linear-gradient(135deg, #0d9488, #14b8a6)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: 12,
+                          fontSize: 14,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 8,
+                          boxShadow: '0 4px 15px rgba(13, 148, 136, 0.2)'
+                        }}
+                      >
+                        ดูรายละเอียดเพิ่มเติม
+                      </a>
+                    )}
                   </div>
-
                 </div>
               ))}
             </div>
@@ -464,147 +355,7 @@ export default function ShopCatalog() {
         </p>
       </div>
 
-      {/* Product Detail Modal */}
-      {selectedProduct && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: 20
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: 24,
-            width: '100%',
-            maxWidth: 720,
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            position: 'relative',
-            overflow: 'hidden',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1.2fr',
-          }} className="shop-modal-grid">
-            
-            <button
-              onClick={() => setSelectedProduct(null)}
-              style={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                background: 'white',
-                border: 'none',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 3
-              }}
-            >
-              <X size={18} color="#475569" />
-            </button>
 
-            <div style={{ backgroundColor: '#f8fafc', height: '100%', minHeight: 320, position: 'relative' }}>
-              <img
-                src={selectedProduct.image}
-                alt={lang === 'th' ? selectedProduct.nameTh : selectedProduct.nameEn}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              {(selectedProduct.tagTh || selectedProduct.tagEn) && (
-                <span style={{
-                  position: 'absolute',
-                  top: 16,
-                  left: 16,
-                  background: '#0d9488',
-                  color: 'white',
-                  padding: '4px 10px',
-                  borderRadius: 30,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
-                }}>
-                  {lang === 'th' ? selectedProduct.tagTh : selectedProduct.tagEn}
-                </span>
-              )}
-            </div>
-
-            <div style={{ padding: 32, display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {categories.find(c => c.id === selectedProduct.category)?.labelTh || ''}
-              </span>
-              <h2 style={{ margin: '6px 0 10px', fontSize: 20, fontWeight: 800, color: '#1e293b', lineHeight: 1.4 }}>
-                {lang === 'th' ? selectedProduct.nameTh : selectedProduct.nameEn}
-              </h2>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-                <div style={{ display: 'flex', gap: 1 }}>
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      fill={i < Math.floor(selectedProduct.rating) ? '#f59e0b' : 'none'}
-                      color={i < Math.floor(selectedProduct.rating) ? '#f59e0b' : '#cbd5e1'}
-                    />
-                  ))}
-                </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>{selectedProduct.rating}</span>
-                <span style={{ fontSize: 12.5, color: '#64748b' }}>({selectedProduct.reviewsCount} {lang === 'th' ? 'รีวิว' : 'reviews'})</span>
-              </div>
-
-              <p style={{ margin: '0 0 24px', fontSize: 13.5, color: '#475569', lineHeight: 1.6, flexGrow: 1 }}>
-                {lang === 'th' ? selectedProduct.descTh : selectedProduct.descEn}
-              </p>
-
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 20 }}>
-                <span style={{ fontSize: 24, fontWeight: 800, color: '#0d9488' }}>
-                  ฿{selectedProduct.price.toLocaleString()}
-                </span>
-                {selectedProduct.originalPrice && (
-                  <span style={{ fontSize: 15, textDecoration: 'line-through', color: '#94a3b8' }}>
-                    ฿{selectedProduct.originalPrice.toLocaleString()}
-                  </span>
-                )}
-              </div>
-
-              <a
-                href={`https://line.me/R/oaMessage/@pawplan/?${encodeURIComponent(lang === 'th' ? `สวัสดีค่ะ สนใจสั่งซื้อสินค้า: ${selectedProduct.nameTh}` : `Hello, I'm interested in ordering: ${selectedProduct.nameEn}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  width: '100%',
-                  padding: '12px 24px',
-                  background: 'linear-gradient(135deg, #0d9488, #14b8a6)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 12,
-                  fontSize: 15,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  boxShadow: '0 4px 14px rgba(13, 148, 136, 0.25)',
-                  transition: 'opacity 0.2s',
-                  textAlign: 'center'
-                }}
-              >
-                <ShoppingBag size={18} />
-                {lang === 'th' ? 'สั่งซื้อสินค้าผ่านทาง LINE' : 'Order via LINE Chat'}
-              </a>
-            </div>
-
-          </div>
-        </div>
-      )}
 
     </div>
   );
