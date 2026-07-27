@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
-import prisma from '@/lib/prisma';
-import { sessionOptions, SessionData } from '@/lib/session';
-import { sendAppointmentEmail } from '@/lib/email';
+import prisma from '@/backend/prisma';
+import { sessionOptions, SessionData } from '@/backend/session';
+import { sendAppointmentEmail } from '@/backend/email/email';
 
 export const runtime = 'nodejs';
 

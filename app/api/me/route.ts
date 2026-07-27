@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
-import { sessionOptions, SessionData } from '@/lib/session';
+import { sessionOptions, SessionData } from '@/backend/session';
 
 export const runtime = 'nodejs';
 
@@ -17,6 +17,7 @@ export async function GET() {
       id: session.userId,
       name: session.userName ?? '',
       email: session.userEmail ?? '',
+      image: session.userImage ?? null,
     },
   });
 }

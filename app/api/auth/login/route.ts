@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
-import prisma from '@/lib/prisma';
-import { sessionOptions, SessionData } from '@/lib/session';
+import prisma from '@/backend/prisma';
+import { sessionOptions, SessionData } from '@/backend/session';
 
 export const runtime = 'nodejs';
 
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     session.userName = user.name;
     session.userEmail = user.email;
     session.userPhone = user.phone || '';
+    session.userImage = user.image || '';
     session.isLoggedIn = true;
     await session.save();
 

@@ -1,6 +1,5 @@
 'use client';
 
-// app/shop/page.tsx
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 

@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import HideHeader from '@/components/layout/HideHeader';
 import HideFooter from '@/components/layout/HideFooter';
-import AdminSidebar from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/admin/AdminSidebar';
+import ArticleModal from '@/components/admin/ArticleModal';
+import AboutUsModal from '@/components/admin/AboutUsModal';
+import { useLanguage } from '@/context/LanguageContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,6 +75,7 @@ const emptyAboutForm: AboutUsForm = {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ContentAdminPage() {
+  const { lang } = useLanguage();
   // Tab state
   const [activeTab, setActiveTab] = useState<'articles' | 'about-us'>('articles');
 
@@ -137,7 +141,7 @@ export default function ContentAdminPage() {
   };
 
   const handleArtDelete = async (a: Article) => {
-    if (!confirm(`ลบบทความ "${a.title}" หรือไม่?`)) return;
+    if (!confirm(lang === 'th' ? `ลบบทความ "${a.title}" หรือไม่?` : `Delete article "${a.title}"?`)) return;
     try { await fetch(`/api/content/${a.id}`, { method: 'DELETE' }); fetchArticles(); }
     catch (err) { console.error('art delete error', err); }
   };
@@ -193,7 +197,7 @@ export default function ContentAdminPage() {
   };
 
   const handleAboutDelete = async (entry: AboutUsEntry) => {
-    if (!confirm(`ลบ "${entry.title}" หรือไม่?`)) return;
+    if (!confirm(lang === 'th' ? `ลบ "${entry.title}" หรือไม่?` : `Delete "${entry.title}"?`)) return;
     try { await fetch(`/api/about-us/${entry.id}`, { method: 'DELETE' }); fetchAboutUs(); }
     catch (err) { console.error('about delete error', err); }
   };
@@ -231,20 +235,20 @@ export default function ContentAdminPage() {
           <div className="admin-header-new">
             <div>
               <h1>Content Management</h1>
-              <p>จัดการบทความและเนื้อหาของคลินิก</p>
+              <p>{lang === 'th' ? 'จัดการบทความและเนื้อหาของคลินิก' : 'Manage clinic articles and content'}</p>
             </div>
             <button
               className="admin-btn admin-btn-primary"
               onClick={activeTab === 'articles' ? openArtNew : openAboutNew}
             >
-              + {activeTab === 'articles' ? 'เพิ่มบทความ' : 'เพิ่มเนื้อหา About Us'}
+              + {activeTab === 'articles' ? (lang === 'th' ? 'เพิ่มบทความ' : 'Add Article') : (lang === 'th' ? 'เพิ่มเนื้อหา About Us' : 'Add About Us Content')}
             </button>
           </div>
 
           {/* ── Tabs ── */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '2px solid #e5e7eb' }}>
             {[
-              { key: 'articles', label: '📄 บทความ' },
+              { key: 'articles', label: lang === 'th' ? '📄 บทความ' : '📄 Articles' },
               { key: 'about-us', label: '🏢 About Us' },
             ].map((tab) => (
               <button
@@ -272,24 +276,24 @@ export default function ContentAdminPage() {
               {/* Stats */}
               <div className="stats-grid-new">
                 <div className="stat-card-new stat-blue">
-                  <div className="stat-top"><div className="stat-label-text">ทั้งหมด</div><div className="stat-icon-new">📄</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'ทั้งหมด' : 'Total'}</div><div className="stat-icon-new">📄</div></div>
                   <div className="stat-value-new">{articles.length}</div>
-                  <div className="stat-desc-new">บทความในระบบ</div>
+                  <div className="stat-desc-new">{lang === 'th' ? 'บทความในระบบ' : 'Total articles'}</div>
                 </div>
                 <div className="stat-card-new stat-green">
-                  <div className="stat-top"><div className="stat-label-text">เผยแพร่แล้ว</div><div className="stat-icon-new">✅</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'เผยแพร่แล้ว' : 'Published'}</div><div className="stat-icon-new">✅</div></div>
                   <div className="stat-value-new">{artPublished}</div>
                   <div className="stat-desc-new">Published</div>
                 </div>
                 <div className="stat-card-new stat-orange">
-                  <div className="stat-top"><div className="stat-label-text">แบบร่าง</div><div className="stat-icon-new">📝</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'แบบร่าง' : 'Draft'}</div><div className="stat-icon-new">📝</div></div>
                   <div className="stat-value-new">{articles.length - artPublished}</div>
                   <div className="stat-desc-new">Draft</div>
                 </div>
                 <div className="stat-card-new stat-blue">
-                  <div className="stat-top"><div className="stat-label-text">หมวดหมู่</div><div className="stat-icon-new">🏷️</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'หมวดหมู่' : 'Categories'}</div><div className="stat-icon-new">🏷️</div></div>
                   <div className="stat-value-new">{CATEGORIES.length}</div>
-                  <div className="stat-desc-new">ประเภทเนื้อหา</div>
+                  <div className="stat-desc-new">{lang === 'th' ? 'ประเภทเนื้อหา' : 'Content types'}</div>
                 </div>
               </div>
 
@@ -297,7 +301,7 @@ export default function ContentAdminPage() {
               <div className="appointments-toolbar">
                 <div className="search-box-new">
                   <span className="search-icon-new">🔍</span>
-                  <input type="text" placeholder="ค้นหาบทความ..." value={artSearch} onChange={(e) => setArtSearch(e.target.value)} className="search-input-new" />
+                  <input type="text" placeholder={lang === 'th' ? 'ค้นหาบทความ...' : 'Search articles...'} value={artSearch} onChange={(e) => setArtSearch(e.target.value)} className="search-input-new" />
                 </div>
                 <select value={artFilterCat} onChange={(e) => setArtFilterCat(e.target.value)} className="filter-select-new">
                   <option value="all">All Categories</option>
@@ -308,13 +312,13 @@ export default function ContentAdminPage() {
               {/* Table */}
               <div className="table-container-new">
                 {artLoading ? (
-                  <div className="table-empty">⏳ กำลังโหลด...</div>
+                  <div className="table-empty">⏳ {lang === 'th' ? 'กำลังโหลด...' : 'Loading...'}</div>
                 ) : artFiltered.length === 0 ? (
-                  <div className="table-empty">📭 ไม่พบบทความ</div>
+                  <div className="table-empty">📭 {lang === 'th' ? 'ไม่พบบทความ' : 'No articles found'}</div>
                 ) : (
                   <table className="appointments-table">
                     <thead>
-                      <tr><th>บทความ</th><th>หมวดหมู่</th><th>สถานะ</th><th>วันที่สร้าง</th><th>Actions</th></tr>
+                      <tr><th>{lang === 'th' ? 'บทความ' : 'Article'}</th><th>{lang === 'th' ? 'หมวดหมู่' : 'Category'}</th><th>{lang === 'th' ? 'สถานะ' : 'Status'}</th><th>{lang === 'th' ? 'วันที่สร้าง' : 'Created At'}</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                       {artFiltered.map((article) => (
@@ -340,7 +344,7 @@ export default function ContentAdminPage() {
                           </td>
                           <td><div className="date-value">{new Date(article.createdAt).toLocaleDateString('th-TH')}</div></td>
                           <td className="actions-cell">
-                            <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: '4px 12px', fontSize: 13 }} onClick={() => openArtEdit(article)}>✏️ แก้ไข</button>
+                            <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: '4px 12px', fontSize: 13 }} onClick={() => openArtEdit(article)}>✏️ {lang === 'th' ? 'แก้ไข' : 'Edit'}</button>
                             <button className="doctor-card-admin__btn-delete" onClick={() => handleArtDelete(article)}>🗑️</button>
                           </td>
                         </tr>
@@ -360,24 +364,24 @@ export default function ContentAdminPage() {
               {/* Stats */}
               <div className="stats-grid-new">
                 <div className="stat-card-new stat-blue">
-                  <div className="stat-top"><div className="stat-label-text">ทั้งหมด</div><div className="stat-icon-new">🏢</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'ทั้งหมด' : 'Total'}</div><div className="stat-icon-new">🏢</div></div>
                   <div className="stat-value-new">{aboutEntries.length}</div>
-                  <div className="stat-desc-new">เนื้อหา About Us</div>
+                  <div className="stat-desc-new">{lang === 'th' ? 'เนื้อหา About Us' : 'About Us Content'}</div>
                 </div>
                 <div className="stat-card-new stat-green">
-                  <div className="stat-top"><div className="stat-label-text">เผยแพร่แล้ว</div><div className="stat-icon-new">✅</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'เผยแพร่แล้ว' : 'Published'}</div><div className="stat-icon-new">✅</div></div>
                   <div className="stat-value-new">{aboutPublished}</div>
                   <div className="stat-desc-new">Published</div>
                 </div>
                 <div className="stat-card-new stat-orange">
-                  <div className="stat-top"><div className="stat-label-text">แบบร่าง</div><div className="stat-icon-new">📝</div></div>
+                  <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'แบบร่าง' : 'Draft'}</div><div className="stat-icon-new">📝</div></div>
                   <div className="stat-value-new">{aboutEntries.length - aboutPublished}</div>
                   <div className="stat-desc-new">Draft</div>
                 </div>
                 <div className="stat-card-new stat-blue">
                   <div className="stat-top"><div className="stat-label-text">Sections</div><div className="stat-icon-new">🗂️</div></div>
                   <div className="stat-value-new">{ABOUT_SECTIONS.length}</div>
-                  <div className="stat-desc-new">หัวข้อ About Us</div>
+                  <div className="stat-desc-new">{lang === 'th' ? 'หัวข้อ About Us' : 'About Us Sections'}</div>
                 </div>
               </div>
 
@@ -385,7 +389,7 @@ export default function ContentAdminPage() {
               <div className="appointments-toolbar">
                 <div className="search-box-new">
                   <span className="search-icon-new">🔍</span>
-                  <input type="text" placeholder="ค้นหาเนื้อหา..." value={aboutSearch} onChange={(e) => setAboutSearch(e.target.value)} className="search-input-new" />
+                  <input type="text" placeholder={lang === 'th' ? 'ค้นหาเนื้อหา...' : 'Search content...'} value={aboutSearch} onChange={(e) => setAboutSearch(e.target.value)} className="search-input-new" />
                 </div>
                 <select value={aboutFilterSection} onChange={(e) => setAboutFilterSection(e.target.value)} className="filter-select-new">
                   <option value="all">All Sections</option>
@@ -396,13 +400,13 @@ export default function ContentAdminPage() {
               {/* Table */}
               <div className="table-container-new">
                 {aboutLoading ? (
-                  <div className="table-empty">⏳ กำลังโหลด...</div>
+                  <div className="table-empty">⏳ {lang === 'th' ? 'กำลังโหลด...' : 'Loading...'}</div>
                 ) : aboutFiltered.length === 0 ? (
-                  <div className="table-empty">📭 ไม่พบเนื้อหา</div>
+                  <div className="table-empty">📭 {lang === 'th' ? 'ไม่พบเนื้อหา' : 'No content found'}</div>
                 ) : (
                   <table className="appointments-table">
                     <thead>
-                      <tr><th>เนื้อหา</th><th>Section</th><th>ลำดับ</th><th>สถานะ</th><th>วันที่สร้าง</th><th>Actions</th></tr>
+                      <tr><th>{lang === 'th' ? 'เนื้อหา' : 'Content'}</th><th>Section</th><th>{lang === 'th' ? 'ลำดับ' : 'Order'}</th><th>{lang === 'th' ? 'สถานะ' : 'Status'}</th><th>{lang === 'th' ? 'วันที่สร้าง' : 'Created At'}</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                       {aboutFiltered.map((entry) => (
@@ -420,8 +424,8 @@ export default function ContentAdminPage() {
                               </div>
                             </div>
                           </td>
-                          <td><span className="status-badge" style={{ backgroundColor: '#f3e8ff', color: '#7c3aed' }}>{getSectionLabel(entry.section)}</span></td>
-                          <td><div className="date-value">{entry.sortOrder}</div></td>
+                          <td><span className="status-badge" style={{ backgroundColor: '#e0f2fe', color: '#0284c7' }}>{getSectionLabel(entry.section)}</span></td>
+                          <td>{entry.sortOrder}</td>
                           <td>
                             <button onClick={() => handleAboutToggle(entry)} className="status-badge" style={{ backgroundColor: entry.published ? '#d1fae520' : '#fef3c720', color: entry.published ? '#10b981' : '#f59e0b', border: 'none', cursor: 'pointer' }}>
                               {entry.published ? '✅ Published' : '📝 Draft'}
@@ -429,7 +433,7 @@ export default function ContentAdminPage() {
                           </td>
                           <td><div className="date-value">{new Date(entry.createdAt).toLocaleDateString('th-TH')}</div></td>
                           <td className="actions-cell">
-                            <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: '4px 12px', fontSize: 13 }} onClick={() => openAboutEdit(entry)}>✏️ แก้ไข</button>
+                            <button className="admin-btn admin-btn-secondary" style={{ marginRight: 8, padding: '4px 12px', fontSize: 13 }} onClick={() => openAboutEdit(entry)}>✏️ {lang === 'th' ? 'แก้ไข' : 'Edit'}</button>
                             <button className="doctor-card-admin__btn-delete" onClick={() => handleAboutDelete(entry)}>🗑️</button>
                           </td>
                         </tr>
@@ -440,101 +444,37 @@ export default function ContentAdminPage() {
               </div>
             </>
           )}
+
         </div>
       </div>
+
       <HideFooter />
 
-      {/* ── Modal: Articles (เดิม) ── */}
-      {(artIsNew || artSelected) && (
-        <div className="appt-modal-overlay" onClick={closeArtModal}>
-          <form className="appt-modal" onSubmit={handleArtSave} onClick={(e) => e.stopPropagation()} style={{ maxWidth: 600 }}>
-            <div className="appt-modal__header">
-              <h2 className="appt-modal__title">{artIsNew ? '➕ เพิ่มบทความใหม่' : '✏️ แก้ไขบทความ'}</h2>
-              <button type="button" className="appt-modal__close" onClick={closeArtModal}>✕</button>
-            </div>
-            <div className="appt-modal__field">
-              <label className="appt-modal__label">ชื่อบทความ *</label>
-              <input required className="appt-modal__input" placeholder="เช่น วิธีดูแลสุขภาพสัตว์เลี้ยงในหน้าร้อน" value={artForm.title} onChange={(e) => setArtForm({ ...artForm, title: e.target.value })} />
-            </div>
-            <div className="appt-modal__row">
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">หมวดหมู่</label>
-                <select className="appt-modal__input" value={artForm.category} onChange={(e) => setArtForm({ ...artForm, category: e.target.value })}>
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">สถานะ</label>
-                <select className="appt-modal__input" value={artForm.published ? 'published' : 'draft'} onChange={(e) => setArtForm({ ...artForm, published: e.target.value === 'published' })}>
-                  <option value="draft">📝 Draft</option>
-                  <option value="published">✅ Published</option>
-                </select>
-              </div>
-            </div>
-            <div className="appt-modal__field">
-              <label className="appt-modal__label">Image URL (Optional)</label>
-              <input className="appt-modal__input" placeholder="https://example.com/image.jpg" value={artForm.imageUrl} onChange={(e) => setArtForm({ ...artForm, imageUrl: e.target.value })} />
-            </div>
-            <div className="appt-modal__field">
-              <label className="appt-modal__label">เนื้อหา *</label>
-              <textarea required className="appt-modal__input appt-modal__textarea" placeholder="เขียนเนื้อหาบทความที่นี่..." rows={6} value={artForm.content} onChange={(e) => setArtForm({ ...artForm, content: e.target.value })} />
-            </div>
-            <div className="appt-modal__footer">
-              <button type="button" className="admin-btn admin-btn-secondary" onClick={closeArtModal}>ยกเลิก</button>
-              <button type="submit" className="admin-btn admin-btn-primary" disabled={artSaving}>{artSaving ? '⏳ กำลังบันทึก...' : '💾 บันทึก'}</button>
-            </div>
-          </form>
-        </div>
-      )}
+      {/* ── Modal: Articles ── */}
+      <ArticleModal
+        isOpen={artIsNew || !!artSelected}
+        isNew={artIsNew}
+        form={artForm}
+        setForm={setArtForm}
+        onSave={handleArtSave}
+        onClose={closeArtModal}
+        isSaving={artSaving}
+        categories={CATEGORIES}
+        lang={lang}
+      />
 
-      {/* ── Modal: About Us (ใหม่) ── */}
-      {(aboutIsNew || aboutSelected) && (
-        <div className="appt-modal-overlay" onClick={closeAboutModal}>
-          <form className="appt-modal" onSubmit={handleAboutSave} onClick={(e) => e.stopPropagation()} style={{ maxWidth: 600 }}>
-            <div className="appt-modal__header">
-              <h2 className="appt-modal__title">{aboutIsNew ? '➕ เพิ่มเนื้อหา About Us' : '✏️ แก้ไขเนื้อหา About Us'}</h2>
-              <button type="button" className="appt-modal__close" onClick={closeAboutModal}>✕</button>
-            </div>
-            <div className="appt-modal__row">
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">Section *</label>
-                <select required className="appt-modal__input" value={aboutForm.section} onChange={(e) => setAboutForm({ ...aboutForm, section: e.target.value })}>
-                  {ABOUT_SECTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-                </select>
-              </div>
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">สถานะ</label>
-                <select className="appt-modal__input" value={aboutForm.published ? 'published' : 'draft'} onChange={(e) => setAboutForm({ ...aboutForm, published: e.target.value === 'published' })}>
-                  <option value="draft">📝 Draft</option>
-                  <option value="published">✅ Published</option>
-                </select>
-              </div>
-            </div>
-            <div className="appt-modal__field">
-              <label className="appt-modal__label">ชื่อหัวข้อ </label>
-              <input required className="appt-modal__input" placeholder="เช่น ประวัติคลินิก" value={aboutForm.title} onChange={(e) => setAboutForm({ ...aboutForm, title: e.target.value })} />
-            </div>
-            <div className="appt-modal__row">
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">Image URL (Optional)</label>
-                <input className="appt-modal__input" placeholder="https://example.com/image.jpg" value={aboutForm.imageUrl} onChange={(e) => setAboutForm({ ...aboutForm, imageUrl: e.target.value })} />
-              </div>
-              <div className="appt-modal__field">
-                <label className="appt-modal__label">ลำดับการแสดง</label>
-                <input type="number" className="appt-modal__input" min={0} value={aboutForm.sortOrder} onChange={(e) => setAboutForm({ ...aboutForm, sortOrder: Number(e.target.value) })} />
-              </div>
-            </div>
-            <div className="appt-modal__field">
-              <label className="appt-modal__label">เนื้อหา *</label>
-              <textarea required className="appt-modal__input appt-modal__textarea" placeholder="เขียนเนื้อหาที่นี่..." rows={6} value={aboutForm.content} onChange={(e) => setAboutForm({ ...aboutForm, content: e.target.value })} />
-            </div>
-            <div className="appt-modal__footer">
-              <button type="button" className="admin-btn admin-btn-secondary" onClick={closeAboutModal}>ยกเลิก</button>
-              <button type="submit" className="admin-btn admin-btn-primary" disabled={aboutSaving}>{aboutSaving ? '⏳ กำลังบันทึก...' : '💾 บันทึก'}</button>
-            </div>
-          </form>
-        </div>
-      )}
+      {/* ── Modal: About Us ── */}
+      <AboutUsModal
+        isOpen={aboutIsNew || !!aboutSelected}
+        isNew={aboutIsNew}
+        form={aboutForm}
+        setForm={setAboutForm}
+        onSave={handleAboutSave}
+        onClose={closeAboutModal}
+        isSaving={aboutSaving}
+        sections={ABOUT_SECTIONS}
+        lang={lang}
+      />
     </div>
   );
 }

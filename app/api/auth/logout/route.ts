@@ -1,7 +1,7 @@
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { sessionOptions, SessionData } from '@/lib/session';
+import { sessionOptions, SessionData } from '@/backend/session';
 
 export const runtime = 'nodejs';
 

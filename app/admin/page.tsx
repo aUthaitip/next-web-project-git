@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import HideHeader from '@/components/layout/HideHeader';
 import HideFooter from '@/components/layout/HideFooter';
-import AdminSidebar from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface RecentAppointment {
