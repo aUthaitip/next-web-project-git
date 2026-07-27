@@ -25,11 +25,14 @@ export default function ShopPage() {
                     </p>
                 </div>
 
-                {/* ===== QR CARD ===== */}
+                {/* ===== TICKET CARD ===== */}
                 <div className="shop-qr-card">
 
-                    {/* Decorative ring */}
+                    {/* Decorative dashed ring */}
                     <div className="shop-qr-card__ring" />
+
+                    {/* Ink stamp badge */}
+                    <span className="shop-qr-card__badge">{t('shop.badge')}</span>
 
                     {/* QR Image */}
                     <div className="shop-qr-card__image-wrap">

@@ -141,6 +141,7 @@ export const translations: Record<string, any> = {
       feat1: 'คัดสรรโดยสัตวแพทย์',
       feat2: 'มีเจ้าหน้าที่ให้คำแนะนำ',
       feat3: 'จัดส่งทั่วประเทศ',
+      badge: 'รับรองโดยทีมสัตวแพทย์',
       note: 'มีเจ้าหน้าที่พร้อมให้คำแนะนำสินค้าที่เหมาะสมกับสัตว์เลี้ยงของคุณ ทุกวัน 9:00–18:00 น.',
     },
     footer: {
@@ -521,6 +522,7 @@ export const translations: Record<string, any> = {
       feat1: 'Vet-curated products',
       feat2: 'Staff available for advice',
       feat3: 'Nationwide delivery',
+      badge:'Vet-curated products',
       note: 'Our staff is ready to recommend the right products for your pet, every day 9:00–18:00.',
     },
     footer: {
