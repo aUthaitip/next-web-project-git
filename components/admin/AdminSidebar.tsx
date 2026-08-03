@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Calendar, FileText, Stethoscope, BookOpen, LogOut, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Calendar, FileText, Stethoscope, BookOpen, LogOut } from 'lucide-react';
 
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -11,7 +11,6 @@ const navItems = [
     { id: 'history', labelEn: 'History', labelTh: 'ประวัติ', icon: FileText, href: '/admin/history' },
     { id: 'doctors', labelEn: 'Doctors', labelTh: 'แพทย์', icon: Stethoscope, href: '/admin/doctors' },
     { id: 'content', labelEn: 'Content', labelTh: 'จัดการเนื้อหา', icon: BookOpen, href: '/admin/content' },
-    { id: 'shop-ads', labelEn: 'Shop Ads', labelTh: 'โฆษณาสินค้า', icon: ShoppingBag, href: '/admin/shop-ads' },
 ];
 
 export default function AdminSidebar() {
@@ -49,7 +48,10 @@ export default function AdminSidebar() {
             </nav>
 
             {/* Logout */}
-            <button className="sidebar-logout" onClick={() => router.push('/')}>
+            <button className="sidebar-logout" onClick={() => {
+                sessionStorage.removeItem('admin_authenticated');
+                router.push('/');
+            }}>
                 <div className="sidebar-logout-icon">
                     <LogOut size={18} />
                 </div>

@@ -7,10 +7,11 @@ interface NewsCardProps {
     imgAlt: string;
     title: string;
     description: string;
+    readMore?: string;
     onOpen: () => void;
 }
 
-export default function NewsCard({ imgSrc, imgAlt, title, description, onOpen }: NewsCardProps) {
+export default function NewsCard({ imgSrc, imgAlt, title, description, readMore = 'ดูเพิ่มเติม', onOpen }: NewsCardProps) {
     return (
         <article className="news-card">
             <div className="card-image">
@@ -28,7 +29,7 @@ export default function NewsCard({ imgSrc, imgAlt, title, description, onOpen }:
                         onOpen();
                     }}
                 >
-                    ดูเพิ่มเติม
+                    {readMore}
                 </a>
             </div>
         </article>

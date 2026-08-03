@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { Eye, Brain, HeartPulse, Radiation } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { specializedFeaturesData } from '@/data/home/SpecializedFeatures';
 
 export default function SpecializedFeatures() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = specializedFeaturesData[lang];
   return (
     <section className="specialized-features" style={{ paddingTop: 0 }}>
-      <h2 style={{ textAlign: 'left', marginBottom: '50px' }}>{t('home.specializedTitle')}</h2>
+      <h2 style={{ textAlign: 'left', marginBottom: '50px' }}>{data.specializedTitle}</h2>
       <div className="feature-grid">
         <Link href="#" className="feature-card">
           <div className="feature-icon-wrapper">
@@ -14,12 +16,12 @@ export default function SpecializedFeatures() {
               <Eye size={60} strokeWidth={2} className="text-blue-500" />
             </span>
             <div className="feature-content">
-              <h3>{t('home.eyeCareTitle')}</h3>
-              <p>{t('home.eyeCareDesc')}</p>
+              <h3>{data.eyeCareTitle}</h3>
+              <p>{data.eyeCareDesc}</p>
             </div>
           </div>
           <div className="feature-image-wrapper">
-            <img src="/assets/2.png" alt={t('home.eyeCareTitle')} />
+            <img src="/assets/2.png" alt={data.eyeCareTitle} />
           </div>
         </Link>
         <Link href="#" className="feature-card">
@@ -28,12 +30,12 @@ export default function SpecializedFeatures() {
               <Brain size={60} strokeWidth={2} className="text-blue-500" />
             </span>
             <div className="feature-content">
-              <h3>{t('home.neuroCenterTitle')}</h3>
-              <p>{t('home.neuroCenterDesc')}</p>
+              <h3>{data.neuroCenterTitle}</h3>
+              <p>{data.neuroCenterDesc}</p>
             </div>
           </div>
           <div className="feature-image-wrapper">
-            <img src="/assets/3.png" alt={t('home.neuroCenterTitle')} />
+            <img src="/assets/3.png" alt={data.neuroCenterTitle} />
           </div>
         </Link>
         <Link href="#" className="feature-card">
@@ -42,12 +44,12 @@ export default function SpecializedFeatures() {
               <HeartPulse size={60} strokeWidth={2} className="text-blue-500" />
             </span>
             <div className="feature-content">
-              <h3>{t('home.cardioCenterTitle')}</h3>
-              <p>{t('home.cardioCenterDesc')}</p>
+              <h3>{data.cardioCenterTitle}</h3>
+              <p>{data.cardioCenterDesc}</p>
             </div>
           </div>
           <div className="feature-image-wrapper">
-            <img src="/assets/4.png" alt={t('home.cardioCenterTitle')} />
+            <img src="/assets/4.png" alt={data.cardioCenterTitle} />
           </div>
         </Link>
         <Link href="#" className="feature-card">
@@ -56,12 +58,12 @@ export default function SpecializedFeatures() {
               <Radiation size={60} strokeWidth={2} />
             </span>
             <div className="feature-content">
-              <h3>{t('home.diagImagingTitle')}</h3>
-              <p>{t('home.diagImagingDesc')}</p>
+              <h3>{data.diagImagingTitle}</h3>
+              <p>{data.diagImagingDesc}</p>
             </div>
           </div>
           <div className="feature-image-wrapper">
-            <img src="/assets/2.png" alt={t('home.diagImagingTitle')} />
+            <img src="/assets/2.png" alt={data.diagImagingTitle} />
           </div>
         </Link>
       </div>

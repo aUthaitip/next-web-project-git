@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { historyMissionData } from '@/data/about-us/HistoryMissionContent';
 
 interface ApiEntry {
   id: number;
@@ -13,15 +14,17 @@ interface ApiEntry {
 }
 
 export default function HistoryMissionContent() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = historyMissionData[lang];
+
   const [apiEntries, setApiEntries] = useState<ApiEntry[]>([]);
 
   useEffect(() => {
     fetch('/api/about-us?section=history_mission')
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setApiEntries(data.filter((a) => a.published));
+      .then((result) => {
+        if (Array.isArray(result)) {
+          setApiEntries(result.filter((a) => a.published));
         }
       })
       .catch(console.error);
@@ -33,10 +36,10 @@ export default function HistoryMissionContent() {
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-[2.8rem] text-slate-800 font-extrabold max-md:text-[2.2rem] mb-4">
-          {t('historyMission.title')}
+          {data.title}
         </h2>
         <div className="w-20 h-1 bg-[#0d9488] mx-auto rounded-full mb-6"></div>
-        <p className="text-slate-500 text-lg font-medium">{t('historyMission.subtitle')}</p>
+        <p className="text-slate-500 text-lg font-medium">{data.subtitle}</p>
       </div>
 
       {/* Section 1: History (Image Left, Text Right) */}
@@ -54,12 +57,12 @@ export default function HistoryMissionContent() {
         <div className="flex-1 text-slate-600 font-medium leading-relaxed text-left text-[1.05rem] space-y-4">
           <p className="mb-4">
             <strong className="text-slate-800 text-[2rem] font-extrabold block mb-3">
-              {t('historyMission.clinicName')}
+              {data.clinicName}
             </strong>
-            {t('historyMission.p1')}
+            {data.p1}
           </p>
-          <p>{t('historyMission.p2')}</p>
-          <p>{t('historyMission.p3')}</p>
+          <p>{data.p2}</p>
+          <p>{data.p3}</p>
         </div>
       </div>
 
@@ -68,42 +71,17 @@ export default function HistoryMissionContent() {
         
         {/* List Left */}
         <ul className="text-left list-none p-0 text-slate-600 flex-1 space-y-4">
-          <li>
-            <div className="flex items-start gap-[18px] bg-white rounded-2xl border border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.02)] p-6 hover:-translate-y-0.5 transition-all duration-300">
-              <i className="fa-solid fa-paw text-[1.5rem] mt-1 text-[#0d9488]" />
-              <div>
-                <strong className="text-slate-800 text-lg font-bold block mb-1">{t('historyMission.m1strong')}</strong>
-                <span className="text-slate-500 text-[0.95rem] font-normal block">{t('historyMission.m1desc')}</span>
+          {data.missions.map((mission, index) => (
+            <li key={index}>
+              <div className="flex items-start gap-[18px] bg-white rounded-2xl border border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.02)] p-6 hover:-translate-y-0.5 transition-all duration-300">
+                <i className="fa-solid fa-paw text-[1.5rem] mt-1" style={{ color: mission.color }} />
+                <div>
+                  <strong className="text-slate-800 text-lg font-bold block mb-1">{mission.strong}</strong>
+                  <span className="text-slate-500 text-[0.95rem] font-normal block">{mission.desc}</span>
+                </div>
               </div>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-start gap-[18px] bg-white rounded-2xl border border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.02)] p-6 hover:-translate-y-0.5 transition-all duration-300">
-              <i className="fa-solid fa-paw text-[1.5rem] mt-1 text-[#0ea5e9]" />
-              <div>
-                <strong className="text-slate-800 text-lg font-bold block mb-1">{t('historyMission.m2strong')}</strong>
-                <span className="text-slate-500 text-[0.95rem] font-normal block">{t('historyMission.m2desc')}</span>
-              </div>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-start gap-[18px] bg-white rounded-2xl border border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.02)] p-6 hover:-translate-y-0.5 transition-all duration-300">
-              <i className="fa-solid fa-paw text-[1.5rem] mt-1 text-[#8b5cf6]" />
-              <div>
-                <strong className="text-slate-800 text-lg font-bold block mb-1">{t('historyMission.m3strong')}</strong>
-                <span className="text-slate-500 text-[0.95rem] font-normal block">{t('historyMission.m3desc')}</span>
-              </div>
-            </div>
-          </li>
-          <li>
-            <div className="flex items-start gap-[18px] bg-white rounded-2xl border border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.02)] p-6 hover:-translate-y-0.5 transition-all duration-300">
-              <i className="fa-solid fa-paw text-[1.5rem] mt-1 text-[#ec4899]" />
-              <div>
-                <strong className="text-slate-800 text-lg font-bold block mb-1">{t('historyMission.m4strong')}</strong>
-                <span className="text-slate-500 text-[0.95rem] font-normal block">{t('historyMission.m4desc')}</span>
-              </div>
-            </div>
-          </li>
+            </li>
+          ))}
         </ul>
 
         {/* Image Right */}
@@ -123,7 +101,7 @@ export default function HistoryMissionContent() {
       {apiEntries.length > 0 && (
         <div className="mt-16">
           <div className="flex items-center gap-4 mb-10">
-            <h3 className="text-2xl font-bold text-slate-800">{t('historyMission.adminTitle')}</h3>
+            <h3 className="text-2xl font-bold text-slate-800">{data.adminTitle}</h3>
             <div className="flex-1 h-px bg-slate-200"></div>
           </div>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[30px] max-md:grid-cols-1">

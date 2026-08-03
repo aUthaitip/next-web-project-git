@@ -4,6 +4,7 @@ import { SetStateAction, useState, useEffect } from 'react';
 import CategoryTabs from '@/components/articles/CategoryTabs';
 import ArticleCard from '@/components/articles/ArticleCard';
 import { useLanguage } from '@/context/LanguageContext';
+import { healthTipsArticlesData } from '@/data/articles/HealthTipsArticles';
 
 type Article = {
   id?: string;
@@ -14,59 +15,20 @@ type Article = {
 };
 
 export default function HealthTipsArticles() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = healthTipsArticlesData[lang];
 
-  const initialArticles: Article[] = [
-    {
-      category: t('healthTips.cat1'),
-      title: t('healthTips.art1title'),
-      snippet: t('healthTips.art1snippet'),
-      image: "/assets/tip1.png",
-    },
-    {
-      category: t('healthTips.cat1'),
-      title: t('healthTips.art2title'),
-      snippet: t('healthTips.art2snippet'),
-      image: "/assets/tip2.png",
-    },
-    {
-      category: t('healthTips.cat2'),
-      title: t('healthTips.art3title'),
-      snippet: t('healthTips.art3snippet'),
-      image: "/assets/tip3.png",
-    },
-    {
-      category: t('healthTips.cat3'),
-      title: t('healthTips.art4title'),
-      snippet: t('healthTips.art4snippet'),
-      image: "/assets/tip4.png",
-    },
-    {
-      category: t('healthTips.cat4'),
-      title: t('healthTips.art5title'),
-      snippet: t('healthTips.art5snippet'),
-      image: "/assets/tip5.png",
-    },
-    {
-      category: t('healthTips.cat5'),
-      title: t('healthTips.art6title'),
-      snippet: t('healthTips.art6snippet'),
-      image: "/assets/tip6.png",
-    },
-  ];
+  const initialArticles: Article[] = data.initialArticles;
+  const staticCategories = data.staticCategories;
 
-  const staticCategories = [
-    t('healthTips.allCat'),
-    t('healthTips.cat1'),
-    t('healthTips.cat2'),
-    t('healthTips.cat3'),
-    t('healthTips.cat4'),
-    t('healthTips.cat5'),
-  ];
-
-  const [selectedCategory, setSelectedCategory] = useState(t('healthTips.allCat'));
+  const [selectedCategory, setSelectedCategory] = useState(data.allCat);
   const [apiArticles, setApiArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Update selected category when language changes
+  useEffect(() => {
+    setSelectedCategory(data.allCat);
+  }, [lang, data.allCat]);
 
   const handleCategoryChange = (category: SetStateAction<string>) => {
     setSelectedCategory(category);
@@ -75,13 +37,13 @@ export default function HealthTipsArticles() {
   useEffect(() => {
     fetch('/api/content?category=Health Tips')
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const mapped = data
+      .then((apiData) => {
+        if (Array.isArray(apiData)) {
+          const mapped = apiData
             .filter((a) => a.published)
             .map((a) => ({
               id: String(a.id),
-              category: t('healthTips.adminCat'),
+              category: data.adminCat,
               title: a.title,
               snippet: a.content,
               image: a.imageUrl || '/assets/tip1.png',
@@ -91,41 +53,41 @@ export default function HealthTipsArticles() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [data.adminCat]);
 
   const allArticles = [...initialArticles, ...apiArticles];
   const allCategories = apiArticles.length > 0
-    ? [...staticCategories, t('healthTips.adminCat')]
+    ? [...staticCategories, data.adminCat]
     : staticCategories;
 
   const filteredArticles = allArticles.filter(article =>
-    selectedCategory === t('healthTips.allCat') || article.category === selectedCategory
+    selectedCategory === data.allCat || article.category === selectedCategory
   );
 
   return (
     <div className="container">
-      <h2 className="page-title">{t('healthTips.title')}</h2>
+      <h2 className="page-title">{data.title}</h2>
       <div className="section-deco">
         <span className="decorative-bar" aria-hidden="true" />
       </div>
-      <p className="intro-text page-subtitle">{t('healthTips.subtitle')}</p>
+      <p className="intro-text page-subtitle">{data.subtitle}</p>
 
       <CategoryTabs
         categories={allCategories}
         selectedCategory={selectedCategory}
-        onCategoryChange={handleCategoryChange}
+        onCategoryChange={handleCategoryChange as (category: string) => void}
       />
 
       <hr />
 
       <div className="article-card-grid page-content">
-        {loading && <p>{t('healthTips.loading')}</p>}
+        {loading && <p>{data.loading}</p>}
         {filteredArticles.length > 0 ? (
           filteredArticles.map((article, index) => (
-            <ArticleCard key={article.id ?? `${article.title}-${index}`} article={article} />
+            <ArticleCard key={article.id ?? `${article.title}-${index}`} article={article as any} />
           ))
         ) : (
-          !loading && <p className="no-articles">{t('healthTips.noArticles')} &quot;{selectedCategory}&quot;</p>
+          !loading && <p className="no-articles">{data.noArticles} &quot;{selectedCategory}&quot;</p>
         )}
       </div>
     </div>

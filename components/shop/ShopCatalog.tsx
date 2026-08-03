@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { shopData } from '@/data/shop/ShopCatalog';
 import { Search, ShoppingBag, MessageSquare, Truck, ShieldCheck, HelpCircle, Star, X, Heart } from 'lucide-react';
 
 interface Product {
@@ -21,7 +22,8 @@ interface Product {
 }
 
 export default function ShopCatalog() {
-  const { t, lang } = useLanguage();
+  const { lang } = useLanguage();
+  const data = shopData[lang];
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [ads, setAds] = useState<any[]>([]);
@@ -41,13 +43,7 @@ export default function ShopCatalog() {
 
   const products: Product[] = [];
 
-  const categories = [
-    { id: 'all', labelTh: 'ทั้งหมด', labelEn: 'All Products' },
-    { id: 'food', labelTh: 'อาหารและขนม', labelEn: 'Food & Treats' },
-    { id: 'grooming', labelTh: 'กรูมมิ่ง & แชมพู', labelEn: 'Grooming & Shampoo' },
-    { id: 'health', labelTh: 'วิตามินและยา', labelEn: 'Health & Vitamins' },
-    { id: 'toys', labelTh: 'ของเล่นสัตว์เลี้ยง', labelEn: 'Toys & Accessories' }
-  ];
+  // Categories moved to data file
 
   const filteredAds = ads.filter(ad => {
     const matchesCategory = selectedCategory === 'all' || ad.category === 'all' || ad.category === selectedCategory;
@@ -91,12 +87,12 @@ export default function ShopCatalog() {
             display: 'inline-block',
             marginBottom: 16
           }}>
-            {t('shop.label')}
+            {data.label}
           </span>
-          <h1 style={{ margin: 0, fontSize: 36, fontWeight: 700, lineHeight: 1.2 }}>{t('shop.title')}</h1>
-          <p style={{ margin: '8px 0 0', color: '#ccfbf1', fontSize: 16, fontWeight: 500 }}>{t('shop.subtitle')}</p>
+          <h1 style={{ margin: 0, fontSize: 36, fontWeight: 700, lineHeight: 1.2 }}>{data.title}</h1>
+          <p style={{ margin: '8px 0 0', color: '#ccfbf1', fontSize: 16, fontWeight: 500 }}>{data.subtitle}</p>
           <p style={{ margin: '16px 0 0', color: 'white', opacity: 0.9, fontSize: 14, lineHeight: 1.6 }}>
-            {t('shop.desc1')} {t('shop.desc2')}
+            {data.desc1} {data.desc2}
           </p>
         </div>
 
@@ -111,11 +107,11 @@ export default function ShopCatalog() {
           flexShrink: 0
         }}>
           <img
-            src="/assets/line.png"
-            alt={t('shop.qrAlt')}
+            src={data.qrImage}
+            alt={data.qrAlt}
             style={{ width: 120, height: 120, objectFit: 'contain', margin: '0 auto 8px' }}
           />
-          <p style={{ margin: 0, color: '#374151', fontSize: 12, fontWeight: 700 }}>{t('shop.scanText')}</p>
+          <p style={{ margin: 0, color: '#374151', fontSize: 12, fontWeight: 700 }}>{data.scanText}</p>
         </div>
       </div>
 
@@ -134,12 +130,12 @@ export default function ShopCatalog() {
             marginBottom: 24,
           }}>
             <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 700, color: '#374151' }}>
-              {lang === 'th' ? 'ค้นหาสินค้า' : 'Search Products'}
+              {data.searchLabel}
             </label>
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
-                placeholder={lang === 'th' ? 'พิมพ์ชื่อสินค้า...' : 'Product name...'}
+                placeholder={data.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -167,10 +163,10 @@ export default function ShopCatalog() {
             marginBottom: 24
           }}>
             <h3 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: '#1e293b' }}>
-              {lang === 'th' ? 'หมวดหมู่สินค้า' : 'Categories'}
+              {data.categoriesTitle}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {categories.map(cat => (
+              {data.categories.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
@@ -190,7 +186,7 @@ export default function ShopCatalog() {
                     fontFamily: 'inherit'
                   }}
                 >
-                  {lang === 'th' ? cat.labelTh : cat.labelEn}
+                  {cat.label}
                 </button>
               ))}
             </div>
@@ -208,22 +204,22 @@ export default function ShopCatalog() {
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <ShieldCheck size={18} color="#0d9488" style={{ marginTop: 2, flexShrink: 0 }} />
                 <div>
-                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{t('shop.feat1')}</h4>
-                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>ปลอดภัย มีคุณภาพสูง</p>
+                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{data.features[0].title}</h4>
+                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>{data.features[0].desc}</p>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <MessageSquare size={18} color="#0d9488" style={{ marginTop: 2, flexShrink: 0 }} />
                 <div>
-                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{t('shop.feat2')}</h4>
-                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>แนะนำสินค้าที่ตรงจุด</p>
+                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{data.features[1].title}</h4>
+                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>{data.features[1].desc}</p>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <Truck size={18} color="#0d9488" style={{ marginTop: 2, flexShrink: 0 }} />
                 <div>
-                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{t('shop.feat3')}</h4>
-                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>จัดส่งไว ทั่วประเทศไทย</p>
+                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#334155' }}>{data.features[2].title}</h4>
+                  <p style={{ margin: '2px 0 0', fontSize: 11.5, color: '#64748b' }}>{data.features[2].desc}</p>
                 </div>
               </div>
             </div>
@@ -245,7 +241,7 @@ export default function ShopCatalog() {
             }}>
               <ShoppingBag size={48} style={{ margin: '0 auto 16px', color: '#94a3b8' }} />
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#334155' }}>
-                {lang === 'th' ? 'ไม่พบข้อมูลที่ตรงกับการค้นหา' : 'No items match your search'}
+                {data.noItemsText}
               </h3>
             </div>
           ) : (
@@ -288,7 +284,7 @@ export default function ShopCatalog() {
 
                   <div style={{ padding: 24, display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', marginBottom: 8 }}>
-                      {categories.find(c => c.id === ad.category)?.labelTh || 'โฆษณา'}
+                      {data.categories.find(c => c.id === ad.category)?.label || data.adLabel}
                     </span>
                     <h4 style={{
                       margin: 0,
@@ -324,7 +320,7 @@ export default function ShopCatalog() {
                           boxShadow: '0 4px 15px rgba(13, 148, 136, 0.2)'
                         }}
                       >
-                        ดูรายละเอียดเพิ่มเติม
+                        {data.moreDetailsBtn}
                       </a>
                     )}
                   </div>
@@ -348,9 +344,9 @@ export default function ShopCatalog() {
       }}>
         <p style={{ margin: 0, color: '#475569', fontSize: 13.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
           <HelpCircle size={18} color="#0d9488" />
-          <span>{t('shop.note')}</span>
+          <span>{data.note}</span>
           <a href="https://lin.ee/LBZXswu" target="_blank" rel="noopener noreferrer" style={{ color: '#0d9488', fontWeight: 700, textDecoration: 'underline' }}>
-            {lang === 'th' ? 'พูดคุยทาง LINE Official' : 'Chat via LINE Official'}
+            {data.lineChatBtn}
           </a>
         </p>
       </div>

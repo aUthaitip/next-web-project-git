@@ -1,11 +1,5 @@
-'use client';
-
-import HealthTipsArticles from '@/components/articles/HealthTipsArticles';
+import { redirect } from 'next/navigation';
 
 export default function HealthTipsPage() {
-  return (
-    <section className="content-section dog-page page-animate">
-      <HealthTipsArticles />
-    </section>
-  );
+  redirect('/articles/health-tips/th');
 }

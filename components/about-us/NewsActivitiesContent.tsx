@@ -5,6 +5,7 @@ import Image from 'next/image';
 import NewsCard from '@/components/about-us/NewsCard';
 import Modal from '@/components/about-us/NewsModal';
 import { useLanguage } from '@/context/LanguageContext';
+import { newsActivitiesData } from '@/data/about-us/NewsActivitiesContent';
 
 interface ApiEntry {
   id: number;
@@ -14,41 +15,52 @@ interface ApiEntry {
   published: boolean;
 }
 
+type ModalId = 'modal-1' | 'modal-2' | 'modal-3' | 'modal-4' | 'modal-5' | 'modal-6';
+
 export default function NewsActivitiesContent() {
-  const { t } = useLanguage();
-  const [openModal, setOpenModal] = useState<null | 'modal-1' | 'modal-2' | 'modal-3' | 'modal-4' | 'modal-5' | 'modal-6'>(null);
+  const { lang } = useLanguage();
+  const data = newsActivitiesData[lang];
+
+  const [openModal, setOpenModal] = useState<null | ModalId>(null);
   const [apiEntries, setApiEntries] = useState<ApiEntry[]>([]);
   const [openApiModal, setOpenApiModal] = useState<number | null>(null);
 
   useEffect(() => {
     fetch('/api/about-us?section=news_activities')
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setApiEntries(data.filter((a) => a.published));
+      .then((result) => {
+        if (Array.isArray(result)) {
+          setApiEntries(result.filter((a) => a.published));
         }
       })
       .catch(console.error);
   }, []);
 
+  const activeModal = data.modals.find((m) => m.id === openModal);
+
   return (
     <>
       <div className="container">
-        <h2 className="page-title">{t('news.title')}</h2>
+        <h2 className="page-title">{data.title}</h2>
         <div className="divider"></div>
         <div className="section-deco">
           <span className="decorative-bar" aria-hidden="true" />
         </div>
 
-        {/* เนื้อหาเดิม — ไม่แตะ */}
+        {/* News Cards */}
         <div className="news-container">
           <div className="news-grid page-content">
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_1.png" imgAlt="รูปภาพประกอบข่าวที่ 1" title={t('news.n1title')} description={t('news.n1desc')} onOpen={() => setOpenModal('modal-1')} />
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_2.png" imgAlt="รูปภาพประกอบข่าวที่ 2" title={t('news.n2title')} description={t('news.n2desc')} onOpen={() => setOpenModal('modal-2')} />
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_3.png" imgAlt="รูปภาพประกอบข่าวที่ 3" title={t('news.n3title')} description={t('news.n3desc')} onOpen={() => setOpenModal('modal-3')} />
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_4.png" imgAlt="กิจกรรมบริจาคโลหิตสัตว์เลี้ยง" title={t('news.n4title')} description={t('news.n4desc')} onOpen={() => setOpenModal('modal-4')} />
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_5.png" imgAlt="โปรแกรมตรวจสุขภาพสัตว์เลี้ยงประจำปี" title={t('news.n5title')} description={t('news.n5desc')} onOpen={() => setOpenModal('modal-5')} />
-            <NewsCard imgSrc="/assets/ข่าวสารและกิจกรรม_6.png" imgAlt="ศูนย์กายภาพบำบัดสัตว์เลี้ยง Pawplan" title={t('news.n6title')} description={t('news.n6desc')} onOpen={() => setOpenModal('modal-6')} />
+            {data.newsItems.map((item) => (
+              <NewsCard
+                key={item.id}
+                imgSrc={item.imgSrc}
+                imgAlt={item.imgAlt}
+                title={item.title}
+                description={item.description}
+                readMore={data.readMore}
+                onOpen={() => setOpenModal(item.id)}
+              />
+            ))}
           </div>
         </div>
 
@@ -71,53 +83,23 @@ export default function NewsActivitiesContent() {
         )}
       </div>
 
-      {/* Modals เดิม */}
-      {openModal === 'modal-1' && (
+      {/* Modal จาก data */}
+      {activeModal && (
         <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_1.png" alt="รูปภาพประกอบข่าวที่ 1" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m1title')}</h2>
-          <p>{t('news.m1p1')}</p>
-          <p>{t('news.m1p2')}</p>
-          <p>{t('news.m1p3')}</p>
-        </Modal>
-      )}
-      {openModal === 'modal-2' && (
-        <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_2.png" alt="รูปภาพประกอบข่าวที่ 2" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m2title')}</h2>
-          <ul>
-            <li>{t('news.m2li1')}</li>
-            <li>{t('news.m2li2')}</li>
-            <li>{t('news.m2li3')}</li>
-          </ul>
-        </Modal>
-      )}
-      {openModal === 'modal-3' && (
-        <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_3.png" alt="รูปภาพประกอบข่าวที่ 3" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m3title')}</h2>
-          <p>{t('news.m3p')}</p>
-        </Modal>
-      )}
-      {openModal === 'modal-4' && (
-        <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_4.png" alt="กิจกรรมบริจาคโลหิตสัตว์เลี้ยง" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m4title')}</h2>
-          <p>{t('news.m4p')}</p>
-        </Modal>
-      )}
-      {openModal === 'modal-5' && (
-        <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_5.png" alt="โปรแกรมตรวจสุขภาพสัตว์เลี้ยงประจำปี" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m5title')}</h2>
-          <p>{t('news.m5p')}</p>
-        </Modal>
-      )}
-      {openModal === 'modal-6' && (
-        <Modal onClose={() => setOpenModal(null)}>
-          <Image src="/assets/ข่าวสารและกิจกรรม_6.png" alt="ศูนย์กายภาพบำบัดสัตว์เลี้ยง Pawplan" width={800} height={450} style={{ width: '100%', height: 'auto' }} />
-          <h2>{t('news.m6title')}</h2>
-          <p>{t('news.m6p')}</p>
+          <Image
+            src={activeModal.imgSrc}
+            alt={activeModal.imgAlt}
+            width={800}
+            height={450}
+            style={{ width: '100%', height: 'auto' }}
+          />
+          <h2>{activeModal.title}</h2>
+          {activeModal.paragraphs?.map((p, i) => <p key={i}>{p}</p>)}
+          {activeModal.listItems && (
+            <ul>
+              {activeModal.listItems.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          )}
         </Modal>
       )}
 

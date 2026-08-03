@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import DoctorCard from '@/components/doctors/DoctorCard';
 import { useLanguage } from '@/context/LanguageContext';
+import { doctorListData } from '@/data/doctors/DoctorList';
 
 interface Doctor {
   id?: number;
@@ -16,7 +17,9 @@ interface Doctor {
 }
 
 export default function DoctorList() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = doctorListData[lang];
+  
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -24,7 +27,7 @@ export default function DoctorList() {
   useEffect(() => {
     fetch('/api/doctors')
       .then((r) => r.json())
-      .then((data) => setDoctors(Array.isArray(data) ? data : []))
+      .then((apiData) => setDoctors(Array.isArray(apiData) ? apiData : []))
       .catch(() => setDoctors([]))
       .finally(() => setLoading(false));
   }, []);
@@ -42,8 +45,8 @@ export default function DoctorList() {
       {/* Hero */}
       <div className="dr-hero">
         <div className="dr-hero__badge">ทีมสัตวแพทย์</div>
-        <h1 className="dr-hero__title">{t('doctors.title')}</h1>
-        <p className="dr-hero__sub">{t('doctors.subtitle')}</p>
+        <h1 className="dr-hero__title">{data.title}</h1>
+        <p className="dr-hero__sub">{data.subtitle}</p>
 
         {/* Search */}
         <div className="dr-search">

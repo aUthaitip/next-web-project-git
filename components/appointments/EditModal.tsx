@@ -2,6 +2,7 @@
 import { useLanguage } from '../../context/LanguageContext';
 import Modal from './Modal';
 import type { Appointment } from './AppointmentCard';
+import { editModalData } from '@/data/appointments/EditModal';
 
 export interface EditFormData {
   petName: string;
@@ -29,7 +30,8 @@ export default function EditModal({
   onClose,
   onConfirm,
 }: EditModalProps) {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const dataText = editModalData[lang];
 
   const setField = (field: keyof EditFormData, value: string) => {
     onChange({ ...data, [field]: value });
@@ -40,14 +42,14 @@ export default function EditModal({
       {appt && (
         <>
           <h3 style={{ margin: '0 0 8px', color: '#0d9488', fontSize: '1.4rem', fontWeight: 700 }}>
-            {t('myAppts.editModalTitle')}
+            {dataText.title}
           </h3>
           <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 24 }}>
-            {t('myAppts.editModalSubtitle')} {appt.petName}
+            {dataText.subtitle} {appt.petName}
           </p>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>{t('myAppts.petNameLabel')}</label>
+            <label style={labelStyle}>{dataText.petNameLabel}</label>
             <input
               type="text"
               value={data.petName}
@@ -57,30 +59,30 @@ export default function EditModal({
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>{t('myAppts.petTypeLabel')}</label>
+            <label style={labelStyle}>{dataText.petTypeLabel}</label>
             <select value={data.petType} onChange={e => setField('petType', e.target.value)} className="book-input">
-              <option value="สุนัข">{t('book.petDog')}</option>
-              <option value="แมว">{t('book.petCat')}</option>
-              <option value="กระต่าย">{t('book.petRabbit')}</option>
-              <option value="นก">{t('book.petBird')}</option>
-              <option value="อื่นๆ">{t('book.petOther')}</option>
+              <option value="สุนัข">{dataText.petOptions.dog}</option>
+              <option value="แมว">{dataText.petOptions.cat}</option>
+              <option value="กระต่าย">{dataText.petOptions.rabbit}</option>
+              <option value="นก">{dataText.petOptions.bird}</option>
+              <option value="อื่นๆ">{dataText.petOptions.other}</option>
             </select>
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>{t('myAppts.serviceLabel')}</label>
+            <label style={labelStyle}>{dataText.serviceLabel}</label>
             <select value={data.service} onChange={e => setField('service', e.target.value)} className="book-input">
-              <option value="">{t('book.serviceSelect') || 'กรุณาเลือกบริการ'}</option>
-              <option value="ตรวจสุขภาพทั่วไป">{t('book.svc1') || 'ตรวจสุขภาพทั่วไป'}</option>
-              <option value="ฉีดวัคซีน">{t('book.svc2') || 'ฉีดวัคซีน'}</option>
-              <option value="ทำหมัน">{t('book.svc3') || 'ทำหมัน'}</option>
-              <option value="ทันตกรรม">{t('book.svc4') || 'ทันตกรรม'}</option>
-              <option value="อื่นๆ">{t('book.svc5') || 'อื่นๆ'}</option>
+              <option value="">{dataText.serviceSelect}</option>
+              <option value="ตรวจสุขภาพทั่วไป">{dataText.services.svc1}</option>
+              <option value="ฉีดวัคซีน">{dataText.services.svc2}</option>
+              <option value="ทำหมัน">{dataText.services.svc3}</option>
+              <option value="ทันตกรรม">{dataText.services.svc4}</option>
+              <option value="อื่นๆ">{dataText.services.svc5}</option>
             </select>
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={labelStyle}>{t('myAppts.notesModalLabel')}</label>
+            <label style={labelStyle}>{dataText.notesLabel}</label>
             <textarea
               value={data.notes}
               onChange={e => setField('notes', e.target.value)}
@@ -92,7 +94,7 @@ export default function EditModal({
 
           <div style={{ display: 'flex', gap: 12 }}>
             <button onClick={onClose} className="book-btn-secondary" style={{ padding: '10px', fontSize: '0.95rem' }}>
-              {t('myAppts.cancelModalBtn')}
+              {dataText.cancelBtn}
             </button>
             <button
               onClick={onConfirm}
@@ -100,7 +102,7 @@ export default function EditModal({
               className="book-btn-primary"
               style={{ padding: '10px', fontSize: '0.95rem', boxShadow: 'none' }}
             >
-              {loading ? t('myAppts.savingBtn') : t('myAppts.confirmBtn')}
+              {loading ? dataText.savingBtn : dataText.confirmBtn}
             </button>
           </div>
         </>

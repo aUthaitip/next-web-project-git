@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { Mail, MessageSquare, Send } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { contactFormData } from '@/data/home/ContactForm';
 
 export default function ContactForm() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = contactFormData[lang];
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -29,9 +31,9 @@ export default function ContactForm() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error(t('home.sendError'));
+      if (!res.ok) throw new Error(data.sendError);
 
-      alert(t('home.sendSuccess'));
+      alert(data.sendSuccess);
       setForm({
         name: '',
         phone: '',
@@ -40,7 +42,7 @@ export default function ContactForm() {
         message: '',
       });
     } catch (err) {
-      alert(t('home.sendError'));
+      alert(data.sendError);
     }
   };
 
@@ -50,8 +52,8 @@ export default function ContactForm() {
         <div className="contact-card-wrapper">
           <div className="contact-info-panel">
             <div className="info-content">
-              <h2>{t('home.contactTitle')}</h2>
-              <p className="subtitle">{t('home.contactSubtitle')}</p>
+              <h2>{data.contactTitle}</h2>
+              <p className="subtitle">{data.contactSubtitle}</p>
               <div className="meta-info-list">
                 <div className="info-item">
                   <div className="icon-box"><Mail size={20} /></div>
@@ -72,7 +74,7 @@ export default function ContactForm() {
                 <input 
                   type="text" 
                   name="name" 
-                  placeholder={t('home.namePlaceholder')}
+                  placeholder={data.namePlaceholder}
                   required 
                   value={form.name}
                   onChange={handleChange}
@@ -82,7 +84,7 @@ export default function ContactForm() {
                 <input 
                   type="tel" 
                   name="phone" 
-                  placeholder={t('home.phonePlaceholder')}
+                  placeholder={data.phonePlaceholder}
                   required 
                   value={form.phone}
                   onChange={handleChange}
@@ -92,7 +94,7 @@ export default function ContactForm() {
                 <input 
                   type="email" 
                   name="email" 
-                  placeholder={t('home.emailPlaceholder')}
+                  placeholder={data.emailPlaceholder}
                   required
                   value={form.email}
                   onChange={handleChange}
@@ -101,17 +103,17 @@ export default function ContactForm() {
               <div className="input-group full-width">
                 <select name="service" defaultValue="" onChange={handleChange} required>
                   <option value="" disabled>
-                    {t('home.selectService')}
+                    {data.selectService}
                   </option>
-                  <option value="checkup">{t('home.svcCheckup')}</option>
-                  <option value="emergency">{t('home.svcEmergency')}</option>
-                  <option value="grooming">{t('home.svcGrooming')}</option>
+                  <option value="checkup">{data.svcCheckup}</option>
+                  <option value="emergency">{data.svcEmergency}</option>
+                  <option value="grooming">{data.svcGrooming}</option>
                 </select>
               </div>
               <div className="input-group full-width">
                 <textarea 
                   name="message" 
-                  placeholder={t('home.notesPlaceholder')}
+                  placeholder={data.notesPlaceholder}
                   rows={4}
                   value={form.message}
                   onChange={handleChange}
@@ -120,7 +122,7 @@ export default function ContactForm() {
             </div>
 
             <button type="submit" className="btn-send-now">
-              <span>{t('home.sendBtn')}</span>
+              <span>{data.sendBtn}</span>
               <Send size={16} className="send-icon" />
             </button>
           </form>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import AwardsSlider from '@/components/about-us/AwardsSlider';
 import { useLanguage } from '@/context/LanguageContext';
+import { awardsAccreditationsData } from '@/data/about-us/AwardsAccreditationsContent';
 
 interface ApiEntry {
   id: number;
@@ -14,15 +15,17 @@ interface ApiEntry {
 }
 
 export default function AwardsAccreditationsContent() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = awardsAccreditationsData[lang];
+
   const [apiEntries, setApiEntries] = useState<ApiEntry[]>([]);
 
   useEffect(() => {
     fetch('/api/about-us?section=awards_accreditation')
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setApiEntries(data.filter((a) => a.published));
+      .then((result) => {
+        if (Array.isArray(result)) {
+          setApiEntries(result.filter((a) => a.published));
         }
       })
       .catch(console.error);
@@ -30,10 +33,10 @@ export default function AwardsAccreditationsContent() {
 
   return (
     <div className="content-container">
-      <h2 className="page-title">{t('awards.title')}</h2>
+      <h2 className="page-title">{data.title}</h2>
       <div className="divider"></div>
-      <p className="intro-text page-subtitle">{t('awards.subtitle')}</p>
-      <AwardsSlider apiEntries={apiEntries} />
+      <p className="intro-text page-subtitle">{data.subtitle}</p>
+      <AwardsSlider slides={data.slides} apiEntries={apiEntries} />
     </div>
   );
 }

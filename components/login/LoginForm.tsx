@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import { loginData } from '@/data/login/LoginForm';
 
 export default function LoginForm() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const data = loginData[lang];
   const [tab, setTab] = useState<'login' | 'register'>('login');
 
   // Login state
@@ -35,11 +37,11 @@ export default function LoginForm() {
       body: JSON.stringify({ email: loginEmail, password: loginPassword }),
     });
 
-    const data = await res.json();
+    const resData = await res.json();
     setLoginLoading(false);
 
     if (!res.ok) {
-      setLoginError(data.error || t('login.genericError'));
+      setLoginError(resData.error || data.genericError);
       return;
     }
 
@@ -55,7 +57,7 @@ export default function LoginForm() {
     setRegSuccess('');
 
     if (regPassword !== regConfirm) {
-      setRegError(t('login.passwordMismatch'));
+      setRegError(data.passwordMismatch);
       setRegLoading(false);
       return;
     }
@@ -66,15 +68,15 @@ export default function LoginForm() {
       body: JSON.stringify({ name: regName, email: regEmail, phone: regPhone, password: regPassword }),
     });
 
-    const data = await res.json();
+    const resData = await res.json();
     setRegLoading(false);
 
     if (!res.ok) {
-      setRegError(data.error || t('login.genericError'));
+      setRegError(resData.error || data.genericError);
       return;
     }
 
-    setRegSuccess(t('login.registerSuccess'));
+    setRegSuccess(data.registerSuccess);
     setRegName(''); setRegEmail(''); setRegPhone('');
     setRegPassword(''); setRegConfirm('');
     setTimeout(() => setTab('login'), 1500);
@@ -88,7 +90,7 @@ export default function LoginForm() {
         <div style={{ background: 'linear-gradient(135deg, #0d9488, #14b8a6)', padding: '32px', textAlign: 'center' }}>
           <div style={{ fontSize: 48 }}>🐾</div>
           <h2 style={{ color: 'white', margin: '8px 0 4px', fontSize: 24 }}>Pawplan</h2>
-          <p style={{ color: '#ccfbf1', margin: 0, fontSize: 14 }}>{t('login.systemSubtitle')}</p>
+          <p style={{ color: '#ccfbf1', margin: 0, fontSize: 14 }}>{data.systemSubtitle}</p>
         </div>
 
         {/* Tabs */}
@@ -106,7 +108,7 @@ export default function LoginForm() {
                 transition: 'all 0.2s',
               }}
             >
-              {tabKey === 'login' ? t('login.tabLogin') : t('login.tabRegister')}
+              {tabKey === 'login' ? data.tabLogin : data.tabRegister}
             </button>
           ))}
         </div>
@@ -122,31 +124,31 @@ export default function LoginForm() {
                 </div>
               )}
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.emailLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.emailLabel}</label>
                 <input
                   type="email" required value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="example@email.com"
+                  placeholder={data.emailPlaceholder}
                   style={inputStyle}
                 />
               </div>
               <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.passwordLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.passwordLabel}</label>
                 <input
                   type="password" required value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={data.passwordPlaceholder}
                   style={inputStyle}
                 />
               </div>
               <button type="submit" disabled={loginLoading} style={btnStyle}>
-                {loginLoading ? t('login.loggingIn') : t('login.loginBtn')}
+                {loginLoading ? data.loggingIn : data.loginBtn}
               </button>
               <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: '#6b7280' }}>
-                {t('login.noAccount')}{' '}
+                {data.noAccount}{' '}
                 <button type="button" onClick={() => setTab('register')}
                   style={{ background: 'none', border: 'none', color: '#0d9488', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>
-                  {t('login.goRegister')}
+                  {data.goRegister}
                 </button>
               </p>
             </form>
@@ -166,38 +168,38 @@ export default function LoginForm() {
                 </div>
               )}
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.nameLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.nameLabel}</label>
                 <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)}
-                  placeholder={t('login.namePlaceholder')} style={inputStyle} />
+                  placeholder={data.namePlaceholder} style={inputStyle} />
               </div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.emailLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.emailLabel}</label>
                 <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="example@email.com" style={inputStyle} />
+                  placeholder={data.emailPlaceholder} style={inputStyle} />
               </div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.phoneLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.phoneLabel}</label>
                 <input type="tel" value={regPhone} onChange={(e) => setRegPhone(e.target.value)}
-                  placeholder="08X-XXX-XXXX" style={inputStyle} />
+                  placeholder={data.phonePlaceholder} style={inputStyle} />
               </div>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.regPasswordLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.regPasswordLabel}</label>
                 <input type="password" required value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder={t('login.regPasswordPlaceholder')} style={inputStyle} />
+                  placeholder={data.regPasswordPlaceholder} style={inputStyle} />
               </div>
               <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{t('login.confirmPasswordLabel')}</label>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.confirmPasswordLabel}</label>
                 <input type="password" required value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)}
-                  placeholder="••••••••" style={inputStyle} />
+                  placeholder={data.passwordPlaceholder} style={inputStyle} />
               </div>
               <button type="submit" disabled={regLoading} style={btnStyle}>
-                {regLoading ? t('login.registering') : t('login.registerBtn')}
+                {regLoading ? data.registering : data.registerBtn}
               </button>
               <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: '#6b7280' }}>
-                {t('login.hasAccount')}{' '}
+                {data.hasAccount}{' '}
                 <button type="button" onClick={() => setTab('login')}
                   style={{ background: 'none', border: 'none', color: '#0d9488', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>
-                  {t('login.goLogin')}
+                  {data.goLogin}
                 </button>
               </p>
             </form>

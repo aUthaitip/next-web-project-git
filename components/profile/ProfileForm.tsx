@@ -4,10 +4,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { User, Mail, Phone, Lock, Save, ArrowLeft, CheckCircle, AlertCircle, Eye, EyeOff, Camera, Loader2 } from 'lucide-react';
+import { profileFormData } from '@/data/profile/ProfileForm';
 
 export default function ProfileForm() {
   const router = useRouter();
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(true);
@@ -31,26 +32,7 @@ export default function ProfileForm() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   // Translations via i18n
-  const localized = {
-    title: t('profile.title'),
-    subtitle: t('profile.subtitle'),
-    nameLabel: t('profile.nameLabel'),
-    emailLabel: t('profile.emailLabel'),
-    phoneLabel: t('profile.phoneLabel'),
-    changePasswordTitle: t('profile.changePasswordTitle'),
-    currentPasswordLabel: t('profile.currentPasswordLabel'),
-    newPasswordLabel: t('profile.newPasswordLabel'),
-    confirmPasswordLabel: t('profile.confirmPasswordLabel'),
-    saveBtn: t('profile.saveBtn'),
-    savingBtn: t('profile.savingBtn'),
-    backBtn: t('profile.backBtn'),
-    requiredFields: t('profile.requiredFields'),
-    passwordMismatch: t('profile.passwordMismatch'),
-    passwordTooShort: t('profile.passwordTooShort'),
-    loadError: t('profile.loadError'),
-    uploadingText: t('profile.uploadingText'),
-    uploadFailed: t('profile.uploadFailed'),
-  };
+  const localized = profileFormData[lang];
 
   const checkSession = useCallback(async () => {
     try {
@@ -89,7 +71,7 @@ export default function ProfileForm() {
 
     const file = files[0];
     if (!file.type.startsWith('image/')) {
-      setError(t('profile.imageFileOnly'));
+      setError(localized.imageFileOnly);
       return;
     }
 
@@ -113,7 +95,7 @@ export default function ProfileForm() {
       }
 
       setImage(data.url);
-      setSuccess(t('profile.uploadSuccess'));
+      setSuccess(localized.uploadSuccess);
     } catch (err) {
       setError(localized.uploadFailed);
     } finally {
@@ -161,11 +143,11 @@ export default function ProfileForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || t('profile.saveError'));
+        setError(data.error || localized.saveError);
         return;
       }
 
-      setSuccess(t('profile.updateSuccess'));
+      setSuccess(localized.updateSuccess);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -173,7 +155,7 @@ export default function ProfileForm() {
       router.refresh();
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
-      setError(t('profile.connectError'));
+      setError(localized.connectError);
     } finally {
       setSubmitLoading(false);
     }
@@ -186,7 +168,7 @@ export default function ProfileForm() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-light)' }}>
         <div style={{ textAlign: 'center', color: '#0d9488' }}>
           <div style={{ fontSize: 48 }} className="animate-bounce">🐾</div>
-          <p>{t('myAppts.loading') || 'กำลังโหลด...'}</p>
+          <p>{localized.loading}</p>
         </div>
       </div>
     );
@@ -293,7 +275,7 @@ export default function ProfileForm() {
                     e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
                   }}
                 >
-                  {t('profile.removePhoto')}
+                  {localized.removePhoto}
                 </button>
               </div>
             )}

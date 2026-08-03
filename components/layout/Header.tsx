@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Menu, User, CalendarDays, LogOut, UserLock, ChevronDown } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import { headerData } from '@/data/layout/Header';
 
 interface DropdownItem { label: string; href: string }
 interface NavItem { label: string; dropdown?: DropdownItem[]; href?: string }
@@ -37,7 +38,8 @@ interface HeaderProps {
 export default function Header({ initialUser = null }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { t, lang, toggleLanguage } = useLanguage();
+  const { lang, toggleLanguage } = useLanguage();
+  const data = headerData[lang];
   const [user, setUser] = useState<SessionUser | null>(initialUser);
 
   const fetchUser = useCallback(() => {
@@ -57,44 +59,44 @@ export default function Header({ initialUser = null }: HeaderProps) {
   }, [fetchUser]);
 
   const navItems: NavItem[] = [
-    { label: t('nav.home'), href: '/' },
+    { label: data.nav.home, href: '/' },
     {
-      label: t('nav.aboutUs'),
+      label: data.nav.aboutUs,
       dropdown: [
-        { label: t('nav.historyMission'), href: '/about-us/history_mission' },
-        { label: t('nav.newsActivities'), href: '/about-us/news_activities' },
-        { label: t('nav.awardsAccreditations'), href: '/about-us/awards_accreditations' },
-        { label: t('nav.contactUs'), href: '/#contact' },
+        { label: data.nav.historyMission, href: '/about-us/history_mission' },
+        { label: data.nav.newsActivities, href: '/about-us/news_activities' },
+        { label: data.nav.awardsAccreditations, href: '/about-us/awards_accreditations' },
+        { label: data.nav.contactUs, href: '/#contact' },
       ],
     },
     {
-      label: t('nav.services'),
+      label: data.nav.services,
       dropdown: [
-        { label: t('nav.bookAppointment'), href: '/appointment' },
-        { label: t('nav.petCare'), href: '/petcare' },
-        { label: t('nav.shop'), href: '/shop' },
+        { label: data.nav.bookAppointment, href: '/appointment' },
+        { label: data.nav.petCare, href: '/petcare' },
+        { label: data.nav.shop, href: '/shop' },
       ],
     },
     {
-      label: t('nav.clinicDoctors'),
+      label: data.nav.clinicDoctors,
       dropdown: [
-        { label: t('nav.medicalServices'), href: '/#services' },
-        { label: t('nav.veterinaryTeam'), href: '/doctors' },
+        { label: data.nav.medicalServices, href: '/#services' },
+        { label: data.nav.veterinaryTeam, href: '/doctors' },
       ],
     },
     {
-      label: t('nav.articles'),
+      label: data.nav.articles,
       dropdown: [
-        { label: t('nav.dogArticles'), href: '/articles/dog' },
-        { label: t('nav.catArticles'), href: '/articles/cat' },
-        { label: t('nav.healthTips'), href: '/articles/health-tips' },
+        { label: data.nav.dogArticles, href: '/articles/dog' },
+        { label: data.nav.catArticles, href: '/articles/cat' },
+        { label: data.nav.healthTips, href: '/articles/health-tips' },
       ],
     },
   ];
 
   const appointmentNavItems: NavItem[] = [
-    { label: t('nav.bookAppointment'), href: '/book' },
-    { label: t('nav.myAppointments'), href: '/my-appointments' },
+    { label: data.nav.bookAppointment, href: '/book' },
+    { label: data.nav.myAppointments, href: '/my-appointments' },
   ];
 
   const isBookingFlow = pathname === '/book' || pathname === '/my-appointments' || pathname === '/profile';
@@ -180,7 +182,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
           <div className="header-actions">
             <button
               onClick={toggleLanguage}
-              title={lang === 'th' ? t('common.switchToEnglish') : t('common.switchToThai')}
+              title={lang === 'th' ? data.common.switchToEnglish : data.common.switchToThai}
               style={{
                 background: 'none',
                 border: '1.5px solid currentColor',
@@ -227,29 +229,29 @@ export default function Header({ initialUser = null }: HeaderProps) {
                         className="hdr-menu-item"
                         onClick={() => { router.push('/profile'); setMenuOpen(false); }}
                       >
-                        <User size={16} strokeWidth={1.8} /> {t('nav.editProfile')}
+                        <User size={16} strokeWidth={1.8} /> {data.nav.editProfile}
                       </button>
                       <button
                         className="hdr-menu-item"
                         onClick={() => { router.push('/my-appointments'); setMenuOpen(false); }}
                       >
-                        <CalendarDays size={16} strokeWidth={1.8} /> {t('nav.myAppointments')}
+                        <CalendarDays size={16} strokeWidth={1.8} /> {data.nav.myAppointments}
                       </button>
                       <button className="hdr-menu-item danger" onClick={handleLogout}>
-                        <LogOut size={16} strokeWidth={1.8} /> {t('nav.logout')}
+                        <LogOut size={16} strokeWidth={1.8} /> {data.nav.logout}
                       </button>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="hdr-login hdr-desktop-only" title={t('nav.login')}>
+              <Link href="/login" className="hdr-login hdr-desktop-only" title={data.nav.login}>
                 <UserLock size={30} strokeWidth={2} />
               </Link>
             )}
 
             {/* General Hamburger Button visible on mobile screens */}
-            <button className="hdr-hamburger" onClick={() => setMobileNavOpen(true)} title={t('common.menu')}>
+            <button className="hdr-hamburger" onClick={() => setMobileNavOpen(true)} title={data.common.menu}>
               <Menu size={24} strokeWidth={2} />
             </button>
           </div>
@@ -315,14 +317,14 @@ export default function Header({ initialUser = null }: HeaderProps) {
                     👤 {user.name}
                   </div>
                   <Link href="/my-appointments" className="hdr-mobile-subitem" onClick={() => setMobileNavOpen(false)}>
-                    {t('nav.myAppointments')}
+                    {data.nav.myAppointments}
                   </Link>
                   <button
                     onClick={() => { handleLogout(); setMobileNavOpen(false); }}
                     className="hdr-mobile-subitem"
                     style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', color: 'var(--text-danger)' }}
                   >
-                    {t('nav.logout')}
+                    {data.nav.logout}
                   </button>
                 </>
               ) : (
@@ -332,7 +334,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
                   style={{ borderTop: '1px solid #f3f4f6', marginTop: 12, color: 'var(--main-blue)', fontWeight: 600 }}
                   onClick={() => setMobileNavOpen(false)}
                 >
-                  {t('nav.login')}
+                  {data.nav.login}
                 </Link>
               )}
             </div>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '../(main)/globals.css';
 import ScrollToTop from '@/components/layout/ScrollToTop';
 import { LanguageProvider } from '@/context/LanguageContext';
+import AdminGuard from '@/components/admin/AdminGuard';
 
 export const metadata: Metadata = {
   title: {
@@ -21,7 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <LanguageProvider>
-          {children}
+          <AdminGuard>
+            {children}
+          </AdminGuard>
           <ScrollToTop />
         </LanguageProvider>
       </body>

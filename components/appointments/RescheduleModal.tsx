@@ -2,6 +2,7 @@
 import { useLanguage } from '../../context/LanguageContext';
 import Modal from './Modal';
 import type { Appointment } from './AppointmentCard';
+import { rescheduleModalData } from '@/data/appointments/RescheduleModal';
 
 const TIME_SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00'];
 
@@ -28,21 +29,22 @@ export default function RescheduleModal({
   onClose,
   onConfirm,
 }: RescheduleModalProps) {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const dataText = rescheduleModalData[lang];
 
   return (
     <Modal open={open && !!appt} onClose={onClose}>
       {appt && (
         <>
           <h3 style={{ margin: '0 0 8px', color: '#0d9488', fontSize: '1.4rem', fontWeight: 700 }}>
-            {t('myAppts.rescheduleModalTitle')}
+            {dataText.title}
           </h3>
           <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 24 }}>
             {appt.petName} — {appt.service}
           </p>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>{t('myAppts.newDateLabel')}</label>
+            <label style={labelStyle}>{dataText.newDateLabel}</label>
             <input
               type="date"
               value={date}
@@ -53,7 +55,7 @@ export default function RescheduleModal({
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={labelStyle}>{t('myAppts.newTimeLabel')}</label>
+            <label style={labelStyle}>{dataText.newTimeLabel}</label>
             <select value={time} onChange={e => onTimeChange(e.target.value)} className="book-input">
               {TIME_SLOTS.map(ts => (
                 <option key={ts} value={ts}>{ts}</option>
@@ -63,7 +65,7 @@ export default function RescheduleModal({
 
           <div style={{ display: 'flex', gap: 12 }}>
             <button onClick={onClose} className="book-btn-secondary" style={{ padding: '10px', fontSize: '0.95rem' }}>
-              {t('myAppts.cancelModalBtn')}
+              {dataText.cancelBtn}
             </button>
             <button
               onClick={onConfirm}
@@ -71,7 +73,7 @@ export default function RescheduleModal({
               className="book-btn-primary"
               style={{ padding: '10px', fontSize: '0.95rem', boxShadow: 'none' }}
             >
-              {loading ? t('myAppts.savingBtn') : t('myAppts.confirmBtn')}
+              {loading ? dataText.savingBtn : dataText.confirmBtn}
             </button>
           </div>
         </>
