@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import prisma from '@/backend/prisma';
 import { sessionOptions, SessionData } from '@/backend/session';
 import { sendAppointmentEmail } from '@/backend/email/email';
+import { sendLinePushMessage, getLineFlexTemplateForCompletion } from '@/lib/line';
 
 export const runtime = 'nodejs';
 
@@ -20,17 +21,73 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     // แจ้งเตือนผู้ใช้เมื่อ admin เปลี่ยนสถานะ
+    console.log('PUT /api/appointments/[id] called. Status:', body.status, 'Appointment ID:', id);
     if (updated.userId) {
+      console.log('User ID associated with appointment:', updated.userId);
       let msg = `นัดหมายของคุณมีการเปลี่ยนสถานะเป็น: ${body.status}`;
       if (body.status === 'confirmed') msg = `คลินิกได้ยืนยันการนัดหมาย: ${updated.service} สำหรับน้อง ${updated.petName} เรียบร้อยแล้ว`;
       else if (body.status === 'cancelled') msg = `คลินิกได้ยกเลิกนัดหมาย: ${updated.service} สำหรับน้อง ${updated.petName}`;
-      
+      else if (body.status === 'arrived') msg = `น้อง ${updated.petName} มาถึงคลินิกและเตรียมเข้ารับบริการ ${updated.service} เรียบร้อยแล้ว`;
+      else if (body.status === 'completed') msg = `การตรวจรักษา/บริการ ${updated.service} ของน้อง ${updated.petName} เสร็จสิ้นเรียบร้อยแล้ว`;
+
       await prisma.notification.create({
         data: {
           userId: updated.userId,
           message: msg,
         }
       });
+
+      // LINE Push Notification
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: updated.userId },
+          select: { lineUserId: true }
+        });
+
+        console.log('Fetched user. lineUserId:', user?.lineUserId);
+
+        if (user?.lineUserId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          console.log('Sending LINE message. status:', body.status, 'siteUrl:', siteUrl);
+
+          if (body.status === 'arrived') {
+            const res = await sendLinePushMessage(user.lineUserId, [
+              {
+                type: 'text',
+                text: `🐾 น้อง ${updated.petName} มาถึงคลินิกและเตรียมพร้อมเข้ารับบริการ "${updated.service}" แล้วครับ`,
+              }
+            ]);
+            console.log('LINE arrived message send result:', res);
+          } else if (body.status === 'completed') {
+            console.log('Generating completed Flex template...');
+            const completionFlex = getLineFlexTemplateForCompletion(updated, siteUrl);
+            const res = await sendLinePushMessage(user.lineUserId, [completionFlex]);
+            console.log('LINE completed message send result:', res);
+          } else if (body.status === 'confirmed') {
+            const res = await sendLinePushMessage(user.lineUserId, [
+              {
+                type: 'text',
+                text: `🐾 คลินิกได้ยืนยันการจองนัดหมายบริการ "${updated.service}" สำหรับน้อง ${updated.petName} ในวันที่ ${updated.date} เวลา ${updated.time} น. เรียบร้อยแล้ว!`,
+              }
+            ]);
+            console.log('LINE confirmed message send result:', res);
+          } else if (body.status === 'cancelled') {
+            const res = await sendLinePushMessage(user.lineUserId, [
+              {
+                type: 'text',
+                text: `❌ การนัดหมายบริการ "${updated.service}" สำหรับน้อง ${updated.petName} ได้ถูกยกเลิกแล้ว`,
+              }
+            ]);
+            console.log('LINE cancelled message send result:', res);
+          }
+        } else {
+          console.log('Skipping LINE notification: user does not have a connected lineUserId.');
+        }
+      } catch (lineErr) {
+        console.error('Failed to send status update LINE notification:', lineErr);
+      }
+    } else {
+      console.log('Skipping notifications: appointment is not linked to any registered user (userId is null).');
     }
 
     return NextResponse.json(updated);

@@ -168,16 +168,21 @@ export default function AppointmentPage() {
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'confirmed': return '#10b981';
+      case 'arrived': return '#3b82f6';
+      case 'completed': return '#10b981';
       case 'cancelled': return '#ef4444';
       default: return '#f59e0b';
     }
   };
 
   const getStatusLabel = (status?: string) => {
+    const isTh = lang === 'th';
     switch (status) {
-      case 'confirmed': return 'Confirmed';
-      case 'cancelled': return 'Cancelled';
-      default: return 'Pending';
+      case 'confirmed': return isTh ? 'ยืนยันแล้ว' : 'Confirmed';
+      case 'arrived': return isTh ? 'มาถึงแล้ว' : 'Arrived';
+      case 'completed': return isTh ? 'เสร็จสิ้น' : 'Completed';
+      case 'cancelled': return isTh ? 'ยกเลิกแล้ว' : 'Cancelled';
+      default: return isTh ? 'รอยืนยัน' : 'Pending';
     }
   };
 
@@ -211,6 +216,8 @@ export default function AppointmentPage() {
               <option value="all">{lang === 'th' ? 'ทุกสถานะ' : 'All Status'}</option>
               <option value="pending">{lang === 'th' ? 'รอยืนยัน' : 'Pending'}</option>
               <option value="confirmed">{lang === 'th' ? 'ยืนยันแล้ว' : 'Confirmed'}</option>
+              <option value="arrived">{lang === 'th' ? 'มาถึงแล้ว' : 'Arrived'}</option>
+              <option value="completed">{lang === 'th' ? 'เสร็จสิ้น' : 'Completed'}</option>
               <option value="cancelled">{lang === 'th' ? 'ยกเลิกแล้ว' : 'Cancelled'}</option>
             </select>
           </div>
@@ -260,10 +267,16 @@ export default function AppointmentPage() {
                           <button className="actions-btn" onClick={() => setActiveMenu(activeMenu === apt.id ? null : apt.id)}>⋮</button>
                           {activeMenu === apt.id && (
                             <div className="dropdown-menu-new">
-                              {apt.status !== 'confirmed' && (
+                              {apt.status !== 'confirmed' && apt.status !== 'completed' && apt.status !== 'arrived' && (
                                 <button className="dropdown-item confirm" onClick={() => handleStatusChange(apt, 'confirmed')}>✓ Confirm</button>
                               )}
-                              {apt.status !== 'cancelled' && (
+                              {apt.status !== 'arrived' && apt.status !== 'completed' && apt.status !== 'cancelled' && (
+                                <button className="dropdown-item" style={{ color: '#3b82f6' }} onClick={() => handleStatusChange(apt, 'arrived')}>📍 Arrived</button>
+                              )}
+                              {apt.status !== 'completed' && apt.status !== 'cancelled' && (
+                                <button className="dropdown-item" style={{ color: '#10b981' }} onClick={() => handleStatusChange(apt, 'completed')}>💳 Complete</button>
+                              )}
+                              {apt.status !== 'cancelled' && apt.status !== 'completed' && (
                                 <button className="dropdown-item cancel" onClick={() => handleStatusChange(apt, 'cancelled')}>✕ Cancel</button>
                               )}
                               {apt.userId && (

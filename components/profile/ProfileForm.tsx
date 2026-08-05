@@ -22,6 +22,7 @@ export default function ProfileForm() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [image, setImage] = useState<string | null>(null);
+  const [lineUserId, setLineUserId] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,6 +37,21 @@ export default function ProfileForm() {
 
   const checkSession = useCallback(async () => {
     try {
+      // Check for success or error query parameters from LINE redirect callback
+      const urlParams = new URLSearchParams(window.location.search);
+      const successParam = urlParams.get('success');
+      const errorParam = urlParams.get('error');
+      if (successParam) {
+        setSuccess(successParam);
+        // Clear query parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      if (errorParam) {
+        setError(errorParam);
+        // Clear query parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
       const res = await fetch('/api/auth/me');
       if (!res.ok) {
         router.push('/login');
@@ -50,6 +66,7 @@ export default function ProfileForm() {
       setEmail(data.userEmail ?? '');
       setPhone(data.userPhone ?? '');
       setImage(data.userImage ?? null);
+      setLineUserId(data.lineUserId ?? null);
     } catch (err) {
       setError(localized.loadError);
     } finally {
@@ -358,6 +375,101 @@ export default function ProfileForm() {
                   style={inputWithIconStyle}
                   placeholder="08X-XXX-XXXX"
                 />
+              </div>
+            </div>
+
+            {/* LINE Integration Section */}
+            <div style={{
+              background: '#f8fafc',
+              border: '1px dashed #cbd5e1',
+              borderRadius: '12px',
+              padding: '16px',
+              marginTop: '8px',
+              marginBottom: '8px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    backgroundColor: '#06c755',
+                    color: 'white',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '14px',
+                    fontFamily: 'system-ui, sans-serif'
+                  }}>
+                    LINE
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+                      {lang === 'th' ? 'การแจ้งเตือนผ่าน LINE' : 'LINE Notifications'}
+                    </h4>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
+                      {lineUserId 
+                        ? (lang === 'th' ? 'เชื่อมต่อแล้ว (รับข่าวสารและยืนยันผ่านไลน์)' : 'Connected (receive updates and confirm via LINE)')
+                        : (lang === 'th' ? 'เชื่อมต่อเพื่อรับการแจ้งเตือนจองนัดหมาย' : 'Connect to receive booking notifications')}
+                    </p>
+                  </div>
+                </div>
+
+                {lineUserId ? (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (confirm(lang === 'th' ? 'คุณต้องการยกเลิกการเชื่อมต่อบัญชี LINE ใช่หรือไม่?' : 'Do you want to disconnect your LINE account?')) {
+                        try {
+                          const res = await fetch('/api/auth/line/disconnect', { method: 'POST' });
+                          if (res.ok) {
+                            setLineUserId(null);
+                            setSuccess(lang === 'th' ? 'ยกเลิกการเชื่อมต่อ LINE สำเร็จ' : 'Disconnected LINE successfully');
+                          } else {
+                            setError(lang === 'th' ? 'เกิดข้อผิดพลาดในการยกเลิกเชื่อมต่อ' : 'Error unlinking account');
+                          }
+                        } catch (err) {
+                          setError(lang === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อ' : 'Connection error');
+                        }
+                      }
+                    }}
+                    style={{
+                      backgroundColor: '#f1f5f9',
+                      border: '1px solid #cbd5e1',
+                      color: '#64748b',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {lang === 'th' ? 'ยกเลิกการเชื่อมต่อ' : 'Disconnect'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.location.href = '/api/auth/line/login';
+                    }}
+                    style={{
+                      backgroundColor: '#06c755',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 2px 4px rgba(6, 199, 85, 0.2)',
+                    }}
+                  >
+                    {lang === 'th' ? 'เชื่อมต่อ LINE' : 'Connect LINE'}
+                  </button>
+                )}
               </div>
             </div>
 

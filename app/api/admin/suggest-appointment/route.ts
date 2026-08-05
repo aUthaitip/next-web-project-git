@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/backend/prisma';
+import { sendLinePushMessage, getLineFlexTemplateForSuggestedAppointment } from '@/lib/line';
 
 export const runtime = 'nodejs';
 
@@ -36,6 +37,22 @@ export async function POST(req: NextRequest) {
         message: `คุณมีนัดหมายใหม่: ${service} สำหรับน้อง ${petName} วันที่ ${date} เวลา ${time} กรุณายืนยันการนัดหมาย`,
       },
     });
+
+    // Send LINE Push Notification if user is connected to LINE
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { lineUserId: true },
+      });
+
+      if (user?.lineUserId) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const suggestFlex = getLineFlexTemplateForSuggestedAppointment(appointment, siteUrl);
+        await sendLinePushMessage(user.lineUserId, [suggestFlex]);
+      }
+    } catch (lineErr) {
+      console.error('Failed to send suggested appointment LINE notification:', lineErr);
+    }
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {

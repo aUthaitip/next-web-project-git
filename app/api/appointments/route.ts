@@ -3,6 +3,7 @@ import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 import prisma from '@/backend/prisma';
 import { sessionOptions, SessionData } from '@/backend/session';
+import { sendLinePushMessage, getLineFlexTemplateForAppointment } from '@/lib/line';
 
 export const runtime = 'nodejs';
 
@@ -68,6 +69,23 @@ export async function POST(req: Request) {
         userId,
       },
     });
+
+    // Send LINE Push message if user is connected
+    if (userId) {
+      try {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { lineUserId: true }
+        });
+        if (user?.lineUserId) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          const lineFlexMessage = getLineFlexTemplateForAppointment(appointment, siteUrl);
+          await sendLinePushMessage(user.lineUserId, [lineFlexMessage]);
+        }
+      } catch (lineErr) {
+        console.error('Failed to send LINE notification for booking:', lineErr);
+      }
+    }
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {
