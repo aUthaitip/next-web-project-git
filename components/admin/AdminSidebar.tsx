@@ -50,7 +50,7 @@ export default function AdminSidebar() {
             {/* Logout */}
             <button className="sidebar-logout" onClick={() => {
                 sessionStorage.removeItem('admin_authenticated');
-                router.push('/');
+                window.location.href = '/admin';
             }}>
                 <div className="sidebar-logout-icon">
                     <LogOut size={18} />
