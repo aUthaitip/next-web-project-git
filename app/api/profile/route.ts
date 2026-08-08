@@ -65,7 +65,7 @@ export async function PUT(req: Request) {
     session.userName = updatedUser.name;
     session.userEmail = updatedUser.email;
     session.userPhone = updatedUser.phone || '';
-    session.userImage = updatedUser.image || '';
+    session.userImage = updatedUser.image ? 'has_image' : '';
     await session.save();
 
     return NextResponse.json({

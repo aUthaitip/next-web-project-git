@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     session.userName = user.name;
     session.userEmail = user.email;
     session.userPhone = user.phone || '';
-    session.userImage = user.image || '';
+    session.userImage = user.image ? 'has_image' : '';
     session.isLoggedIn = true;
     await session.save();
 
