@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import HideFooter from '@/components/layout/HideFooter';
 
 const TIME_SLOTS = [
   '09:00','09:30','10:00','10:30','11:00','11:30',
@@ -111,6 +112,7 @@ export default function BookPage() {
 
   return (
     <main className="book-page page-animate">
+      <HideFooter />
       <div className="book-container">
 
         {/* Hero */}
