@@ -10,7 +10,7 @@ export default function SpecializedFeatures() {
     <section className="specialized-features" style={{ paddingTop: 0 }}>
       <h2 style={{ textAlign: 'left', marginBottom: '50px' }}>{data.specializedTitle}</h2>
       <div className="feature-grid">
-        <Link href="#" className="feature-card">
+        <Link href="/appointment?service=eye" className="feature-card">
           <div className="feature-icon-wrapper">
             <span className="feature-icon">
               <Eye size={60} strokeWidth={2} className="text-blue-500" />
@@ -24,7 +24,7 @@ export default function SpecializedFeatures() {
             <img src="/assets/2.png" alt={data.eyeCareTitle} />
           </div>
         </Link>
-        <Link href="#" className="feature-card">
+        <Link href="/appointment?service=neuro" className="feature-card">
           <div className="feature-icon-wrapper">
             <span className="feature-icon">
               <Brain size={60} strokeWidth={2} className="text-blue-500" />
@@ -38,7 +38,7 @@ export default function SpecializedFeatures() {
             <img src="/assets/3.png" alt={data.neuroCenterTitle} />
           </div>
         </Link>
-        <Link href="#" className="feature-card">
+        <Link href="/appointment?service=cardio" className="feature-card">
           <div className="feature-icon-wrapper">
             <span className="feature-icon">
               <HeartPulse size={60} strokeWidth={2} className="text-blue-500" />
@@ -52,7 +52,7 @@ export default function SpecializedFeatures() {
             <img src="/assets/4.png" alt={data.cardioCenterTitle} />
           </div>
         </Link>
-        <Link href="#" className="feature-card">
+        <Link href="/appointment?service=imaging" className="feature-card">
           <div className="feature-icon-wrapper">
             <span className="feature-icon">
               <Radiation size={60} strokeWidth={2} />

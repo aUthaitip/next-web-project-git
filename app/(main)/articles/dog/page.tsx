@@ -1,5 +1,11 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import DogArticles from '@/components/articles/DogArticles';
 
 export default function DogArticlePage() {
-  redirect('/articles/dog/th');
+  return (
+    <section className="content-section dog-page page-animate">
+      <DogArticles />
+    </section>
+  );
 }

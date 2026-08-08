@@ -45,8 +45,8 @@ export default function Footer() {
             <h4>{data.quickLinks}</h4>
             <ul>
                 <li><Link href="/appointment">{data.bookAppointment}</Link></li>
-                <li><a href="#">{data.healthArticles}</a></li>
-                <li><a href="#">{data.privacyPolicy}</a></li>
+                <li><Link href="/articles/health-tips">{data.healthArticles}</Link></li>
+                <li><Link href="/#contact">{data.privacyPolicy}</Link></li>
             </ul>
         </div>
       </div>

@@ -31,6 +31,22 @@ export default function BookPage() {
         setFormData(prev => ({ ...prev, owner: data.userName || '', phone: data.userPhone || '' }));
       }
     });
+
+    const params = new URLSearchParams(window.location.search);
+    const serviceParam = params.get('service');
+    if (serviceParam) {
+      if (serviceParam === 'eye') {
+        setFormData(prev => ({ ...prev, service: 'อื่นๆ', otherService: 'ตรวจโรคตาและรักษาเฉพาะทาง' }));
+      } else if (serviceParam === 'neuro') {
+        setFormData(prev => ({ ...prev, service: 'อื่นๆ', otherService: 'ตรวจระบบประสาทและสมอง' }));
+      } else if (serviceParam === 'cardio') {
+        setFormData(prev => ({ ...prev, service: 'อื่นๆ', otherService: 'ตรวจหัวใจและหลอดเลือด' }));
+      } else if (serviceParam === 'imaging') {
+        setFormData(prev => ({ ...prev, service: 'อื่นๆ', otherService: 'ตรวจรังสีวินิจฉัยและอัลตราซาวด์' }));
+      } else {
+        setFormData(prev => ({ ...prev, service: serviceParam }));
+      }
+    }
   }, []);
 
   const set = (key: string, val: string) => setFormData(prev => ({ ...prev, [key]: val }));

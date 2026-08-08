@@ -2,10 +2,20 @@ import prisma from '@/backend/prisma';
 import Link from 'next/link';
 import { CheckCircle2, Calendar, Clock, Award, ShieldCheck, Home } from 'lucide-react';
 
+import { Metadata } from 'next';
+
 export const runtime = 'nodejs';
 
 interface PageProps {
   params: Promise<{ id: string }> | { id: string };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  return {
+    title: `ยืนยันนัดหมาย #${resolvedParams.id} | Pawplan`,
+    description: `ระบบรับทราบและยืนยันการเข้ารับบริการของสัตว์เลี้ยง หมายเลขนัดหมาย #${resolvedParams.id}`,
+  };
 }
 
 export default async function AcknowledgePage({ params }: PageProps) {

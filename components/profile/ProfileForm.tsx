@@ -404,16 +404,35 @@ export default function ProfileForm() {
                   }}>
                     LINE
                   </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                       {lang === 'th' ? 'การแจ้งเตือนผ่าน LINE' : 'LINE Notifications'}
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: '50px',
+                        backgroundColor: lineUserId ? '#dcfce7' : '#fee2e2',
+                        color: lineUserId ? '#15803d' : '#b91c1c',
+                      }}>
+                        <span style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: lineUserId ? '#22c55e' : '#ef4444',
+                        }} />
+                        {lineUserId 
+                          ? (lang === 'th' ? 'เชื่อมต่อแล้ว' : 'Connected')
+                          : (lang === 'th' ? 'ยังไม่ได้เชื่อมต่อ' : 'Not Connected')}
+                      </span>
                     </h4>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
+                    <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#64748b' }}>
                       {lineUserId 
                         ? (lang === 'th' ? 'เชื่อมต่อแล้ว (รับข่าวสารและยืนยันผ่านไลน์)' : 'Connected (receive updates and confirm via LINE)')
                         : (lang === 'th' ? 'เชื่อมต่อเพื่อรับการแจ้งเตือนจองนัดหมาย' : 'Connect to receive booking notifications')}
                     </p>
-                  </div>
                 </div>
 
                 {lineUserId ? (

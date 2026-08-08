@@ -28,6 +28,7 @@ export default function CatArticles() {
           const mapped = apiData
             .filter((a) => a.published)
             .map((a) => ({
+              id: a.id,
               category: a.category || 'Cat', 
               title: a.title,
               snippet: a.content,

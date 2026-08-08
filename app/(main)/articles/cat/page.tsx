@@ -1,5 +1,11 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import CatArticles from '@/components/articles/CatArticles';
 
 export default function CatArticlePage() {
-  redirect('/articles/cat/th');
+  return (
+    <section className="content-section dog-page page-animate">
+      <CatArticles />
+    </section>
+  );
 }

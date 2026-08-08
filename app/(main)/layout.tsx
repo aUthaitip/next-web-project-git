@@ -30,7 +30,7 @@ export default function RootLayout({
       <body>
         <LanguageProvider>
           <Header />
-          <main className="container">{children}</main>
+          <main>{children}</main>
           <Footer />
           <ScrollToTop />
         </LanguageProvider>

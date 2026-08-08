@@ -1,5 +1,11 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import HealthTipsArticles from '@/components/articles/HealthTipsArticles';
 
 export default function HealthTipsPage() {
-  redirect('/articles/health-tips/th');
+  return (
+    <section className="content-section dog-page page-animate">
+      <HealthTipsArticles />
+    </section>
+  );
 }
