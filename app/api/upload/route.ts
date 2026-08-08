@@ -1,18 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { sessionOptions, SessionData } from '@/backend/session';
-import fs from 'fs/promises';
-import path from 'path';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-    // Allow upload even if not logged in for testing/admin purposes
-    const userId = session.isLoggedIn && session.userId ? session.userId : 'guest';
-
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
 
@@ -28,27 +19,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น' }, { status: 400 });
     }
 
-    // Limit file size to 5MB
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'ขนาดรูปภาพต้องไม่เกิน 5MB' }, { status: 400 });
+    // Limit file size to 1.5MB for base64 storage limits
+    if (file.size > 1.5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'ขนาดรูปภาพต้องไม่เกิน 1.5MB สำหรับเซิร์ฟเวอร์คลาวด์' }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    // Ensure directory exists
-    await fs.mkdir(uploadDir, { recursive: true });
+    // Convert to Base64 Data URL
+    const base64Data = buffer.toString('base64');
+    const dataUrl = `data:${file.type};base64,${base64Data}`;
 
-    // Generate unique name
-    const ext = path.extname(file.name) || '.jpg';
-    const filename = `avatar-${userId}-${Date.now()}${ext}`;
-    const filePath = path.join(uploadDir, filename);
-
-    // Save file
-    await fs.writeFile(filePath, buffer);
-
-    const publicUrl = `/uploads/${filename}`;
-
-    return NextResponse.json({ success: true, url: publicUrl });
+    return NextResponse.json({ success: true, url: dataUrl });
 
   } catch (error: any) {
     console.error('Upload error:', error);
