@@ -4,7 +4,7 @@ import HistoryMissionContent from '@/components/about-us/HistoryMissionContent';
 
 export default function HistoryMissionPage() {
   return (
-    <section className="py-20 min-h-[60vh] text-[#334155] block max-md:py-10 animate-[fadeInDown_0.6s_ease-out]">
+    <section className="content-section history_mission-page page-animate pt-28 pb-32">
       <HistoryMissionContent />
     </section>
   );

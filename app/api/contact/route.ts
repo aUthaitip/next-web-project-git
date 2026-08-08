@@ -1,16 +1,21 @@
 import { NextResponse } from 'next/server';
 import { sendMail } from '@/backend/email/mailer';
+import { contactSchema } from '@/lib/validations';
 
 export async function POST(req: Request) {
   try {
-    const { name, phone, email, service, message } = await req.json();
+    const body = await req.json();
+    const parseResult = contactSchema.safeParse(body);
 
-    if (!name || !phone) {
+    if (!parseResult.success) {
+      const errorMessage = parseResult.error.issues.map((issue) => issue.message).join(', ');
       return NextResponse.json(
-        { success: false, error: 'กรุณากรอกชื่อและเบอร์โทรศัพท์' },
+        { success: false, error: errorMessage },
         { status: 400 }
       );
     }
+
+    const { name, phone, email = '', service = '', message = '' } = parseResult.data;
 
     const recipient = process.env.EMAIL_TO || process.env.EMAIL_USER;
     if (!recipient) {
@@ -73,17 +78,29 @@ async function saveToGoogleSheet(data: {
     throw new Error('GOOGLE_SHEET_WEBHOOK_URL is not configured');
   }
 
-  const response = await fetch(webhookUrl, {
+  // Apps Script's doPost reads the action from the query string
+  // (e.parameter.action), not from the JSON body — must be appended to the URL.
+  const url = new URL(webhookUrl);
+  url.searchParams.set('action', 'addUser');
+
+  const response = await fetch(url.toString(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
     redirect: 'follow',
   });
 
-  const result = await response.json();
+  const text = await response.text();
+  let result;
+  try {
+    result = JSON.parse(text);
+  } catch (err) {
+    throw new Error(`Google Sheet webhook returned HTML or invalid JSON. Status: ${response.status}. Preview: ${text.substring(0, 150)}`);
+  }
 
-  if (result.result !== 'success') {
-    throw new Error(result.message || 'Google Sheet webhook returned error');
+  // addUser() ตอบกลับเป็น { success: true } หรือ { success: false, error }
+  if (result.success !== true) {
+    throw new Error(result.error || `Google Sheet webhook returned failure: ${JSON.stringify(result)}`);
   }
 
   return result;

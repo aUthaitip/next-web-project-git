@@ -7,6 +7,7 @@ import { useLanguage } from '../../../context/LanguageContext';
 import AppointmentCard, { Appointment } from '../../../components/appointments/AppointmentCard';
 import RescheduleModal from '../../../components/appointments/RescheduleModal';
 import EditModal, { EditFormData } from '../../../components/appointments/EditModal';
+import HideFooter from '@/components/layout/HideFooter';
 
 interface AppNotification {
   id: number;
@@ -253,6 +254,7 @@ export default function MyAppointmentsPage() {
 
   return (
     <section style={{ backgroundColor: 'var(--bg-light)', minHeight: '100vh', padding: '40px 0' }}>
+      <HideFooter />
       <div className="container" style={{ maxWidth: 1100, margin: '0 auto' }}>
 
         {/* Header */}

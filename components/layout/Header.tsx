@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Menu, User, CalendarDays, LogOut, UserLock, ChevronDown } from 'lucide-react';
+import { Menu, User, CalendarDays, LogOut, UserLock, ChevronDown, LogIn } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { headerData } from '@/data/layout/Header';
@@ -180,27 +180,20 @@ export default function Header({ initialUser = null }: HeaderProps) {
           </nav>
 
           <div className="header-actions">
-            <button
-              onClick={toggleLanguage}
-              title={lang === 'th' ? data.common.switchToEnglish : data.common.switchToThai}
-              style={{
-                background: 'none',
-                border: '1.5px solid currentColor',
-                borderRadius: 6,
-                padding: '4px 10px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                letterSpacing: '0.5px',
-                color: 'inherit',
-                transition: 'opacity 0.2s',
-                opacity: 0.85,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.85')}
-            >
-              {lang === 'th' ? 'EN' : 'TH'}
-            </button>
+            <div className="lang-switcher" title={lang === 'th' ? data.common.switchToEnglish : data.common.switchToThai}>
+              <button 
+                className={`lang-btn ${lang === 'th' ? 'active' : ''}`} 
+                onClick={() => lang !== 'th' && toggleLanguage()}
+              >
+                TH
+              </button>
+              <button 
+                className={`lang-btn ${lang === 'en' ? 'active' : ''}`} 
+                onClick={() => lang !== 'en' && toggleLanguage()}
+              >
+                EN
+              </button>
+            </div>
             {user ? (
               <div className="hdr-user-section">
                 <div className="hdr-user-chip" ref={menuRef}>
@@ -245,8 +238,8 @@ export default function Header({ initialUser = null }: HeaderProps) {
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="hdr-login hdr-desktop-only" title={data.nav.login}>
-                <UserLock size={30} strokeWidth={2} />
+              <Link href="/login" className="hdr-login-btn hdr-desktop-only" title={data.nav.login}>
+                <span>{data.nav.login}</span>
               </Link>
             )}
 
@@ -279,25 +272,29 @@ export default function Header({ initialUser = null }: HeaderProps) {
                       <div 
                         className="hdr-mobile-item"
                         onClick={() => setMobileOpenSub(mobileOpenSub === i ? null : i)}
-                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                        style={{ cursor: 'pointer', userSelect: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                       >
                         <span>{item.label}</span>
-                        <span style={{ fontSize: '0.8rem', display: 'inline-block', transition: 'transform 0.2s', transform: mobileOpenSub === i ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+                        <ChevronDown 
+                          size={16} 
+                          style={{ 
+                            transition: 'transform 0.25s ease', 
+                            transform: mobileOpenSub === i ? 'rotate(180deg)' : 'rotate(0deg)' 
+                          }} 
+                        />
                       </div>
-                      {mobileOpenSub === i && (
-                        <div className="hdr-mobile-sub">
-                          {item.dropdown.map((sub, j) => (
-                            <Link
-                              key={j}
-                              href={sub.href}
-                              className="hdr-mobile-subitem"
-                              onClick={() => { setMobileNavOpen(false); setMobileOpenSub(null); }}
-                            >
-                              {sub.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
+                      <div className={`hdr-mobile-sub${mobileOpenSub === i ? ' open' : ''}`}>
+                        {item.dropdown.map((sub, j) => (
+                          <Link
+                            key={j}
+                            href={sub.href}
+                            className="hdr-mobile-subitem"
+                            onClick={() => { setMobileNavOpen(false); setMobileOpenSub(null); }}
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
                     </>
                   ) : (
                     <Link
