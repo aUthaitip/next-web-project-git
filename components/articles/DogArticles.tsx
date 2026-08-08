@@ -41,23 +41,25 @@ export default function DogArticles() {
       .then((res) => res.json())
       .then((apiData) => {
         if (Array.isArray(apiData)) {
-          const mapped = apiData
-            .filter((a) => a.published)
-            .map((a) => ({
-              id: String(a.id),
-              category: data.adminCat,
-              title: a.title,
-              snippet: a.content,
-              image: a.imageUrl || '/assets/dog1.png',
-            }));
-          setApiArticles(mapped);
+          setApiArticles(apiData.filter((a) => a.published));
         }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [data.adminCat]); // re-run if adminCat translation changes, though not strictly necessary since data is derived from lang
+  }, []);
 
-  const allArticles = [...initialArticles, ...apiArticles];
+  const mappedApiArticles = apiArticles.map((a: any) => {
+    const isEn = lang === 'en';
+    return {
+      id: String(a.id),
+      category: data.adminCat,
+      title: (isEn && a.titleEn) ? a.titleEn : a.title,
+      snippet: (isEn && a.contentEn) ? a.contentEn : a.content,
+      image: a.imageUrl || '/assets/dog1.png',
+    };
+  });
+
+  const allArticles = [...initialArticles, ...mappedApiArticles];
   const allCategories = apiArticles.length > 0
     ? [...staticCategories, data.adminCat]
     : staticCategories;

@@ -18,10 +18,13 @@ export async function PUT(
       where: { id: doctorId },
       data: {
         name: body.name,
+        nameEn: body.nameEn || null,
         expertise: expertiseValue,
+        expertiseEn: body.expertiseEn || null,
         imageUrl: body.imageUrl,
         email: body.email,
         bio: body.bio || '',
+        bioEn: body.bioEn || null,
         availableDays: availableDaysStr,
       },
     });

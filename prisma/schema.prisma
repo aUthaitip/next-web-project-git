@@ -51,10 +51,13 @@ model Appointment {
 model Doctor {
   id            Int      @id @default(autoincrement())
   name          String
+  nameEn        String?
   email         String?
   expertise     String?
+  expertiseEn   String?
   imageUrl      String?
   bio           String?
+  bioEn         String?
   availableDays String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -63,8 +66,10 @@ model Doctor {
 model Article {
   id        Int      @id @default(autoincrement())
   title     String
+  titleEn   String?
   category  String   @default("General")
   content   String
+  contentEn String?
   imageUrl  String?
   published Boolean  @default(false)
   createdAt DateTime @default(now())

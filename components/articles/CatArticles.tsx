@@ -25,22 +25,24 @@ export default function CatArticles() {
       .then((res) => res.json())
       .then((apiData) => {
         if (Array.isArray(apiData)) {
-          const mapped = apiData
-            .filter((a) => a.published)
-            .map((a) => ({
-              id: a.id,
-              category: a.category || 'Cat', 
-              title: a.title,
-              snippet: a.content,
-              image: a.imageUrl || '/assets/cat1.png',
-            }));
-          setApiArticles(mapped);
+          setApiArticles(apiData.filter((a) => a.published));
         }
       })
       .catch(console.error);
   }, []);
 
-  const allArticles = [...staticArticles, ...apiArticles];
+  const mappedApiArticles = apiArticles.map((a: any) => {
+    const isEn = lang === 'en';
+    return {
+      id: a.id,
+      category: a.category || 'Cat',
+      title: (isEn && a.titleEn) ? a.titleEn : a.title,
+      snippet: (isEn && a.contentEn) ? a.contentEn : a.content,
+      image: a.imageUrl || '/assets/cat1.png',
+    };
+  });
+
+  const allArticles = [...staticArticles, ...mappedApiArticles];
 
   const apiCategories = apiArticles
     .map((a) => a.category)

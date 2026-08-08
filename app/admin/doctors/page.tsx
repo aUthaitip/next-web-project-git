@@ -10,11 +10,14 @@ import { useLanguage } from '@/context/LanguageContext';
 interface Doctor {
   id?: number;
   name: string;
+  nameEn?: string | null;
   role?: string;
+  expertiseEn?: string | null;
   imageUrl?: string;
   specialty?: string;
   email?: string;
   bio?: string;
+  bioEn?: string | null;
   availableDays?: string[];
 }
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -56,10 +59,13 @@ export default function DoctorsAdminPage() {
     if (!selected) return;
     const body = JSON.stringify({
       name: selected.name,
+      nameEn: selected.nameEn || null,
       specialty: selected.role,
+      expertiseEn: selected.expertiseEn || null,
       imageUrl: selected.imageUrl,
       email: selected.email,
       bio: selected.bio,
+      bioEn: selected.bioEn || null,
       availableDays: selected.availableDays || [],
     });
     if (selected.id) {

@@ -26,11 +26,14 @@ export async function GET() {
 
 const doctorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
+  nameEn: z.string().optional().nullable(),
   specialty: z.string().optional().nullable(),
   expertise: z.string().optional().nullable(),
+  expertiseEn: z.string().optional().nullable(),
   email: z.string().email().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   bio: z.string().optional().nullable(),
+  bioEn: z.string().optional().nullable(),
   availableDays: z.array(z.string()).optional(),
 });
 
@@ -46,7 +49,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, specialty, expertise, email, imageUrl, bio, availableDays } = parsed.data;
+    const { name, nameEn, specialty, expertise, expertiseEn, email, imageUrl, bio, bioEn, availableDays } = parsed.data;
 
     // map incoming `specialty` (old name) to `expertise` (schema)
     const expertiseValue = expertise ?? specialty ?? null;
@@ -55,10 +58,13 @@ export async function POST(req: Request) {
     const doctor = await prisma.doctor.create({
       data: {
         name,
+        nameEn: nameEn || null,
         expertise: expertiseValue,
+        expertiseEn: expertiseEn || null,
         email,
         imageUrl,
         bio: bio || '',
+        bioEn: bioEn || null,
         availableDays: availableDaysStr,
       },
     });

@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, category, content, imageUrl, published } = body;
+    const { title, titleEn, category, content, contentEn, imageUrl, published } = body;
 
     if (!title || !content) {
       return NextResponse.json({ error: 'title and content are required' }, { status: 400 });
@@ -31,8 +31,10 @@ export async function POST(req: NextRequest) {
     const article = await prisma.article.create({
       data: {
         title,
+        titleEn: titleEn || null,
         category: category || 'General',
         content,
+        contentEn: contentEn || null,
         imageUrl: imageUrl || null,
         published: published ?? false,
       },

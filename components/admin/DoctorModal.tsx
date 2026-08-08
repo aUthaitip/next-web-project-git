@@ -3,11 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 interface Doctor {
   id?: number;
   name: string;
+  nameEn?: string | null;
   role?: string;
+  expertiseEn?: string | null;
   imageUrl?: string;
   specialty?: string;
   email?: string;
   bio?: string;
+  bioEn?: string | null;
   availableDays?: string[];
 }
 
@@ -217,13 +220,24 @@ export default function DoctorModal({
 
           {/* ชื่อแพทย์ */}
           <div>
-            <label className="doctors-modal__label">{lang === 'th' ? 'ชื่อแพทย์ *' : 'Doctor Name *'}</label>
+            <label className="doctors-modal__label">{lang === 'th' ? 'ชื่อแพทย์ (ภาษาไทย) *' : 'Doctor Name (Thai) *'}</label>
             <input
               required
               className="doctors-modal__input"
-              placeholder={lang === 'th' ? 'เช่น นพ. สมชาย ใจดี' : 'e.g. Dr. Somchai Jaidee'}
+              placeholder="เช่น นพ. สมชาย ใจดี"
               value={selected.name}
               onChange={(e) => setSelected({ ...selected, name: e.target.value })}
+            />
+          </div>
+
+          {/* ชื่อแพทย์ (EN) */}
+          <div>
+            <label className="doctors-modal__label">{lang === 'th' ? 'ชื่อแพทย์ (ภาษาอังกฤษ)' : 'Doctor Name (English)'}</label>
+            <input
+              className="doctors-modal__input"
+              placeholder="e.g. Dr. Somchai Jaidee"
+              value={selected.nameEn || ''}
+              onChange={(e) => setSelected({ ...selected, nameEn: e.target.value })}
             />
           </div>
 
@@ -242,25 +256,49 @@ export default function DoctorModal({
           {/* ความเชี่ยวชาญ */}
           <div>
             <label className="doctors-modal__label">
-              {lang === 'th' ? 'ความเชี่ยวชาญ *' : 'Specialty *'} <span className="doctors-modal__hint">({lang === 'th' ? 'คั่นด้วยจุลภาค' : 'comma separated'})</span>
+              {lang === 'th' ? 'ความเชี่ยวชาญ (ภาษาไทย) *' : 'Specialty (Thai) *'} <span className="doctors-modal__hint">({lang === 'th' ? 'คั่นด้วยจุลภาค' : 'comma separated'})</span>
             </label>
             <input
               required
               className="doctors-modal__input"
-              placeholder={lang === 'th' ? 'เช่น จักษุแพทย์, ศัลยแพทย์' : 'e.g. Ophthalmologist, Surgeon'}
+              placeholder="เช่น จักษุแพทย์, ศัลยแพทย์"
               value={selected.role || ''}
               onChange={(e) => setSelected({ ...selected, role: e.target.value })}
             />
           </div>
 
+          {/* ความเชี่ยวชาญ (EN) */}
+          <div>
+            <label className="doctors-modal__label">
+              {lang === 'th' ? 'ความเชี่ยวชาญ (ภาษาอังกฤษ)' : 'Specialty (English)'} <span className="doctors-modal__hint">({lang === 'th' ? 'คั่นด้วยจุลภาค' : 'comma separated'})</span>
+            </label>
+            <input
+              className="doctors-modal__input"
+              placeholder="e.g. Ophthalmologist, Surgeon"
+              value={selected.expertiseEn || ''}
+              onChange={(e) => setSelected({ ...selected, expertiseEn: e.target.value })}
+            />
+          </div>
+
           {/* Bio */}
           <div>
-            <label className="doctors-modal__label">{lang === 'th' ? 'ประวัติย่อ' : 'Bio'}</label>
+            <label className="doctors-modal__label">{lang === 'th' ? 'ประวัติย่อ (ภาษาไทย)' : 'Bio (Thai)'}</label>
             <textarea
               className="doctors-modal__input doctors-modal__textarea"
-              placeholder={lang === 'th' ? 'ประวัติการศึกษาและประสบการณ์...' : 'Education and experience...'}
+              placeholder="ประวัติการศึกษาและประสบการณ์ภาษาไทย..."
               value={selected.bio || ''}
               onChange={(e) => setSelected({ ...selected, bio: e.target.value })}
+            />
+          </div>
+
+          {/* Bio (EN) */}
+          <div>
+            <label className="doctors-modal__label">{lang === 'th' ? 'ประวัติย่อ (ภาษาอังกฤษ)' : 'Bio (English)'}</label>
+            <textarea
+              className="doctors-modal__input doctors-modal__textarea"
+              placeholder="Education and experience in English..."
+              value={selected.bioEn || ''}
+              onChange={(e) => setSelected({ ...selected, bioEn: e.target.value })}
             />
           </div>
 

@@ -7,14 +7,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { id: idStr } = await params;
     const id = parseInt(idStr);
     const body = await req.json();
-    const { title, category, content, imageUrl, published } = body;
+    const { title, titleEn, category, content, contentEn, imageUrl, published } = body;
 
     const article = await prisma.article.update({
       where: { id },
       data: {
         title,
+        titleEn: titleEn || null,
         category,
         content,
+        contentEn: contentEn || null,
         imageUrl: imageUrl || null,
         published: published ?? false,
       },

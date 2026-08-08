@@ -2,8 +2,10 @@ import React from 'react';
 
 interface ArticleForm {
   title: string;
+  titleEn: string;
   category: string;
   content: string;
+  contentEn: string;
   imageUrl: string;
   published: boolean;
 }
@@ -41,8 +43,12 @@ export default function ArticleModal({
           <button type="button" className="appt-modal__close" onClick={onClose}>✕</button>
         </div>
         <div className="appt-modal__field">
-          <label className="appt-modal__label">{lang === 'th' ? 'ชื่อบทความ *' : 'Article Title *'}</label>
-          <input required className="appt-modal__input" placeholder={lang === 'th' ? 'เช่น วิธีดูแลสุขภาพสัตว์เลี้ยงในหน้าร้อน' : 'e.g. How to take care of your pet in summer'} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <label className="appt-modal__label">{lang === 'th' ? 'ชื่อบทความ (ภาษาไทย) *' : 'Article Title (Thai) *'}</label>
+          <input required className="appt-modal__input" placeholder="เช่น วิธีดูแลสุขภาพสัตว์เลี้ยงในหน้าร้อน" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        </div>
+        <div className="appt-modal__field">
+          <label className="appt-modal__label">{lang === 'th' ? 'ชื่อบทความ (ภาษาอังกฤษ)' : 'Article Title (English)'}</label>
+          <input className="appt-modal__input" placeholder="e.g. How to take care of your pet in summer" value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} />
         </div>
         <div className="appt-modal__row">
           <div className="appt-modal__field">
@@ -64,8 +70,12 @@ export default function ArticleModal({
           <input className="appt-modal__input" placeholder="https://example.com/image.jpg" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
         </div>
         <div className="appt-modal__field">
-          <label className="appt-modal__label">{lang === 'th' ? 'เนื้อหา *' : 'Content *'}</label>
-          <textarea required className="appt-modal__input appt-modal__textarea" placeholder={lang === 'th' ? 'เขียนเนื้อหาบทความที่นี่...' : 'Write article content here...'} rows={6} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+          <label className="appt-modal__label">{lang === 'th' ? 'เนื้อหา (ภาษาไทย) *' : 'Content (Thai) *'}</label>
+          <textarea required className="appt-modal__input appt-modal__textarea" placeholder="เขียนเนื้อหาบทความภาษาไทยที่นี่..." rows={4} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+        </div>
+        <div className="appt-modal__field">
+          <label className="appt-modal__label">{lang === 'th' ? 'เนื้อหา (ภาษาอังกฤษ)' : 'Content (English)'}</label>
+          <textarea className="appt-modal__input appt-modal__textarea" placeholder="Write English article content here..." rows={4} value={form.contentEn} onChange={(e) => setForm({ ...form, contentEn: e.target.value })} />
         </div>
         <div className="appt-modal__footer">
           <button type="button" className="admin-btn admin-btn-secondary" onClick={onClose}>{lang === 'th' ? 'ยกเลิก' : 'Cancel'}</button>

@@ -13,8 +13,10 @@ import { useLanguage } from '@/context/LanguageContext';
 interface Article {
   id: number;
   title: string;
+  titleEn?: string | null;
   category: string;
   content: string;
+  contentEn?: string | null;
   imageUrl?: string;
   published: boolean;
   createdAt: string;
@@ -23,8 +25,10 @@ interface Article {
 
 interface ArticleForm {
   title: string;
+  titleEn: string;
   category: string;
   content: string;
+  contentEn: string;
   imageUrl: string;
   published: boolean;
 }
@@ -65,7 +69,7 @@ const ABOUT_SECTIONS = [
   { value: 'news_activities', label: '📰 News & Activities' },
 ];
 const emptyArticleForm: ArticleForm = {
-  title: '', category: 'General', content: '', imageUrl: '', published: false,
+  title: '', titleEn: '', category: 'General', content: '', contentEn: '', imageUrl: '', published: false,
 };
 
 const emptyAboutForm: AboutUsForm = {
@@ -122,7 +126,15 @@ export default function ContentAdminPage() {
 
   const openArtNew = () => { setArtForm(emptyArticleForm); setArtSelected(null); setArtIsNew(true); };
   const openArtEdit = (a: Article) => {
-    setArtForm({ title: a.title, category: a.category, content: a.content, imageUrl: a.imageUrl || '', published: a.published });
+    setArtForm({
+      title: a.title,
+      titleEn: a.titleEn || '',
+      category: a.category,
+      content: a.content,
+      contentEn: a.contentEn || '',
+      imageUrl: a.imageUrl || '',
+      published: a.published,
+    });
     setArtSelected(a); setArtIsNew(false);
   };
   const closeArtModal = () => { setArtSelected(null); setArtIsNew(false); };
