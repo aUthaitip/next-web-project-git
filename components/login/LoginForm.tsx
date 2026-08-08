@@ -3,12 +3,18 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { loginData } from '@/data/login/LoginForm';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginForm() {
   const router = useRouter();
   const { lang } = useLanguage();
   const data = loginData[lang];
   const [tab, setTab] = useState<'login' | 'register'>('login');
+
+  // Password visibility states
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirm, setShowRegConfirm] = useState(false);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -134,12 +140,33 @@ export default function LoginForm() {
               </div>
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.passwordLabel}</label>
-                <input
-                  type="password" required value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder={data.passwordPlaceholder}
-                  style={inputStyle}
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showLoginPassword ? 'text' : 'password'} required value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder={data.passwordPlaceholder}
+                    style={{ ...inputStyle, paddingRight: '42px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <button type="submit" disabled={loginLoading} style={btnStyle}>
                 {loginLoading ? data.loggingIn : data.loginBtn}
@@ -184,13 +211,59 @@ export default function LoginForm() {
               </div>
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.regPasswordLabel}</label>
-                <input type="password" required value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder={data.regPasswordPlaceholder} style={inputStyle} />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showRegPassword ? 'text' : 'password'} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
+                    placeholder={data.regPasswordPlaceholder} style={{ ...inputStyle, paddingRight: '42px' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegPassword(!showRegPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.confirmPasswordLabel}</label>
-                <input type="password" required value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)}
-                  placeholder={data.passwordPlaceholder} style={inputStyle} />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showRegConfirm ? 'text' : 'password'} required value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)}
+                    placeholder={data.passwordPlaceholder} style={{ ...inputStyle, paddingRight: '42px' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegConfirm(!showRegConfirm)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showRegConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <button type="submit" disabled={regLoading} style={btnStyle}>
                 {regLoading ? data.registering : data.registerBtn}

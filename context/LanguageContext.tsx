@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import th from '@/locales/th.json';
 import en from '@/locales/en.json';
 
@@ -20,17 +21,50 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>('th');
   const [isSwitching, setIsSwitching] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
+  // Initialize lang state based on URL prefix first, then localStorage, then default 'th'
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const savedLang = window.localStorage.getItem('lang') as Language | null;
-    const initialLang = savedLang === 'th' || savedLang === 'en' ? savedLang : 'th';
+    const currentPath = window.location.pathname;
+    let initialLang: Language = 'th';
+
+    if (currentPath.startsWith('/en')) {
+      initialLang = 'en';
+    } else if (currentPath.startsWith('/th')) {
+      initialLang = 'th';
+    } else {
+      const savedLang = window.localStorage.getItem('lang') as Language | null;
+      initialLang = savedLang === 'th' || savedLang === 'en' ? savedLang : 'th';
+    }
 
     setLangState(initialLang);
     document.documentElement.lang = initialLang;
     document.documentElement.dir = 'ltr';
   }, []);
+
+  // Synchronize state and URL prefix during pathname changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const currentPath = window.location.pathname;
+    const hasTh = currentPath.startsWith('/th');
+    const hasEn = currentPath.startsWith('/en');
+
+    if (!hasTh && !hasEn) {
+      // If client-side navigation leads to non-prefixed page, redirect/replace it
+      const targetPath = `/${lang}${currentPath === '/' ? '' : currentPath}${window.location.search}`;
+      window.history.replaceState(null, '', targetPath);
+    } else {
+      const currentLocale = hasTh ? 'th' : 'en';
+      if (currentLocale !== lang) {
+        setLangState(currentLocale);
+        window.localStorage.setItem('lang', currentLocale);
+      }
+    }
+  }, [pathname, lang]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -42,13 +76,33 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      if (newLang === 'en' && currentPath.startsWith('/th')) {
+        window.location.href = currentPath.replace(/^\/th/, '/en') + window.location.search;
+      } else if (newLang === 'th' && currentPath.startsWith('/en')) {
+        window.location.href = currentPath.replace(/^\/en/, '/th') + window.location.search;
+      }
+    }
   };
 
   const toggleLanguage = () => {
     setIsSwitching(true);
     window.setTimeout(() => {
-      setLangState((prev) => (prev === 'th' ? 'en' : 'th'));
+      const nextLang = lang === 'th' ? 'en' : 'th';
+      setLangState(nextLang);
       setIsSwitching(false);
+
+      if (typeof window !== 'undefined') {
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/th')) {
+          window.location.href = currentPath.replace(/^\/th/, '/en') + window.location.search;
+        } else if (currentPath.startsWith('/en')) {
+          window.location.href = currentPath.replace(/^\/en/, '/th') + window.location.search;
+        } else {
+          window.location.href = `/${nextLang}${currentPath === '/' ? '' : currentPath}${window.location.search}`;
+        }
+      }
     }, 220);
   };
 

@@ -25,13 +25,6 @@ export default function Footer() {
                 <li>{data.email}</li>
                 <li>{data.lineId}</li>
             </ul>
-
-            <div className="social-icons" style={{ marginTop: '20px' }}>
-                <a href="#" className="social-link" title="Facebook"><i className="fab fa-facebook-f"></i></a>
-                <a href="#" className="social-link" title="Instagram"><i className="fab fa-instagram"></i></a>
-                <a href="#" className="social-link" title="Twitter"><i className="fab fa-twitter"></i></a>
-                <a href="#" className="social-link line-icon" title="Line"><i className="fab fa-line"></i></a> 
-            </div>
         </div>
         
         <div>

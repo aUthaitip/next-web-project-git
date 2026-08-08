@@ -6,7 +6,7 @@ export default function AboutClinic() {
   const data = aboutClinicData[lang];
   return (
     <section className="about-clinic">
-      <div className="container" style={{ padding: 0 }}>
+      <div className="container">
         <div className="clinic-info">
           <div className="clinic-image">
             <img src="/assets/4.png" alt={data.aboutImageAlt} />

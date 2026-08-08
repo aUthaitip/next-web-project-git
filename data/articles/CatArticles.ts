@@ -27,7 +27,7 @@ export const catArticlesData: Record<'th' | 'en', CatArticlesData> = {
       { category: "🧬 การดูแลเฉพาะช่วงวัย", title: "อาหารเปียกหรืออาหารเม็ด: อะไรดีกว่ากัน? ไขข้อสงสัยโภชนาการแมว", snippet: "คำถามยอดฮิตที่ไม่มีคำตอบตายตัว! แต่สำหรับแมว ซึ่งเป็นสัตว์ที่กินเนื้อเป็นหลัก (Obligate Carnivore) และมีสัญชาตญาณการดื่มน้ำต่ำ การเลือกอาหารจึงต้องพิจารณาปัจจัยสำคัญ", image: "/assets/cat4.png" },
       { category: "🏥 Pawplan Cat Friendly Space", title: "เราทำให้แมวรู้สึกสบายใจในห้องตรวจได้อย่างไร? (หลักการ Cat Friendly)", snippet: "Pawplan ได้รับการรับรอง Cat Friendly (CF) ในระดับ Gold Certification ซึ่งหมายความว่าเราเข้าใจว่าการมาคลินิกคือประสบการณ์ที่น่ากลัวสำหรับแมว เราจึงปรับปรุงทุกขั้นตอนเพื่อลดความเครียด", image: "/assets/cat5.png" },
     ],
-    staticCategories: ["ทั้งหมด", "🩺 สุขภาพและการป้องกันโรค", "🐈‍⬛ พฤติกรรมและการเลี้ยงดู", "🍲 โภชนาการอาหาร", "🧬 การดูแลเฉพาะช่วงวัย", "🏥 Pawplan Cat Friendly Space", "Cat"]
+    staticCategories: ["ทั้งหมด", "🩺 สุขภาพและการป้องกันโรค", "🐈‍⬛ พฤติกรรมและการเลี้ยงดู", "🍲 โภชนาการอาหาร", "🧬 การดูแลเฉพาะช่วงวัย", "🏥 พื้นที่สำหรับแมวโดยเฉพาะ",]
   },
   en: {
     title: "🐱 Cat Articles",
@@ -41,6 +41,6 @@ export const catArticlesData: Record<'th' | 'en', CatArticlesData> = {
       { category: "🧬 Age-Specific Care", title: "Wet or Dry Food: Which is Better? Cat Nutrition Explained", snippet: "A popular question with no single answer! For cats as obligate carnivores with low thirst instincts, food choice requires careful consideration of key factors.", image: "/assets/cat4.png" },
       { category: "🏥 Pawplan Cat Friendly Space", title: "How We Make Cats Comfortable in the Exam Room (Cat Friendly Principles)", snippet: "Pawplan is Cat Friendly Gold Certified, meaning we understand that clinic visits are scary for cats. We improve every step to reduce stress.", image: "/assets/cat5.png" },
     ],
-    staticCategories: ["All", "🩺 Health & Disease Prevention", "🐈‍⬛ Behavior & Care", "🍲 Nutrition & Diet", "🧬 Age-Specific Care", "🏥 Pawplan Cat Friendly Space", "Cat"]
+    staticCategories: ["All", "🩺 Health & Disease Prevention", "🐈‍⬛ Behavior & Care", "🍲 Nutrition & Diet", "🧬 Age-Specific Care", "🏥 Pawplan Cat Friendly Space",]
   }
 };
