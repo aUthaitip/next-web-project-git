@@ -11,8 +11,8 @@ interface Article {
 }
 
 export default function ArticleCard({ article }: { article: Article }) {
-  const cardContent = (
-    <div className="article-card" style={{ cursor: article.id ? 'pointer' : 'default', height: '100%' }}>
+  return (
+    <div className="article-card">
       <div className="card-image-wrapper">
         {
           (() => {
@@ -39,14 +39,4 @@ export default function ArticleCard({ article }: { article: Article }) {
       </div>
     </div>
   );
-
-  if (article.id) {
-    return (
-      <Link href={`/articles/detail/${article.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-        {cardContent}
-      </Link>
-    );
-  }
-
-  return cardContent;
 }
