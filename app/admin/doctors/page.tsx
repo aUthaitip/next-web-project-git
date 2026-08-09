@@ -116,11 +116,7 @@ export default function DoctorsAdminPage() {
               <div className="stat-value-new">{doctors.length}</div>
               <div className="stat-desc-new">{lang === 'th' ? 'แพทย์ในระบบ' : 'System doctors'}</div>
             </div>
-            <div className="stat-card-new stat-green">
-              <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'พร้อมให้บริการ' : 'Available'}</div><div className="stat-icon-new">✅</div></div>
-              <div className="stat-value-new">{onlineDoctors.length}</div>
-              <div className="stat-desc-new">{lang === 'th' ? 'Online อยู่ขณะนี้' : 'Currently online'}</div>
-            </div>
+
             <div className="stat-card-new stat-orange">
               <div className="stat-top"><div className="stat-label-text">{lang === 'th' ? 'เวลาทำการ' : 'Working Hours'}</div><div className="stat-icon-new">⏰</div></div>
               <div className="stat-value-new">{doctors.length > 0 ? '10/6' : 'N/A'}</div>
@@ -151,9 +147,7 @@ export default function DoctorsAdminPage() {
                   <div className="doctor-card-admin__image">
                     <img src={doc.imageUrl || `https://via.placeholder.com/400x300?text=${encodeURIComponent(doc.name)}`} alt={doc.name} />
                     <div className="doctor-card-admin__image-overlay" />
-                    {(doc.availableDays || []).includes(TODAY) && (
-                      <span className="doctor-card-admin__badge">● Online</span>
-                    )}
+
                   </div>
                   <div className="doctor-card-admin__body">
                     <div className="doctor-card-admin__name">{doc.name}</div>
