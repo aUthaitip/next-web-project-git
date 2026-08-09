@@ -52,7 +52,7 @@ export default function DogArticles() {
     const isEn = lang === 'en';
     return {
       id: String(a.id),
-      category: data.adminCat,
+      category: 'Dog',
       title: (isEn && a.titleEn) ? a.titleEn : a.title,
       snippet: (isEn && a.contentEn) ? a.contentEn : a.content,
       image: a.imageUrl || '/assets/dog1.png',
@@ -60,9 +60,7 @@ export default function DogArticles() {
   });
 
   const allArticles = [...initialArticles, ...mappedApiArticles];
-  const allCategories = apiArticles.length > 0
-    ? [...staticCategories, data.adminCat]
-    : staticCategories;
+  const allCategories = staticCategories;
 
   const filteredArticles = allArticles.filter(article =>
     selectedCategory === data.allCat || article.category === selectedCategory

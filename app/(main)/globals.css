@@ -1395,23 +1395,23 @@ header {
 .dropdown-item.cancel:hover { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
 .dropdown-item.delete:hover { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-.doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
 .doctor-card-admin { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); overflow: hidden; transition: all 0.3s ease; border: 1px solid #e5e7eb; }
 .doctor-card-admin:hover { box-shadow: 0 8px 24px rgba(10, 110, 220, 0.12); transform: translateY(-4px); }
-.doctor-card-admin__image { position: relative; height: 180px; overflow: hidden; background: linear-gradient(135deg, #0a6edc, #0854a8); }
+.doctor-card-admin__image { position: relative; height: 140px; overflow: hidden; background: linear-gradient(135deg, #0a6edc, #0854a8); }
 .doctor-card-admin__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 .doctor-card-admin:hover .doctor-card-admin__image img { transform: scale(1.08); }
 .doctor-card-admin__image-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent); }
-.doctor-card-admin__badge { position: absolute; top: 12px; right: 12px; background: #10b981; color: #fff; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
-.doctor-card-admin__body { padding: 16px 20px; }
-.doctor-card-admin__name { font-weight: 700; color: #0854a8; font-size: 1rem; margin-bottom: 4px; }
-.doctor-card-admin__specialty { color: #6c757d; font-size: 0.875rem; margin-bottom: 10px; }
-.doctor-card-admin__rating { font-size: 0.85rem; color: #f59e0b; margin-bottom: 14px; }
+.doctor-card-admin__badge { position: absolute; top: 8px; right: 8px; background: #10b981; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.doctor-card-admin__body { padding: 12px 14px; }
+.doctor-card-admin__name { font-weight: 700; color: #0854a8; font-size: 0.95rem; margin-bottom: 2px; }
+.doctor-card-admin__specialty { color: #6c757d; font-size: 0.8rem; margin-bottom: 8px; }
+.doctor-card-admin__rating { font-size: 0.8rem; color: #f59e0b; margin-bottom: 10px; }
 .doctor-card-admin__rating span { color: #6c757d; margin-left: 4px; }
-.doctor-card-admin__actions { display: flex; gap: 8px; }
-.doctor-card-admin__btn-edit { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #fcd34d; background: #fef3c7; color: #92400e; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+.doctor-card-admin__actions { display: flex; gap: 6px; }
+.doctor-card-admin__btn-edit { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #fcd34d; background: #fef3c7; color: #92400e; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; text-align: center; }
 .doctor-card-admin__btn-edit:hover { background: #fde68a; }
-.doctor-card-admin__btn-delete { flex: 1; padding: 8px 12px; border-radius: 8px; border: none; background: #dc3545; color: #fff; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+.doctor-card-admin__btn-delete { flex: 1; padding: 6px 8px; border-radius: 6px; border: none; background: #dc3545; color: #fff; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; text-align: center; }
 .doctor-card-admin__btn-delete:hover { background: #c82333; }
 
 .doctors-modal__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }

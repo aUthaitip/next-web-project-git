@@ -23,7 +23,7 @@ export const healthTipsArticlesData: Record<'th' | 'en', HealthTipsArticlesData>
     loading: "กำลังโหลด...",
     noArticles: "ไม่พบข้อมูลบทความในหมวดหมู่",
     allCat: "ทั้งหมด",
-    adminCat: "📝 บทความจาก Admin",
+    adminCat: "📝 บทความ",
     initialArticles: [
       { category: "🦷 สุขภาพช่องปากและฟัน", title: "5 ขั้นตอนง่าย ๆ ในการแปรงฟันสุนัขและแมว", snippet: "โรคปริทันต์ (Periodontal Disease) เป็นภัยเงียบที่พบในสัตว์เลี้ยงกว่า 80% ที่มีอายุ 3 ปีขึ้นไป การแปรงฟันทุกวันคือการป้องกันที่ดีที่สุด แต่ทำอย่างไรให้ง่ายและสัตว์เลี้ยงยอมให้ความร่วมมือ?", image: "/assets/tip1.png" },
       { category: "🦷 สุขภาพช่องปากและฟัน", title: "อาหารและขนมช่วยขัดฟัน: ใช้ได้ผลจริงหรือไม่?", snippet: "ขนมขัดฟัน (Dental Chews) และอาหารสูตรดูแลช่องปาก (Dental Diets) เป็นตัวเลือกยอดนิยม แต่สิ่งเหล่านี้สามารถทดแทนการแปรงฟันได้จริงหรือ? มาฟังคำแนะนำจากสัตวแพทย์ Pawplan", image: "/assets/tip2.png" },
@@ -40,7 +40,7 @@ export const healthTipsArticlesData: Record<'th' | 'en', HealthTipsArticlesData>
     loading: "Loading...",
     noArticles: "No articles found in category",
     allCat: "All",
-    adminCat: "📝 Articles from Admin",
+    adminCat: "📝 Articles",
     initialArticles: [
       { category: "🦷 Oral & Dental Health", title: "5 Easy Steps to Brush Your Dog's or Cat's Teeth", snippet: "Periodontal Disease is a silent threat found in over 80% of pets aged 3 and above. Daily brushing is the best prevention — but how do you make it easy and get your pet to cooperate?", image: "/assets/tip1.png" },
       { category: "🦷 Oral & Dental Health", title: "Dental Chews & Dental Diets: Do They Really Work?", snippet: "Dental Chews and Dental Diets are popular choices, but can they truly replace brushing? Hear from Pawplan veterinarians.", image: "/assets/tip2.png" },
