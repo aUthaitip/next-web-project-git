@@ -57,7 +57,7 @@ export default function DoctorCard({ name, nameEn, role, specialty, expertise, e
           </div>
         )}
         <div className="dr-card__img-gradient" />
-        {isOnline && <span className="dr-card__online-badge">● {isEn ? 'Available' : 'พร้อมให้บริการ'}</span>}
+
         <div className="dr-card__img-name">
           <h3>{displayName}</h3>
           {displayRole && <p>{displayRole}</p>}
