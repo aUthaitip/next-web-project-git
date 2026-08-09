@@ -50,7 +50,7 @@ export default function HealthTipsArticles() {
     const isEn = lang === 'en';
     return {
       id: String(a.id),
-      category: data.adminCat,
+      category: 'Health Tips',
       title: (isEn && a.titleEn) ? a.titleEn : a.title,
       snippet: (isEn && a.contentEn) ? a.contentEn : a.content,
       image: a.imageUrl || '/assets/tip1.png',
@@ -58,9 +58,7 @@ export default function HealthTipsArticles() {
   });
 
   const allArticles = [...initialArticles, ...mappedApiArticles];
-  const allCategories = apiArticles.length > 0
-    ? [...staticCategories, data.adminCat]
-    : staticCategories;
+  const allCategories = staticCategories;
 
   const filteredArticles = allArticles.filter(article =>
     selectedCategory === data.allCat || article.category === selectedCategory

@@ -23,7 +23,7 @@ export const dogArticlesData: Record<'th' | 'en', DogArticlesData> = {
     loading: "กำลังโหลด...",
     noArticles: "ไม่พบข้อมูลบทความในหมวดหมู่",
     allCat: "ทั้งหมด",
-    adminCat: "📝 บทความจาก Admin",
+    adminCat: "📝 บทความ",
     initialArticles: [
       { category: "🐕 สุขภาพและการป้องกันโรค", title: "ภัยเงียบจากพยาธิหนอนหัวใจ: ป้องกันดีกว่ารักษา", snippet: "พยาธิหนอนหัวใจเป็นภัยร้ายที่คร่าชีวิตสุนัขได้ หากไม่ได้รับการป้องกันและรักษาที่ถูกต้อง ทำความเข้าใจอาการและการป้องกันเพื่อปกป้องเพื่อนรักของคุณ", image: "/assets/dog1.png" },
       { category: "🐕 สุขภาพและการป้องกันโรค", title: "วัคซีนจำเป็นสำหรับสุนัข: สิ่งที่เจ้าของมือใหม่ต้องรู้", snippet: "คู่มือฉบับสมบูรณ์สำหรับเจ้าของสุนัขมือใหม่เกี่ยวกับการฉีดวัคซีนที่จำเป็น เพื่อปกป้องลูกสุนัขของคุณจากโรคร้ายแรงต่างๆ", image: "/assets/dog2.png" },
@@ -40,7 +40,7 @@ export const dogArticlesData: Record<'th' | 'en', DogArticlesData> = {
     loading: "Loading...",
     noArticles: "No articles found in category",
     allCat: "All",
-    adminCat: "📝 Articles from Admin",
+    adminCat: "📝 Articles",
     initialArticles: [
       { category: "🐕 Health & Disease Prevention", title: "The Silent Threat of Heartworm: Prevention is Better than Cure", snippet: "Heartworm is a deadly threat that can kill dogs if not properly prevented and treated. Understand the symptoms and prevention to protect your beloved companion.", image: "/assets/dog1.png" },
       { category: "🐕 Health & Disease Prevention", title: "Essential Vaccines for Dogs: What New Owners Must Know", snippet: "A complete guide for new dog owners about essential vaccinations to protect your puppy from serious diseases.", image: "/assets/dog2.png" },
