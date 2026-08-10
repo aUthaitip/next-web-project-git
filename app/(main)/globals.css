@@ -111,6 +111,10 @@ h1, h2, h3 {
 
 svg { stroke: var(--icon-color-main); }
 
+.group:hover svg.lucide,
+[class*="group-hover:text-"] {
+  stroke: currentColor;
+}
 /* Animation Keyframes */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-30px); }
@@ -408,7 +412,7 @@ header {
 .clinic-text p { font-size: 1.2rem; line-height: 1.8; margin-bottom: 25px; color: var(--text-dark); }
 .clinic-text ul { list-style: none; padding: 0; margin-bottom: 30px; }
 .clinic-text ul li { font-size: 1.2rem; padding-left: 35px; position: relative; margin-bottom: 15px; color: var(--text-dark); }
-.clinic-text ul li::before { content: '✅'; position: absolute; left: 0; font-size: 1.5rem; top: 0; }
+.clinic-text ul li::before { content: 'âœ…'; position: absolute; left: 0; font-size: 1.5rem; top: 0; }
 .clinic-image { max-width: 400px; flex-shrink: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); border: 8px solid var(--bg-white); transition: all 0.4s ease; }
 .clinic-image img { width: 100%; height: auto; display: block; transition: transform 0.4s ease; }
 
@@ -445,13 +449,13 @@ header {
 }
 
 /*======================================================*/
-/* 6. DOCTOR PROFILE CARDS — REDESIGN                   */
+/* 6. DOCTOR PROFILE CARDS â€” REDESIGN                   */
 /*======================================================*/
 
 /* Page wrapper */
 .dr-page { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
 
-/* ── Hero ── */
+/* â”€â”€ Hero â”€â”€ */
 .dr-hero {
   text-align: center;
   padding: 64px 24px 48px;
@@ -498,7 +502,7 @@ header {
   border-color: #0d9488;
   box-shadow: 0 0 0 3px rgba(13,148,136,0.12), 0 2px 12px rgba(0,0,0,0.06);
 }
-/* ── Grid ── */
+/* â”€â”€ Grid â”€â”€ */
 .dr-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -506,7 +510,7 @@ header {
   margin-top: 48px;
 }
 
-/* ── Card ── */
+/* â”€â”€ Card â”€â”€ */
 .dr-card {
   background: #fff;
   border-radius: 20px;
@@ -862,7 +866,7 @@ header {
 .product-tag.new { background-color: var(--main-blue); }
 
 /* QR Design Expansion Elements */
-/* QR Design Expansion Elements — Pawplan Shop Pass */
+/* QR Design Expansion Elements â€” Pawplan Shop Pass */
  
 .shop-page { position: relative; overflow: hidden; padding: 90px 20px 110px;}
 .shop-page__container { max-width: 640px; position: relative; z-index: 1; }
@@ -896,7 +900,6 @@ header {
 .shop-qr-card__divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; color: #d1d5db; font-size: 0.85rem; }
 .shop-qr-card__divider::before, .shop-qr-card__divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
 .shop-qr-card__divider span { color: #9ca3af; white-space: nowrap; font-weight: 500; }
-/* ---- features, using the same icon-chip pattern as .pc-icon-box / .doctor-avatar ---- */
 .shop-features { display: flex; flex-direction: column; gap: 10px; text-align: left; }
 .shop-feature { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f9fafb; border-radius: 14px; font-size: 0.95rem; color: var(--text-dark); font-weight: 500; transition: background 0.2s ease, transform 0.2s ease; }
 .shop-feature:hover { background: #f0fdfa; transform: translateX(2px); }
@@ -1065,7 +1068,7 @@ header {
 .text-content h4 { font-size: 1.3rem; color: #333; margin-top: 20px; margin-bottom: 10px; }
 .text-content ul { list-style-type: none; padding-left: 0; margin-bottom: 20px; }
 .text-content ul li { margin-bottom: 8px; position: relative; padding-left: 1.75rem; }
-.text-content ul li::before { content: '🐾'; position: absolute; left: 0; top: 0; color: #007bff; font-weight: bold; }
+.text-content ul li::before { content: 'ðŸ¾'; position: absolute; left: 0; top: 0; color: #007bff; font-weight: bold; }
 .text-content ul li a { text-decoration: none; color: #0056b3; font-weight: 400; }
 .text-content ul li a:hover { color: #007bff; text-decoration: underline; }
 
@@ -1612,7 +1615,7 @@ footer ul a:hover { color: var(--main-blue); opacity: 1; }
 .pc-card { background: white; padding: 40px 25px; border-radius: 24px; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; }
 .pc-card:hover { transform: translateY(-8px); border-color: #2dd4bf; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
 .pc-icon-box { width: 64px; height: 64px; background: #f0fdfa; color: #0d9488; display: flex; align-items: center; justify-content: center; border-radius: 16px; margin-bottom: 20px; transition: all 0.3s ease; }
-.pc-card:hover .pc-icon-box { background: #0d9488; color: white; transform: scale(1.1); }
+.pc-card:hover .pc-icon-box { background: #f0fdfa; color: white; transform: scale(1.1); }
 .pc-card h3 { font-size: 1.25rem; color: #1e293b; margin-bottom: 12px; font-weight: 700; }
 .pc-card p { font-size: 0.95rem; color: #64748b; line-height: 1.6; }
 .pc-footer { margin-top: 60px; padding: 50px; background: #f8fafc; border-radius: 30px; }
@@ -1629,7 +1632,7 @@ footer ul a:hover { color: var(--main-blue); opacity: 1; }
     .appointments-table thead th, .appointments-table tbody td { padding: 12px 14px; font-size: 0.9rem; }
 }
 
-/* ── Mobile Overlay Menu ── */
+/* â”€â”€ Mobile Overlay Menu â”€â”€ */
 .hdr-hamburger {
   display: none;
   background: none;
@@ -2487,4 +2490,892 @@ footer ul a:hover { color: var(--main-blue); opacity: 1; }
   .footer-bottom p {
     font-size: 0.8rem !important;
   }
+}
+
+/*======================================================*/
+/* APPOINTMENT PAGE — CLEAN LAYOUT OVERRIDES             */
+/* Keeps the existing Pawplan visual language            */
+/*======================================================*/
+.appointment-page-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 56px 0 72px;
+    background:
+        radial-gradient(circle at 8% 18%, rgba(186, 230, 253, 0.42), transparent 26%),
+        radial-gradient(circle at 92% 72%, rgba(204, 251, 241, 0.38), transparent 28%),
+        linear-gradient(180deg, #f7fcff 0%, #eef9fc 100%);
+}
+
+.appointment-container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.appointment-hero {
+    width: min(760px, 100%);
+    margin: 0 auto 48px;
+    text-align: center;
+}
+
+.appointment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 15px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(52, 173, 186, 0.18);
+    border-radius: 999px;
+    background: rgba(224, 242, 254, 0.82);
+    color: var(--accent-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(36, 143, 155, 0.08);
+}
+
+.appointment-main-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--main-blue), var(--accent-blue));
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(52, 173, 186, 0.22);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.appointment-main-icon:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 16px 34px rgba(52, 173, 186, 0.28);
+}
+
+.appointment-title {
+    margin: 0;
+    color: #1e293b !important;
+    font-size: clamp(2rem, 4vw, 3.35rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.04em;
+}
+
+.appointment-title-line {
+    width: 72px;
+    height: 4px;
+    margin: 18px auto;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--main-blue), var(--accent-blue));
+}
+
+.appointment-subtitle {
+    width: min(680px, 100%);
+    margin: 0 auto;
+    color: #64748b !important;
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+}
+
+.appointment-steps-wrap {
+    position: relative;
+    margin-bottom: 52px;
+}
+
+.appointment-steps-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.appointment-connector {
+    position: absolute;
+    z-index: 1;
+    top: 45px;
+    left: 11%;
+    right: 11%;
+    height: 2px;
+    background: linear-gradient(90deg, #dff5f8, #b8e8ee, #dff5f8);
+}
+
+.appointment-step-card {
+    position: relative;
+    min-width: 0;
+    min-height: 214px;
+    padding: 28px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    border: 1px solid rgba(186, 230, 253, 0.85);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 24px rgba(36, 143, 155, 0.08);
+    backdrop-filter: blur(10px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.appointment-step-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(52, 173, 186, 0.5);
+    box-shadow: 0 16px 32px rgba(36, 143, 155, 0.14);
+}
+
+.appointment-step-number {
+    position: absolute;
+    top: 5px;
+    right: 13px;
+    z-index: 0;
+    color: rgba(148, 163, 184, 0.14);
+    font-size: 4.5rem;
+    font-weight: 900;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+}
+
+.appointment-step-icon {
+    position: relative;
+    z-index: 1;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border-radius: 18px;
+    background: #effbfc;
+    box-shadow: inset 0 1px 2px rgba(36, 143, 155, 0.06);
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.appointment-step-card:hover .appointment-step-icon {
+    transform: rotate(4deg) translateY(-2px);
+    background: linear-gradient(135deg, var(--main-blue), var(--accent-blue));
+}
+
+.appointment-step-title {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 8px !important;
+    color: #1e293b !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+}
+
+.appointment-step-card:hover .appointment-step-title {
+    color: var(--accent-blue) !important;
+}
+
+.appointment-step-desc {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #64748b !important;
+    font-size: 0.83rem !important;
+    line-height: 1.65 !important;
+}
+
+.appointment-info-card {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid rgba(186, 230, 253, 0.9);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 12px 32px rgba(36, 143, 155, 0.09);
+    backdrop-filter: blur(12px);
+}
+
+.appointment-accent-line {
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--main-blue), var(--accent-blue), #1e3a8a);
+}
+
+.appointment-info-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+    gap: 32px;
+    align-items: stretch;
+    padding: 30px;
+}
+
+.appointment-notes {
+    min-width: 0;
+    padding: 4px 8px 4px 2px;
+}
+
+.appointment-notes-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.appointment-notes-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff8e7;
+    color: #d89a18;
+}
+
+.appointment-notes-title {
+    margin: 0 !important;
+    color: #1e293b !important;
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+}
+
+.appointment-notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.appointment-note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 0;
+    color: #64748b;
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.appointment-note-item + .appointment-note-item {
+    border-top: 1px dashed rgba(52, 173, 186, 0.25);
+}
+
+.appointment-note-check {
+    width: 21px;
+    height: 21px;
+    margin-top: 2px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #effbfc;
+    color: var(--main-blue);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.appointment-cta-panel {
+    min-width: 0;
+    min-height: 100%;
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid rgba(186, 230, 253, 0.65);
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(239, 251, 252, 0.92), rgba(240, 249, 255, 0.72));
+}
+
+.appointment-cta-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(52, 173, 186, 0.1);
+    color: var(--main-blue);
+}
+
+.appointment-cta-title {
+    margin: 0 0 7px !important;
+    color: #334155 !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+}
+
+.appointment-cta-desc {
+    max-width: 270px;
+    margin: 0 0 18px;
+    color: #64748b;
+    font-size: 0.78rem;
+    line-height: 1.6;
+}
+
+.appointment-cta-button {
+    width: 100%;
+    min-height: 52px;
+    padding: 13px 22px !important;
+    gap: 9px;
+    font-size: 1rem !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+.appointment-cta-footnote {
+    margin-top: 9px;
+    color: #94a3b8;
+    font-size: 0.65rem;
+    user-select: none;
+}
+
+@media (max-width: 1024px) {
+    .appointment-container {
+        width: min(920px, calc(100% - 32px));
+    }
+
+    .appointment-steps-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .appointment-connector {
+        display: none;
+    }
+
+    .appointment-info-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .appointment-cta-panel {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .appointment-page-wrapper {
+        padding: 38px 0 52px;
+    }
+
+    .appointment-container {
+        width: min(100% - 24px, 560px);
+    }
+
+    .appointment-hero {
+        margin-bottom: 34px;
+    }
+
+    .appointment-main-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+        border-radius: 17px;
+    }
+
+    .appointment-title {
+        font-size: 2rem !important;
+        letter-spacing: -0.025em;
+    }
+
+    .appointment-subtitle {
+        font-size: 0.9rem !important;
+        line-height: 1.7 !important;
+    }
+
+    .appointment-steps-wrap {
+        margin-bottom: 34px;
+    }
+
+    .appointment-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .appointment-step-card {
+        min-height: 0;
+        padding: 22px 20px;
+    }
+
+    .appointment-step-icon {
+        width: 52px;
+        height: 52px;
+        margin-bottom: 14px;
+    }
+
+    .appointment-info-grid {
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .appointment-notes {
+        padding: 0;
+    }
+
+    .appointment-notes-title {
+        font-size: 1.1rem !important;
+    }
+
+    .appointment-note-item {
+        font-size: 0.84rem;
+    }
+
+    .appointment-cta-panel {
+        padding: 22px 18px;
+    }
+  }
+
+/* =========================================================
+   PAWPLAN PET CARE â€” REDESIGNED LAYOUT
+   ========================================================= */
+
+.petcare-page {
+    --petcare-teal: #34adba;
+    --petcare-teal-dark: #238f9b;
+    --petcare-mint: #eefbf9;
+    --petcare-sky: #e0f2fe;
+    --petcare-text: #1e293b;
+    --petcare-muted: #64748b;
+    --petcare-border: rgba(52, 173, 186, 0.16);
+
+    position: relative;
+    overflow: hidden;
+    padding: 58px 20px 72px;
+    background:
+        radial-gradient(circle at 8% 8%, rgba(52, 173, 186, 0.08), transparent 26%),
+        radial-gradient(circle at 92% 78%, rgba(125, 211, 252, 0.18), transparent 30%),
+        var(--petcare-sky);
+}
+
+.petcare-page::before,
+.petcare-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.petcare-page::before {
+    width: 280px;
+    height: 280px;
+    top: -150px;
+    right: -80px;
+    background: rgba(52, 173, 186, 0.08);
+}
+
+.petcare-page::after {
+    width: 220px;
+    height: 220px;
+    bottom: -120px;
+    left: -80px;
+    background: rgba(125, 211, 252, 0.13);
+}
+
+.petcare-page .petcare-container {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1210px);
+    margin-inline: auto;
+}
+
+/* -------------------------
+   Header
+   ------------------------- */
+
+.petcare-header {
+    max-width: 900px;
+    margin: 0 auto 42px;
+    text-align: center;
+    background: 0;
+    box-shadow: none;
+}
+
+.petcare-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 14px 7px 8px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(52, 173, 186, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.62);
+    color: var(--petcare-teal-dark);
+    font-size: 0.86rem;
+    font-weight: 700;
+
+}
+
+.petcare-eyebrow__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(52, 173, 186, 0.12);
+    color: var(--petcare-teal);
+}
+
+.petcare-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.petcare-title-line {
+    width: 72px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(52, 173, 186, 0.45)
+    );
+}
+
+.petcare-title-line:last-child {
+    background: linear-gradient(
+        90deg,
+        rgba(52, 173, 186, 0.45),
+        transparent
+    );
+}
+
+.petcare-title {
+    margin: 0;
+    color: var(--petcare-teal-dark);
+    font-size: clamp(2.35rem, 4vw, 3.5rem);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+}
+
+.petcare-intro {
+    max-width: 820px;
+    margin: 18px auto 0;
+    color: #475569;
+    font-size: clamp(0.98rem, 1.5vw, 1.08rem);
+    line-height: 1.8;
+}
+
+/* -------------------------
+   Service Cards
+   ------------------------- */
+
+.petcare-service-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    margin: 0;
+}
+
+.petcare-service-card {
+    position: relative;
+    min-height: 315px;
+    overflow: hidden;
+    align-items: flex-start;
+    padding: 30px 26px 28px;
+    border: 1px solid var(--petcare-border);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 30px rgba(30, 41, 59, 0.045);
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease;
+}
+
+.petcare-service-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(52, 173, 186, 0.34);
+    box-shadow: 0 20px 40px rgba(30, 41, 59, 0.09);
+}
+
+.petcare-card-number {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    color: rgba(52, 173, 186, 0.16);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.petcare-icon-box {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 23px;
+    border-radius: 18px;
+    background: var(--petcare-mint);
+    color: var(--petcare-teal);
+}
+
+.petcare-service-card:hover .petcare-icon-box {
+    background: var(--petcare-teal);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.petcare-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.petcare-service-card h2 {
+    margin: 0 0 11px;
+    color: var(--petcare-text);
+    font-size: 1.24rem;
+    line-height: 1.35;
+    font-weight: 800;
+}
+
+.petcare-service-card p {
+    margin: 0;
+    color: var(--petcare-muted);
+    font-size: 0.94rem;
+    line-height: 1.75;
+}
+
+.petcare-card-accent {
+    width: 34px;
+    height: 3px;
+    margin-top: 22px;
+    border-radius: 999px;
+    background: rgba(52, 173, 186, 0.28);
+    transition: width 0.28s ease, background 0.28s ease;
+}
+
+.petcare-service-card:hover .petcare-card-accent {
+    width: 62px;
+    background: var(--petcare-teal);
+}
+
+/* -------------------------
+   CTA / Why Pawplan
+   ------------------------- */
+
+.petcare-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+    gap: 36px;
+    align-items: center;
+    margin-top: 34px;
+    padding: 34px 38px;
+    border: 1px solid rgba(52, 173, 186, 0.12);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 12px 35px rgba(30, 41, 59, 0.045);
+}
+
+.petcare-cta__content {
+    min-width: 0;
+    text-align: center;
+}
+
+.petcare-cta__badge {
+    display: inline-flex;
+    gap: 7px;
+    margin-bottom: 10px;
+    color: var(--petcare-teal-dark);
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.petcare-cta__content h2 {
+    margin: 0 0 7px;
+    color: var(--petcare-text);
+    font-size: 1.38rem;
+    line-height: 1.4;
+    font-weight: 800;
+}
+
+.petcare-cta__content p {
+    max-width: 700px;
+    margin: 10px 0 0;
+    text-align: center;
+    color: var(--petcare-muted);
+    font-size: 0.96rem;
+    line-height: 1.7;
+}
+
+.petcare-cta__action {
+    display: flex;
+    min-height: 168px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border: 1px solid rgba(52, 173, 186, 0.12);
+    border-radius: 22px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(238, 251, 249, 0.96),
+            rgba(224, 242, 254, 0.62)
+        );
+    text-align: center;
+}
+
+.petcare-cta__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 13px;
+    border-radius: 14px;
+    background: rgba(52, 173, 186, 0.13);
+    color: var(--petcare-teal);
+}
+
+.petcare-cta-btn {
+    justify-content: center;
+    min-width: 210px;
+    margin-top: 0;
+    padding: 13px 22px;
+    border-radius: 14px;
+    background: #6eb093;
+    box-shadow: 0 8px 18px rgba(110, 176, 147, 0.18);
+}
+
+.petcare-cta-btn:hover {
+    background: #5fa583;
+    box-shadow: 0 12px 24px rgba(95, 165, 131, 0.25);
+    transform: translateY(-2px);
+}
+
+.petcare-cta__hint {
+    margin-top: 9px;
+    color: #94a3b8;
+    font-size: 0.73rem;
+}
+
+/* -------------------------
+   Responsive
+   ------------------------- */
+
+@media (max-width: 1050px) {
+    .petcare-service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .petcare-service-card {
+        min-height: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .petcare-page {
+        padding: 44px 16px 58px;
+    }
+
+    .petcare-header {
+        margin-bottom: 30px;
+    }
+
+    .petcare-title-row {
+        gap: 10px;
+    }
+
+    .petcare-title-line {
+        width: 34px;
+    }
+
+    .petcare-title {
+        font-size: 2.15rem;
+    }
+
+    .petcare-intro {
+        font-size: 0.92rem;
+        line-height: 1.7;
+    }
+
+    .petcare-service-grid {
+        gap: 14px;
+    }
+
+    .petcare-service-card {
+        min-height: 265px;
+        padding: 25px 21px;
+        border-radius: 22px;
+    }
+
+    .petcare-service-card h2 {
+        font-size: 1.1rem;
+    }
+
+    .petcare-service-card p {
+        font-size: 0.9rem;
+    }
+
+    .petcare-cta {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 26px 22px;
+        border-radius: 24px;
+    }
+
+    .petcare-cta__action {
+        min-height: auto;
+        padding: 22px;
+    }
+}
+
+@media (max-width: 520px) {
+    .petcare-page {
+        padding: 34px 14px 48px;
+    }
+
+    .petcare-eyebrow {
+        margin-bottom: 14px;
+        font-size: 0.78rem;
+    }
+
+    .petcare-title-row {
+        gap: 0;
+    }
+
+    .petcare-title-line {
+        display: none;
+    }
+
+    .petcare-title {
+        font-size: 2rem;
+    }
+
+    .petcare-intro {
+        margin-top: 12px;
+    }
+
+    .petcare-service-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .petcare-service-card {
+        min-height: auto;
+        padding: 24px;
+    }
+
+    .petcare-icon-box {
+        width: 58px;
+        height: 58px;
+    }
+
+    .petcare-cta__content h2 {
+        font-size: 1.2rem;
+    }
+
+    .petcare-cta__content p {
+        font-size: 0.9rem;
+    }
+
+    .petcare-cta-btn {
+        width: 100%;
+        min-width: 0;
+    }
 }
