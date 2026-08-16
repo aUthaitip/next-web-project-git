@@ -19,6 +19,7 @@ model User {
   createdAt    DateTime      @default(now())
   appointments Appointment[]
   notifications Notification[]
+  pets         Pet[]
 }
 model Notification {
   id        Int      @id @default(autoincrement())
@@ -48,6 +49,21 @@ model Appointment {
   user           User?     @relation(fields: [userId], references: [id])
   owner          String?
   doctorName     String?
+  petId          Int?
+  pet            Pet?      @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model Pet {
+  id           Int           @id @default(autoincrement())
+  name         String
+  type         String
+  breed        String?
+  age          Int?
+  ownerId      Int
+  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Doctor {
@@ -102,3 +118,4 @@ model ShopAdvertisement {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
