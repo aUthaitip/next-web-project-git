@@ -160,7 +160,6 @@ export default function DoctorList() {
     <div className="dr-page">
       {/* Hero */}
       <div className="dr-hero">
-        <div className="dr-hero__badge">ทีมสัตวแพทย์</div>
         <h1 className="dr-hero__title">{data.title}</h1>
         <p className="dr-hero__sub">{data.subtitle}</p>
 
