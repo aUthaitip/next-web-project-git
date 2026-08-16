@@ -78,7 +78,7 @@ export async function POST(req: Request) {
           select: { lineUserId: true }
         });
         if (user?.lineUserId) {
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').trim();
           const lineFlexMessage = getLineFlexTemplateForAppointment(appointment, siteUrl);
           await sendLinePushMessage(user.lineUserId, [lineFlexMessage]);
         }
