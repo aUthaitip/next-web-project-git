@@ -412,7 +412,7 @@ header {
 .clinic-text p { font-size: 1.2rem; line-height: 1.8; margin-bottom: 25px; color: var(--text-dark); }
 .clinic-text ul { list-style: none; padding: 0; margin-bottom: 30px; }
 .clinic-text ul li { font-size: 1.2rem; padding-left: 35px; position: relative; margin-bottom: 15px; color: var(--text-dark); }
-.clinic-text ul li::before { content: 'âœ…'; position: absolute; left: 0; font-size: 1.5rem; top: 0; }
+.clinic-text ul li::before { content: '\2705'; position: absolute; left: 0; font-size: 1.5rem; top: 0; }
 .clinic-image { max-width: 400px; flex-shrink: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); border: 8px solid var(--bg-white); transition: all 0.4s ease; }
 .clinic-image img { width: 100%; height: auto; display: block; transition: transform 0.4s ease; }
 
