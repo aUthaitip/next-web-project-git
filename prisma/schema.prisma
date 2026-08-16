@@ -47,6 +47,7 @@ model Appointment {
   userId         Int?
   user           User?     @relation(fields: [userId], references: [id])
   owner          String?
+  doctorName     String?
 }
 
 model Doctor {

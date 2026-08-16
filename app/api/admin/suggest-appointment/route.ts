@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId, patient, owner, phone, petName, petType, service, date, time, notes } = body;
+    const { userId, patient, owner, phone, petName, petType, service, date, time, notes, doctorName } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
@@ -17,15 +17,16 @@ export async function POST(req: NextRequest) {
     const appointment = await prisma.appointment.create({
       data: {
         userId,
-        patient,
-        owner,
-        phone,
-        petName,
-        petType,
-        service,
-        date,
-        time,
+        patient: patient || owner || 'คนไข้ทั่วไป',
+        owner: owner || patient || 'คนไข้ทั่วไป',
+        phone: phone || '-',
+        petName: petName || 'สัตว์เลี้ยง',
+        petType: petType || 'ไม่ระบุ',
+        service: service || 'ตรวจรักษา',
+        date: date || '',
+        time: time || '09:00',
         notes: notes || 'นัดหมายครั้งต่อไปโดยแพทย์',
+        doctorName: doctorName || null,
         status: 'suggested',
       },
     });
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     await prisma.notification.create({
       data: {
         userId,
-        message: `คุณมีนัดหมายใหม่: ${service} สำหรับน้อง ${petName} วันที่ ${date} เวลา ${time} กรุณายืนยันการนัดหมาย`,
+        message: `คุณมีนัดหมายใหม่: ${service}${doctorName ? ` กับ ${doctorName}` : ''} สำหรับน้อง ${petName} วันที่ ${date} เวลา ${time} กรุณายืนยันการนัดหมาย`,
       },
     });
 
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (user?.lineUserId) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').trim();
         const suggestFlex = getLineFlexTemplateForSuggestedAppointment(appointment, siteUrl);
         await sendLinePushMessage(user.lineUserId, [suggestFlex]);
       }

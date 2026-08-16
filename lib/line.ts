@@ -492,7 +492,23 @@ export function getLineFlexTemplateForSuggestedAppointment(appointment: any, sit
                   { type: 'text', text: 'วัน/เวลา', color: '#6b7280', size: 'sm', flex: 2 },
                   { type: 'text', text: `${appointment.date} @ ${appointment.time} น.`, color: '#374151', size: 'sm', flex: 4 }
                 ],
-              }
+              },
+              ...(appointment.doctorName ? [{
+                type: 'box',
+                layout: 'horizontal',
+                contents: [
+                  { type: 'text', text: 'พบแพทย์', color: '#6b7280', size: 'sm', flex: 2 },
+                  { type: 'text', text: appointment.doctorName, color: '#374151', size: 'sm', flex: 4 }
+                ],
+              }] : []),
+              ...(appointment.notes ? [{
+                type: 'box',
+                layout: 'horizontal',
+                contents: [
+                  { type: 'text', text: 'หมายเหตุ', color: '#6b7280', size: 'sm', flex: 2 },
+                  { type: 'text', text: appointment.notes, color: '#374151', size: 'sm', flex: 4 }
+                ],
+              }] : [])
             ],
           }
         ],

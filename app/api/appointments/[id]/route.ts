@@ -47,7 +47,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         console.log('Fetched user. lineUserId:', user?.lineUserId);
 
         if (user?.lineUserId) {
-          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').trim();
           console.log('Sending LINE message. status:', body.status, 'siteUrl:', siteUrl);
 
           if (body.status === 'arrived') {

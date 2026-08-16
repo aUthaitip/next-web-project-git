@@ -7,6 +7,7 @@ interface Appointment {
   time: string;
   status: string;
   notes?: string;
+  doctorName?: string;
   owner: string;
   phone: string;
 }
@@ -63,6 +64,7 @@ export default function AppointmentCard({
           </div>
           <div style={{ color: '#6b7280', fontSize: 14, display: 'flex', flexWrap: 'wrap', gap: '4px 16px' }}>
             <span>🏥 {appt.service}</span>
+            {appt.doctorName && <span>👩‍⚕️ {appt.doctorName}</span>}
             <span>📅 {appt.date}</span>
             <span>🕐 {appt.time}</span>
           </div>

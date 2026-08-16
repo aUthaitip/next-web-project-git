@@ -17,6 +17,7 @@ interface Appointment {
   petName: string;
   petType: string;
   notes?: string;
+  doctorName?: string;
   status?: string;
   createdAt?: string;
   userId?: number;
@@ -48,7 +49,8 @@ export default function AppointmentPage() {
   });
 
   const [suggestAppt, setSuggestAppt] = useState<Appointment | null>(null);
-  const [suggestForm, setSuggestForm] = useState({ date: '', time: '09:00', service: '' });
+  const [suggestForm, setSuggestForm] = useState({ date: '', time: '09:00', service: '', doctorName: '', notes: '' });
+  const [doctors, setDoctors] = useState<any[]>([]);
 
   // ✅ ดึงข้อมูลจาก API แทน localStorage
   const fetchAppointments = async () => {
@@ -64,7 +66,20 @@ export default function AppointmentPage() {
     }
   };
 
-  useEffect(() => { fetchAppointments(); }, []);
+  const fetchDoctors = async () => {
+    try {
+      const res = await fetch('/api/doctors');
+      const data = await res.json();
+      setDoctors(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to load doctors:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAppointments();
+    fetchDoctors();
+  }, []);
 
   useEffect(() => {
     let filtered = appointments;
@@ -153,15 +168,21 @@ export default function AppointmentPage() {
           service: suggestForm.service,
           date: suggestForm.date,
           time: suggestForm.time,
+          doctorName: suggestForm.doctorName,
+          notes: suggestForm.notes,
         }),
       });
       if (res.ok) {
         await fetchAppointments();
         setSuggestAppt(null);
-        setSuggestForm({ date: '', time: '09:00', service: '' });
+        setSuggestForm({ date: '', time: '09:00', service: '', doctorName: '', notes: '' });
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(`เกิดข้อผิดพลาด: ${errData.error || 'ไม่สามารถเสนอวันนัดหมายได้'}`);
       }
     } catch (error) {
       console.error('Suggest error:', error);
+      alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
     }
   };
 
@@ -261,7 +282,21 @@ export default function AppointmentPage() {
                           {getStatusLabel(apt.status)}
                         </span>
                       </td>
-                      <td className="reason-cell">{apt.service || '-'}</td>
+                      <td className="reason-cell">
+                        <div>
+                          <div>{apt.service || '-'}</div>
+                          {apt.doctorName && (
+                            <div style={{ fontSize: '11px', color: '#0d9488', marginTop: '2px', fontWeight: 'bold' }}>
+                              👩‍⚕️ แพทย์: {apt.doctorName}
+                            </div>
+                          )}
+                          {apt.notes && (
+                            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', fontStyle: 'italic' }}>
+                              📝 {apt.notes}
+                            </div>
+                          )}
+                        </div>
+                      </td>
                       <td className="actions-cell">
                         <div className="actions-dropdown-container">
                           <button className="actions-btn" onClick={() => setActiveMenu(activeMenu === apt.id ? null : apt.id)}>⋮</button>
@@ -313,6 +348,7 @@ export default function AppointmentPage() {
         setSuggestForm={setSuggestForm}
         handleSuggestAppointment={handleSuggestAppointment}
         lang={lang}
+        doctors={doctors}
       />
     </div>
   );
