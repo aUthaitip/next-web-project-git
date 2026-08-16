@@ -453,6 +453,7 @@ header {
 /*======================================================*/
 
 /* Page wrapper */
+.doctors-page { padding-top: 30px !important; }
 .dr-page { max-width: 1200px; margin: 0 auto; padding: 0 24px 80px; }
 
 /* â”€â”€ Hero â”€â”€ */
@@ -460,15 +461,7 @@ header {
   text-align: center;
   padding: 64px 24px 48px;
 }
-.dr-hero__badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, #e0f2fe, #f0fdf4);
-  color: #0d9488; font-size: 13px; font-weight: 700;
-  padding: 6px 18px; border-radius: 999px;
-  margin-bottom: 20px;
-  border: 1px solid #bae6fd;
-  letter-spacing: 0.5px;
-}
+
 .dr-hero__title {
   font-size: clamp(1.75rem, 4vw, 3rem);
   font-weight: 800;
