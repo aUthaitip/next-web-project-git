@@ -1,0 +1,4 @@
+# The standalone Fiber server is deployed separately on Render.
+/api/
+/render.yaml
+/.local/

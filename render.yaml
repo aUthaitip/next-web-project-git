@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pawplan-api
+    runtime: go
+    plan: free
+    branch: dev
+    rootDir: api
+    buildCommand: go build -o server ./cmd/server && go build -o migrate ./cmd/migrate
+    startCommand: ./migrate && ./server
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: API_ADDR
+        value: 0.0.0.0:10000
+      - key: APP_ENV
+        value: production
+      - key: COOKIE_SAME_SITE
+        value: lax
