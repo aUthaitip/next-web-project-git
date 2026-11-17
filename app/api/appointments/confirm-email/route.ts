@@ -1,23 +1,21 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { sessionOptions, SessionData } from '@/backend/session';
 import { sendAppointmentEmail } from '@/backend/email/email';
+import { getMemberUser } from '@/backend/member-session';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
-  const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-  if (!session.isLoggedIn || !session.userEmail) {
-    return NextResponse.json({ ok: false });
+  const user = await getMemberUser();
+  if (!user) {
+    return NextResponse.json({ ok: false }, { status: 401 });
   }
 
   const { petName, service, date, time } = await req.json();
 
   try {
     await sendAppointmentEmail({
-      to: session.userEmail,
-      userName: session.userName!,
+      to: user.email,
+      userName: user.name,
       appointment: { petName, service, date, time },
       type: 'confirmation',
     });

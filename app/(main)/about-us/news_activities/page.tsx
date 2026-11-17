@@ -1,6 +1,6 @@
 'use client';
 
-import NewsActivitiesContent from '@/components/about-us/NewsActivitiesContent';
+import NewsActivitiesContent from '@/features/about/components/NewsActivitiesContent';
 
 export default function NewsActivitiesPage() {
   return (

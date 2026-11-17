@@ -1,6 +1,6 @@
 'use client';
 
-import DoctorList from '@/components/doctors/DoctorList';
+import DoctorList from '@/features/doctors/components/DoctorList';
 
 export default function DoctorsPage() {
   return (

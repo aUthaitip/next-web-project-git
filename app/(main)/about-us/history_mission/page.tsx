@@ -1,6 +1,6 @@
 'use client';
 
-import HistoryMissionContent from '@/components/about-us/HistoryMissionContent';
+import HistoryMissionContent from '@/features/about/components/HistoryMissionContent';
 
 export default function HistoryMissionPage() {
   return (

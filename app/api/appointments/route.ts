@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
 import prisma from '@/backend/prisma';
-import { sessionOptions, SessionData } from '@/backend/session';
-import { sendLinePushMessage, getLineFlexTemplateForAppointment } from '@/lib/line';
 
 export const runtime = 'nodejs';
 
@@ -50,9 +46,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Get current user session to link appointment if logged in
-    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-    const userId = session.isLoggedIn ? session.userId : null;
+    // This endpoint is retained for the existing admin's walk-in bookings.
 
     const appointment = await prisma.appointment.create({
       data: {
@@ -66,26 +60,9 @@ export async function POST(req: Request) {
         petType,
         notes: notes || '',
         status: 'pending',
-        userId,
+        userId: null,
       },
     });
-
-    // Send LINE Push message if user is connected
-    if (userId) {
-      try {
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-          select: { lineUserId: true }
-        });
-        if (user?.lineUserId) {
-          const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').trim();
-          const lineFlexMessage = getLineFlexTemplateForAppointment(appointment, siteUrl);
-          await sendLinePushMessage(user.lineUserId, [lineFlexMessage]);
-        }
-      } catch (lineErr) {
-        console.error('Failed to send LINE notification for booking:', lineErr);
-      }
-    }
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error) {

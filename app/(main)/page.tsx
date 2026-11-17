@@ -1,13 +1,13 @@
 'use client';
 
-import Hero from '@/components/home/Hero';
-import SpecializedFeatures from '@/components/home/SpecializedFeatures';
-import MedicalServices from '@/components/home/MedicalServices';
-import AboutClinic from '@/components/home/AboutClinic';
-import QuickCta from '@/components/home/QuickCta';
-import LocationSection from '@/components/home/LocationSection';
-import FaqSection from '@/components/home/FaqSection';
-import ContactForm from '@/components/home/ContactForm';
+import Hero from '@/features/home/components/Hero';
+import SpecializedFeatures from '@/features/home/components/SpecializedFeatures';
+import MedicalServices from '@/features/home/components/MedicalServices';
+import AboutClinic from '@/features/home/components/AboutClinic';
+import QuickCta from '@/features/home/components/QuickCta';
+import LocationSection from '@/features/home/components/LocationSection';
+import FaqSection from '@/features/home/components/FaqSection';
+import ContactForm from '@/features/home/components/ContactForm';
 
 export default function HomePage() {
   return (
