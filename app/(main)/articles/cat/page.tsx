@@ -1,6 +1,6 @@
 'use client';
 
-import CatArticles from '@/components/articles/CatArticles';
+import CatArticles from '@/features/articles/components/CatArticles';
 
 export default function CatArticlePage() {
   return (

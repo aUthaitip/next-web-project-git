@@ -1,0 +1,296 @@
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
+import { loginData } from '@/features/auth/data/LoginForm';
+import { Eye, EyeOff } from 'lucide-react';
+
+export default function LoginForm() {
+  const router = useRouter();
+  const { lang } = useLanguage();
+  const data = loginData[lang];
+  const [tab, setTab] = useState<'login' | 'register'>('login');
+
+  // Password visibility states
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showRegConfirm, setShowRegConfirm] = useState(false);
+
+  // Login state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  // Register state
+  const [regName, setRegName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirm, setRegConfirm] = useState('');
+  const [regError, setRegError] = useState('');
+  const [regSuccess, setRegSuccess] = useState('');
+  const [regLoading, setRegLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError('');
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+    });
+
+    const resData = await res.json();
+    setLoginLoading(false);
+
+    if (!res.ok) {
+      setLoginError(resData.error || data.genericError);
+      return;
+    }
+
+    window.dispatchEvent(new Event('user-auth-change'));
+    router.push('/my-appointments');
+    router.refresh();
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRegLoading(true);
+    setRegError('');
+    setRegSuccess('');
+
+    if (regPassword !== regConfirm) {
+      setRegError(data.passwordMismatch);
+      setRegLoading(false);
+      return;
+    }
+
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: regName, email: regEmail, phone: regPhone, password: regPassword }),
+    });
+
+    const resData = await res.json();
+    setRegLoading(false);
+
+    if (!res.ok) {
+      setRegError(resData.error || data.genericError);
+      return;
+    }
+
+    setRegSuccess(data.registerSuccess);
+    setRegName(''); setRegEmail(''); setRegPhone('');
+    setRegPassword(''); setRegConfirm('');
+    setTimeout(() => setTab('login'), 1500);
+  };
+
+  return (
+    <div className="container" style={{ maxWidth: 480, margin: '0 auto' }}>
+      <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+
+        {/* Header */}
+        <div style={{ background: 'linear-gradient(135deg, #0d9488, #14b8a6)', padding: '32px', textAlign: 'center' }}>
+          <div style={{ fontSize: 48 }}>🐾</div>
+          <h2 style={{ color: 'white', margin: '8px 0 4px', fontSize: 24 }}>Pawplan</h2>
+          <p style={{ color: '#ccfbf1', margin: 0, fontSize: 14 }}>{data.systemSubtitle}</p>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb' }}>
+          {(['login', 'register'] as const).map((tabKey) => (
+            <button
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
+              style={{
+                flex: 1, padding: '14px', border: 'none', cursor: 'pointer', fontSize: 15, fontFamily: 'inherit',
+                fontWeight: tab === tabKey ? 700 : 400,
+                color: tab === tabKey ? '#0d9488' : '#6b7280',
+                background: 'white',
+                borderBottom: tab === tabKey ? '2px solid #0d9488' : '2px solid transparent',
+                transition: 'all 0.2s',
+              }}
+            >
+              {tabKey === 'login' ? data.tabLogin : data.tabRegister}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ padding: '32px' }}>
+
+          {/* LOGIN FORM */}
+          {tab === 'login' && (
+            <form onSubmit={handleLogin}>
+              {loginError && (
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '12px 16px', borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+                  {loginError}
+                </div>
+              )}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.emailLabel}</label>
+                <input
+                  type="email" required value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder={data.emailPlaceholder}
+                  style={inputStyle}
+                />
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.passwordLabel}</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showLoginPassword ? 'text' : 'password'} required value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder={data.passwordPlaceholder}
+                    style={{ ...inputStyle, paddingRight: '42px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+              <button type="submit" disabled={loginLoading} style={btnStyle}>
+                {loginLoading ? data.loggingIn : data.loginBtn}
+              </button>
+              <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: '#6b7280' }}>
+                {data.noAccount}{' '}
+                <button type="button" onClick={() => setTab('register')}
+                  style={{ background: 'none', border: 'none', color: '#0d9488', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>
+                  {data.goRegister}
+                </button>
+              </p>
+            </form>
+          )}
+
+          {/* REGISTER FORM */}
+          {tab === 'register' && (
+            <form onSubmit={handleRegister}>
+              {regError && (
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '12px 16px', borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+                  {regError}
+                </div>
+              )}
+              {regSuccess && (
+                <div style={{ background: '#f0fdf4', border: '1px solid #86efac', color: '#16a34a', padding: '12px 16px', borderRadius: 8, marginBottom: 16, fontSize: 14 }}>
+                  {regSuccess}
+                </div>
+              )}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.nameLabel}</label>
+                <input type="text" required value={regName} onChange={(e) => setRegName(e.target.value)}
+                  placeholder={data.namePlaceholder} style={inputStyle} />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.emailLabel}</label>
+                <input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                  placeholder={data.emailPlaceholder} style={inputStyle} />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.phoneLabel}</label>
+                <input type="tel" value={regPhone} onChange={(e) => setRegPhone(e.target.value)}
+                  placeholder={data.phonePlaceholder} style={inputStyle} />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.regPasswordLabel}</label>
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showRegPassword ? 'text' : 'password'} required value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
+                    placeholder={data.regPasswordPlaceholder} style={{ ...inputStyle, paddingRight: '42px' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegPassword(!showRegPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 600, color: '#374151' }}>{data.confirmPasswordLabel}</label>
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showRegConfirm ? 'text' : 'password'} required value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)}
+                    placeholder={data.passwordPlaceholder} style={{ ...inputStyle, paddingRight: '42px' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegConfirm(!showRegConfirm)}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#9ca3af',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 0,
+                    }}
+                  >
+                    {showRegConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+              <button type="submit" disabled={regLoading} style={btnStyle}>
+                {regLoading ? data.registering : data.registerBtn}
+              </button>
+              <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: '#6b7280' }}>
+                {data.hasAccount}{' '}
+                <button type="button" onClick={() => setTab('login')}
+                  style={{ background: 'none', border: 'none', color: '#0d9488', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}>
+                  {data.goLogin}
+                </button>
+              </p>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '10px 14px', border: '1px solid #d1d5db',
+  borderRadius: 8, fontSize: 15, fontFamily: 'inherit', outline: 'none',
+  boxSizing: 'border-box', transition: 'border-color 0.2s',
+};
+
+const btnStyle: React.CSSProperties = {
+  width: '100%', padding: '12px', background: 'linear-gradient(135deg, #0d9488, #14b8a6)',
+  color: 'white', border: 'none', borderRadius: 8, fontSize: 16,
+  fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.2s',
+};

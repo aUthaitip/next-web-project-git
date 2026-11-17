@@ -1,6 +1,6 @@
 'use client';
 
-import DogArticles from '@/components/articles/DogArticles';
+import DogArticles from '@/features/articles/components/DogArticles';
 
 export default function DogArticlePage() {
   return (

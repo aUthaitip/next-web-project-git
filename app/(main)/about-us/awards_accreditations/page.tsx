@@ -1,6 +1,6 @@
 'use client';
 
-import AwardsAccreditationsContent from '@/components/about-us/AwardsAccreditationsContent';
+import AwardsAccreditationsContent from '@/features/about/components/AwardsAccreditationsContent';
 
 export default function AwardsPage() {
   return (

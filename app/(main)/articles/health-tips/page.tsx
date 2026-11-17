@@ -1,6 +1,6 @@
 'use client';
 
-import HealthTipsArticles from '@/components/articles/HealthTipsArticles';
+import HealthTipsArticles from '@/features/articles/components/HealthTipsArticles';
 
 export default function HealthTipsPage() {
   return (
