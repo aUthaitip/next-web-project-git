@@ -38,7 +38,7 @@ PawPlan คือเว็บแอปพลิเคชันสำหรับ
 
 | Frontend | Backend และบริการของระบบ |
 | --- | --- |
-| Next.js, React, TypeScript | Next.js Route Handlers, Prisma ORM |
+| Next.js, React, TypeScript | Go + Fiber (Clean Architecture), Next.js Route Handlers, Prisma ORM |
 | Tailwind CSS, CSS, shadcn/ui | PostgreSQL |
 | Framer Motion, Lucide React | Authentication และ session management |
 | Responsive design และ i18n (TH/EN) | LINE Login / Messaging API, Nodemailer |
@@ -56,9 +56,49 @@ PawPlan คือเว็บแอปพลิเคชันสำหรับ
 
 ## เริ่มต้นใช้งาน
 
+### โครงสร้าง Full Stack และขอบเขต Go API
+
+ขอบเขตที่ย้ายไป **Go + Fiber / Clean Architecture** คือสมาชิก, นัดหมายฝั่งสมาชิก, โปรไฟล์ และการอ่านแจ้งเตือนของสมาชิก หน้าเว็บเรียก Go API โดยตรงผ่าน `features/*/api.ts` และ `lib/api-client.ts` ส่วนแอดมิน คอนเทนต์ แพทย์ ร้านค้า ติดต่อ LINE และอีเมลยังใช้ Next.js API เดิม โดย LINE/อีเมลตรวจผู้ใช้ผ่าน Go session ดู contract และวิธีตั้งค่าใน [คู่มือ Go API](api/README.md)
+
+Frontend ใช้ **feature-based architecture**:
+
+```text
+app/                         # Next.js routes และ layouts
+features/
+  auth/                      # components, data, api.ts, types.ts
+  appointments/              # pages, components, data, api.ts, types.ts
+  profile/                   # components, data, api.ts
+  notifications/             # api.ts, types.ts
+  admin/                     # pages, components และ layouts ของแอดมิน (API เดิม)
+  home/, about/, articles/, doctors/, shop/, petcare/
+shared/layouts/              # DocumentLayout และ SiteLayout
+shared/components/layout/    # Header, Footer, ScrollToTop ที่ใช้ร่วมกัน
+shared/data/layout/          # ข้อความของ Header/Footer
+lib/api-client.ts            # HTTP client สำหรับ Go API และการจัดการ errors
+api/internal/domain/         # entities และ domain errors
+api/internal/usecase/        # กฎธุรกิจและ repository interfaces
+api/internal/repository/     # PostgreSQL implementations
+api/internal/transport/http/ # Fiber handlers และ HTTP DTOs
+```
+
+รันสองโปรเซสคู่กัน หลังตั้งค่า PostgreSQL แล้ว:
+
+```bash
+# Terminal 1
+cd api
+go run ./cmd/migrate
+go run ./cmd/server
+
+# Terminal 2 — จาก root โปรเจกต์
+bun dev
+```
+
+เปิด `http://localhost:3000/th/login` สมัคร → login → จอง → ดู/แก้/เลื่อน/ยกเลิกนัด → แก้โปรไฟล์ → logout ตั้ง `NEXT_PUBLIC_API_URL=http://localhost:8080/api` ใน root `.env` (เป็นค่าปริยายอยู่แล้ว) และใช้ hostname `localhost` เหมือนกันทั้งเว็บ/API เพื่อให้ cookie ใช้งานร่วมกับ LINE/อีเมลเดิมได้ สมาชิกต้อง login ใหม่ผ่าน Go; session เดิมของ Next.js ไม่ถูกนำมาใช้
+
 ### สิ่งที่ต้องมี
 
 - [Bun](https://bun.sh/) เวอร์ชันปัจจุบัน
+- Go ตามเวอร์ชันใน [`api/go.mod`](api/go.mod)
 - PostgreSQL database หรือโปรเจกต์ Supabase ที่เข้าถึงได้
 
 ### 1. ติดตั้ง dependencies
@@ -75,6 +115,7 @@ bun install
 
 ```bash
 cp .env.example .env
+cp api/.env.example api/.env
 ```
 
 อย่างน้อยต้องตั้งค่า `DATABASE_URL` และ `DIRECT_URL` ให้ชี้ไปยัง PostgreSQL database เดียวกัน ตัวอย่างสำหรับ local PostgreSQL:
@@ -88,13 +129,23 @@ DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/pawplan?schema=public"
 
 ### 3. สร้าง schema ในฐานข้อมูล
 
+สำหรับฐานข้อมูลใหม่ ให้สร้างตารางเดิมก่อน แล้วเพิ่มตารางของ Go ตามลำดับนี้:
+
 ```bash
 bunx prisma db push
+cd api
+go run ./cmd/migrate
 ```
+
+ถ้าฐานข้อมูลมี GoSession/GoMigration แล้ว ให้ใช้ migration ของ Go สำหรับส่วนสมาชิกและนัดหมาย ไม่รัน `prisma db push --accept-data-loss` เพราะ Prisma schema เดิมยังไม่ได้ประกาศตาราง Go
 
 ### 4. รันโปรเจกต์
 
 ```bash
+# Terminal 1 — จาก api/
+go run ./cmd/server
+
+# Terminal 2 — จาก root
 bun dev
 ```
 
