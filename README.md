@@ -154,3 +154,17 @@ bun dev
 ## การตั้งค่าอีเมลจริง (ไม่บังคับ)
 
 หากต้องการทดสอบการส่งอีเมลจริง ให้ตั้ง `MOCK_EMAIL=false` และกำหนดค่า `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` และ `SMTP_PASS` ใน `.env` ด้วยข้อมูล SMTP ของตนเอง ห้ามนำรหัสผ่านหรือ API keys จริงมาใส่ใน repository
+
+## Deploy บน Vercel และ Render
+
+Vercel รัน Next.js และ API เดิม ส่วน Render รัน Go Fiber โดยใช้ฐานข้อมูล PostgreSQL ออนไลน์เดียวกัน `.vercelignore` ตัดเฉพาะโฟลเดอร์ `/api/` ที่ root ออกจาก Vercel; `app/api/` ยังอยู่
+
+1. Push ไฟล์ตั้งค่าไป branch `dev` แล้วเลือก **New → Blueprint** บน Render เชื่อม repo และ branch นี้ ไฟล์ `render.yaml` กำหนด Root Directory, build/start commands และ health check ไว้แล้ว โดยใช้ free plan และไม่สร้างฐานข้อมูลใหม่
+2. ในขั้นตอนสร้าง Blueprint ใส่ `DATABASE_URL` ของฐานข้อมูลออนไลน์เดิม และ `FRONTEND_ORIGIN` เป็น origin ของเว็บจริง เช่น `https://ชื่อเว็บ.vercel.app` โดยไม่มี `/` ท้าย อย่าใช้ฐานข้อมูล localhost; start command จะรัน migration ในฐานข้อมูลที่ระบุก่อนเริ่ม server
+3. เมื่อ Render deploy สำเร็จ เปิด `https://ชื่อบริการ.onrender.com/api/health` ต้องได้ `{"status":"healthy"}`
+4. บน Vercel ตั้ง `NEXT_PUBLIC_API_URL=/api/go` และ `GO_API_URL=https://ชื่อบริการ.onrender.com/api` โดยใช้ URL จริงจาก Render คงค่า database, session และ integrations เดิมไว้ จากนั้น redeploy environment ที่จะใช้งาน
+5. ตรวจ `https://ชื่อเว็บ.vercel.app/api/go/health` แล้วลองสมัคร/login/จอง/แก้โปรไฟล์/logout การทดสอบควรใช้โดเมนเดียวกับ `FRONTEND_ORIGIN`; preview URL อื่นจะไม่ผ่านการตรวจ Origin ของ Go
+
+`next.config.ts` ส่ง `/api/go/:path*` ไปยัง `GO_API_URL/:path*` ด้วย external rewrite ดังนั้น browser รับ session cookie บนโดเมนเว็บ และ LINE/อีเมลของ Next.js อ่าน cookie เดียวกันได้ ใช้ `COOKIE_SAME_SITE=lax` และ `APP_ENV=production` ตาม Blueprint การเปลี่ยน URL ต้อง redeploy เพราะ rewrite และ `NEXT_PUBLIC_API_URL` ถูกกำหนดตอน build
+
+อ้างอิง: [Render Blueprint](https://render.com/docs/blueprint-spec), [Next.js rewrites](https://nextjs.org/docs/app/api-reference/config/next-config-js/rewrites), [Vercel ignore](https://vercel.com/docs/deployments/vercel-ignore)
