@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Menu, User, CalendarDays, LogOut, UserLock, ChevronDown, LogIn } from 'lucide-react';
+import { Menu, User, CalendarDays, LogOut, ChevronDown } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
+import { getCurrentUser, logout } from '@/features/auth/api';
 import { headerData } from '@/shared/data/layout/Header';
 
 interface DropdownItem { label: string; href: string }
@@ -43,9 +44,7 @@ export default function Header({ initialUser = null }: HeaderProps) {
   const [user, setUser] = useState<SessionUser | null>(initialUser);
 
   const fetchUser = useCallback(() => {
-    fetch('/api/me')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setUser(data?.user ?? null))
+    getCurrentUser().then(setUser)
       .catch(() => {});
   }, []);
 
@@ -131,7 +130,8 @@ export default function Header({ initialUser = null }: HeaderProps) {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/logout', { method: 'POST' });
+    try { await logout(); } catch (error) { alert(error instanceof Error ? error.message : 'Logout failed'); return; }
+    window.dispatchEvent(new Event('user-auth-change'));
     setUser(null);
     setMenuOpen(false);
     router.push('/');

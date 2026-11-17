@@ -1,16 +1,4 @@
-interface Appointment {
-  id: number;
-  petName: string;
-  petType: string;
-  service: string;
-  date: string;
-  time: string;
-  status: string;
-  notes?: string;
-  doctorName?: string;
-  owner: string;
-  phone: string;
-}
+import type { Appointment } from '../types';
 
 interface StatusLabelInfo {
   text: string;

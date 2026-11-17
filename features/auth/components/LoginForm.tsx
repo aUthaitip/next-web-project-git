@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { loginData } from '@/features/auth/data/LoginForm';
 import { Eye, EyeOff } from 'lucide-react';
+import { login, register } from '../api';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -37,23 +38,17 @@ export default function LoginForm() {
     setLoginLoading(true);
     setLoginError('');
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-    });
-
-    const resData = await res.json();
-    setLoginLoading(false);
-
-    if (!res.ok) {
-      setLoginError(resData.error || data.genericError);
-      return;
+    try {
+      await login({ email: loginEmail, password: loginPassword });
+      window.dispatchEvent(new Event('user-auth-change'));
+      const service = new URLSearchParams(window.location.search).get('service');
+      router.push(service ? `/book?service=${encodeURIComponent(service)}` : '/my-appointments');
+      router.refresh();
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : data.genericError);
+    } finally {
+      setLoginLoading(false);
     }
-
-    window.dispatchEvent(new Event('user-auth-change'));
-    router.push('/my-appointments');
-    router.refresh();
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -68,24 +63,17 @@ export default function LoginForm() {
       return;
     }
 
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: regName, email: regEmail, phone: regPhone, password: regPassword }),
-    });
-
-    const resData = await res.json();
-    setRegLoading(false);
-
-    if (!res.ok) {
-      setRegError(resData.error || data.genericError);
-      return;
+    try {
+      await register({ name: regName, email: regEmail, phone: regPhone, password: regPassword });
+      setRegSuccess(data.registerSuccess);
+      setLoginEmail(regEmail);
+      setRegName(''); setRegEmail(''); setRegPhone('');
+      setRegPassword(''); setRegConfirm('');
+    } catch (error) {
+      setRegError(error instanceof Error ? error.message : data.genericError);
+    } finally {
+      setRegLoading(false);
     }
-
-    setRegSuccess(data.registerSuccess);
-    setRegName(''); setRegEmail(''); setRegPhone('');
-    setRegPassword(''); setRegConfirm('');
-    setTimeout(() => setTab('login'), 1500);
   };
 
   return (

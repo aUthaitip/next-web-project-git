@@ -1,20 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { sessionOptions, SessionData } from '@/backend/session';
 import prisma from '@/backend/prisma';
+import { getMemberUser } from '@/backend/member-session';
 
 export const runtime = 'nodejs';
 
 export async function POST() {
   try {
-    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-    if (!session.isLoggedIn || !session.userId) {
+    const user = await getMemberUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await prisma.user.update({
-      where: { id: session.userId },
+      where: { id: user.id },
       data: { lineUserId: null },
     });
 

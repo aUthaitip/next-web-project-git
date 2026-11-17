@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 
+import { getCurrentUser } from '@/features/auth/api';
+import type { User } from '@/features/auth/types';
+import { bookAppointment, sendBookingEmail } from '../api';
+
 const TIME_SLOTS = [
   '09:00','09:30','10:00','10:30','11:00','11:30',
   '13:00','13:30','14:00','14:30','15:00','15:30','16:00',
@@ -14,7 +18,9 @@ export default function BookPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [submitting, setSubmitting] = useState(false);
-  const [sessionUser, setSessionUser] = useState<{ userName: string; userEmail: string; userPhone: string } | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [sessionUser, setSessionUser] = useState<User | null>(null);
 
   const [formData, setFormData] = useState({
     service: '', otherService: '',
@@ -25,12 +31,14 @@ export default function BookPage() {
   });
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(data => {
-      if (data.isLoggedIn) {
-        setSessionUser(data);
-        setFormData(prev => ({ ...prev, owner: data.userName || '', phone: data.userPhone || '' }));
-      }
-    });
+    let active = true;
+    getCurrentUser().then(user => {
+      if (!active) return;
+      if (!user) { router.replace('/login'); return; }
+      setSessionUser(user);
+      setFormData(prev => ({ ...prev, owner: user.name, phone: user.phone }));
+    }).catch(error => { if (active) setError(error.message); })
+      .finally(() => { if (active) setSessionLoading(false); });
 
     const params = new URLSearchParams(window.location.search);
     const serviceParam = params.get('service');
@@ -47,7 +55,8 @@ export default function BookPage() {
         setFormData(prev => ({ ...prev, service: serviceParam }));
       }
     }
-  }, []);
+    return () => { active = false; };
+  }, [router]);
 
   const set = (key: string, val: string) => setFormData(prev => ({ ...prev, [key]: val }));
 
@@ -59,36 +68,23 @@ export default function BookPage() {
     formData.owner && formData.phone && formData.petName && resolvedPetType;
 
   const handleConfirm = async () => {
+    if (!sessionUser || submitting) return;
     setSubmitting(true);
+    setError('');
     try {
-      const res = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          patient: formData.owner, service: resolvedService,
-          date: formData.date, time: formData.time,
-          owner: formData.owner, phone: formData.phone,
-          petName: formData.petName, petType: resolvedPetType,
-          notes: formData.notes || '', status: 'pending',
-        }),
+      const appointment = await bookAppointment({
+        service: resolvedService, date: formData.date, time: formData.time,
+        owner: formData.owner, phone: formData.phone,
+        petName: formData.petName, petType: resolvedPetType, notes: formData.notes,
       });
-      if (res.ok) {
-        if (sessionUser?.userEmail) {
-          fetch('/api/appointments/confirm-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ petName: formData.petName, service: resolvedService, date: formData.date, time: formData.time }),
-          }).catch(() => {});
-        }
-        setStep(3);
-      } else {
-        alert(t('book.bookingError'));
-      }
-    } catch { alert(t('book.bookingError')); }
-    finally { setSubmitting(false); }
+      void sendBookingEmail(appointment).catch(() => {});
+      setStep(3);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : t('book.bookingError'));
+    } finally { setSubmitting(false); }
   };
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 
   const SERVICES = [
     { label: t('book.svc1'), value: 'ตรวจสุขภาพทั่วไป' },
@@ -112,6 +108,7 @@ export default function BookPage() {
   return (
     <main className="book-page page-animate">
       <div className="book-container">
+        {error && <p role="alert" style={{ color: '#b91c1c' }}>{error}</p>}
 
         {/* Hero */}
         <div className="book-hero">
@@ -239,7 +236,7 @@ export default function BookPage() {
               <Link href="/appointment" className="book-btn-secondary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {t('book.cancelBtn')}
               </Link>
-              <button className="book-btn-primary" onClick={() => isStep1Valid && setStep(2)} disabled={!isStep1Valid}>
+              <button className="book-btn-primary" onClick={() => isStep1Valid && setStep(2)} disabled={!isStep1Valid || sessionLoading || !sessionUser}>
                 {t('book.nextBtn')}
               </button>
             </div>
@@ -286,7 +283,7 @@ export default function BookPage() {
             <h3 className="book-success__title">{t('book.successTitle')}</h3>
             <p className="book-success__sub">
               {t('book.successSub')}
-              {sessionUser && <> • {t('book.emailSent')}</>}
+
             </p>
             <div className="book-success__actions">
               {sessionUser ? (

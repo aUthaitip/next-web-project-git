@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { User, Mail, Phone, Lock, Save, ArrowLeft, CheckCircle, AlertCircle, Eye, EyeOff, Camera, Loader2 } from 'lucide-react';
+import { getCurrentUser } from '@/features/auth/api';
+import { updateProfile, readAvatar } from '../api';
 import { profileFormData } from '@/features/profile/data/ProfileForm';
 
 export default function ProfileForm() {
@@ -52,22 +54,14 @@ export default function ProfileForm() {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
 
-      const res = await fetch('/api/auth/me');
-      if (!res.ok) {
-        router.push('/login');
-        return;
-      }
-      const data = await res.json();
-      if (!data.isLoggedIn) {
-        router.push('/login');
-        return;
-      }
-      setName(data.userName ?? '');
-      setEmail(data.userEmail ?? '');
-      setPhone(data.userPhone ?? '');
-      setImage(data.userImage ?? null);
+      const data = await getCurrentUser();
+      if (!data) { router.replace('/login'); return; }
+      setName(data.name ?? '');
+      setEmail(data.email ?? '');
+      setPhone(data.phone ?? '');
+      setImage(data.image ?? null);
       setLineUserId(data.lineUserId ?? null);
-    } catch (err) {
+    } catch {
       setError(localized.loadError);
     } finally {
       setLoading(false);
@@ -96,25 +90,10 @@ export default function ProfileForm() {
     setError('');
     setSuccess('');
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || localized.uploadFailed);
-        return;
-      }
-
-      setImage(data.url);
-      setSuccess(localized.uploadSuccess);
-    } catch (err) {
-      setError(localized.uploadFailed);
+      setImage(await readAvatar(file));
+    } catch (error) {
+      setError(error instanceof Error ? error.message : localized.uploadFailed);
     } finally {
       setUploading(false);
     }
@@ -144,35 +123,20 @@ export default function ProfileForm() {
     setSubmitLoading(true);
 
     try {
-      const res = await fetch('/api/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          phone: phone || null,
-          image: image || null,
-          currentPassword: currentPassword || null,
-          newPassword: newPassword || null,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || localized.saveError);
-        return;
-      }
-
+      const updated = await updateProfile({ name, email, phone, image: image || '', currentPassword, newPassword });
+      setName(updated.name);
+      setEmail(updated.email);
+      setPhone(updated.phone);
+      setImage(updated.image || null);
       setSuccess(localized.updateSuccess);
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       
       router.refresh();
-      window.dispatchEvent(new Event('storage'));
-    } catch (err) {
-      setError(localized.connectError);
+      window.dispatchEvent(new Event('user-auth-change'));
+    } catch (error) {
+      setError(error instanceof Error ? error.message : localized.connectError);
     } finally {
       setSubmitLoading(false);
     }
@@ -448,7 +412,7 @@ export default function ProfileForm() {
                           } else {
                             setError(lang === 'th' ? 'เกิดข้อผิดพลาดในการยกเลิกเชื่อมต่อ' : 'Error unlinking account');
                           }
-                        } catch (err) {
+                        } catch {
                           setError(lang === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อ' : 'Connection error');
                         }
                       }

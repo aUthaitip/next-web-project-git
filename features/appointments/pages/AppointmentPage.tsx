@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { getCurrentUser } from '@/features/auth/api';
 import { useLanguage } from '@/context/LanguageContext';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -45,10 +46,9 @@ export default function AppointmentPage() {
         const params = new URLSearchParams(window.location.search);
         const service = params.get('service');
 
-        fetch('/api/auth/me')
-            .then(r => r.json())
+        getCurrentUser()
             .then(data => {
-                const dest = data.isLoggedIn ? '/book' : '/login';
+                const dest = data ? '/book' : '/login';
                 if (service) {
                     setCtaHref(`${dest}?service=${service}`);
                 } else {

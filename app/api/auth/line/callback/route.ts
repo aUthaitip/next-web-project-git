@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/backend/prisma';
+import { getIronSession } from 'iron-session';
+import { cookies } from 'next/headers';
+import { lineSessionOptions } from '@/backend/line-session';
+import { getMemberUser } from '@/backend/member-session';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const state = searchParams.get('state'); // User ID passed in state
+  const state = searchParams.get('state');
   const error = searchParams.get('error');
   const errorDescription = searchParams.get('error_description');
 
@@ -21,10 +25,14 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${siteUrl}/profile?error=Invalid+callback+parameters`);
   }
 
-  const userId = parseInt(state);
-  if (isNaN(userId)) {
+  const user = await getMemberUser();
+  const oauth = await getIronSession<{ state?: string; userId?: number }>(await cookies(), lineSessionOptions);
+  const validState = user && oauth.userId === user.id && oauth.state === state;
+  oauth.destroy();
+  if (!validState || !user) {
     return NextResponse.redirect(`${siteUrl}/profile?error=Invalid+session+state`);
   }
+  const userId = user.id;
 
   const clientId = process.env.LINE_LOGIN_CHANNEL_ID || process.env.LINE_CHANNEL_ID;
   const clientSecret = process.env.LINE_LOGIN_CHANNEL_SECRET || process.env.LINE_CHANNEL_SECRET;

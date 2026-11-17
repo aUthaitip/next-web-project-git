@@ -8,12 +8,11 @@ import AppointmentCard, { Appointment } from '@/features/appointments/components
 import RescheduleModal from '@/features/appointments/components/RescheduleModal';
 import EditModal, { EditFormData } from '@/features/appointments/components/EditModal';
 
-interface AppNotification {
-  id: number;
-  message: string;
-  read: boolean;
-  createdAt: string;
-}
+import { getCurrentUser } from '@/features/auth/api';
+import type { User } from '@/features/auth/types';
+import { getMyAppointments, updateAppointment } from '../api';
+import { getNotifications, markNotificationRead, markAllNotificationsRead } from '@/features/notifications/api';
+import type { Notification as AppNotification } from '@/features/notifications/types';
 
 export default function MyAppointmentsPage() {
   const router = useRouter();
@@ -27,7 +26,7 @@ export default function MyAppointmentsPage() {
     completed: { text: t('myAppts.statusCompleted'),  color: '#6b7280', bg: '#f3f4f6' },
   } as Record<string, { text: string; color: string; bg: string }>;
 
-  const [user, setUser] = useState<{ userName: string; userEmail: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,13 +48,9 @@ export default function MyAppointmentsPage() {
   const fetchAppointments = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/appointments/mine');
-      if (!res.ok) {
-        setError(t('myAppts.loadError') || 'ไม่สามารถโหลดนัดหมายได้');
-        return;
-      }
-      const data = await res.json();
+      const data = await getMyAppointments();
       setAppointments(data);
+      setError('');
     } catch {
       setError(t('myAppts.loadError') || 'ไม่สามารถโหลดนัดหมายได้');
     } finally {
@@ -65,9 +60,7 @@ export default function MyAppointmentsPage() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch('/api/notifications');
-      if (!res.ok) return;
-      const data = await res.json();
+      const data = await getNotifications();
       setNotifications(data.notifications ?? []);
     } catch {
       // Notifications are non-critical; fail silently rather than blocking the page.
@@ -76,34 +69,21 @@ export default function MyAppointmentsPage() {
 
   const checkSession = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
-      if (!res.ok) {
-        router.push('/login');
-        return;
-      }
-      const data = await res.json();
-      if (!data.isLoggedIn) {
-        router.push('/login');
-        return;
-      }
+      const data = await getCurrentUser();
+      if (!data) { router.replace('/login'); return; }
       setUser(data);
       fetchAppointments();
       fetchNotifications();
-    } catch {
-      router.push('/login');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Unable to load session');
+      setLoading(false);
     }
   }, [router, fetchAppointments, fetchNotifications]);
 
   const markAsRead = async (id: number) => {
     try {
-      const res = await fetch('/api/notifications', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (res.ok) {
-        setNotifications(prev => prev.map(n => (n.id === id ? { ...n, read: true } : n)));
-      }
+      await markNotificationRead(id);
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     } catch {
       // Silently ignore; not critical to the user's flow.
     }
@@ -111,14 +91,8 @@ export default function MyAppointmentsPage() {
 
   const markAllAsRead = async () => {
     try {
-      const res = await fetch('/api/notifications', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ all: true }),
-      });
-      if (res.ok) {
-        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-      }
+      await markAllNotificationsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     } catch {
       // Silently ignore; not critical to the user's flow.
     }
@@ -140,13 +114,8 @@ export default function MyAppointmentsPage() {
     if (!confirm(t('myAppts.confirmCancel'))) return;
     setActionLoadingId(id);
     try {
-      const res = await fetch(`/api/appointments/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'cancelled' }),
-      });
-      if (res.ok) await fetchAppointments();
-      else setError(t('myAppts.cancelError'));
+      await updateAppointment(id, { status: 'cancelled' });
+      await fetchAppointments();
     } catch {
       setError(t('myAppts.cancelError'));
     } finally {
@@ -157,13 +126,8 @@ export default function MyAppointmentsPage() {
   const handleConfirmSuggested = async (id: number) => {
     setActionLoadingId(id);
     try {
-      const res = await fetch(`/api/appointments/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'confirmed' }),
-      });
-      if (res.ok) await fetchAppointments();
-      else setError(t('myAppts.confirmSuggestedError'));
+      await updateAppointment(id, { status: 'confirmed' });
+      await fetchAppointments();
     } catch {
       setError(t('myAppts.confirmSuggestedError'));
     } finally {
@@ -182,17 +146,9 @@ export default function MyAppointmentsPage() {
     if (!selectedAppt || !newDate || !newTime) return;
     setModalLoading(true);
     try {
-      const res = await fetch(`/api/appointments/${selectedAppt.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: newDate, time: newTime, status: 'pending' }),
-      });
-      if (res.ok) {
-        setModalOpen(false);
-        await fetchAppointments();
-      } else {
-        setError(t('myAppts.rescheduleError'));
-      }
+      await updateAppointment(selectedAppt.id, { date: newDate, time: newTime, status: 'pending' });
+      setModalOpen(false);
+      await fetchAppointments();
     } catch {
       setError(t('myAppts.rescheduleError'));
     } finally {
@@ -210,29 +166,14 @@ export default function MyAppointmentsPage() {
     if (!selectedAppt || !editData.petName || !editData.service) return;
     setModalLoading(true);
     try {
-      const res = await fetch(`/api/appointments/${selectedAppt.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...editData }),
-      });
-      if (res.ok) {
-        setEditModalOpen(false);
-        await fetchAppointments();
-      } else {
-        setError(t('myAppts.editError') || 'ไม่สามารถแก้ไขนัดหมายได้');
-      }
+      await updateAppointment(selectedAppt.id, editData);
+      setEditModalOpen(false);
+      await fetchAppointments();
     } catch {
       setError(t('myAppts.editError') || 'ไม่สามารถแก้ไขนัดหมายได้');
     } finally {
       setModalLoading(false);
     }
-  };
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.dispatchEvent(new Event('user-auth-change'));
-    router.push('/login');
-    router.refresh();
   };
 
   // Sort chronologically (soonest first) so the API's row order never matters.
@@ -259,7 +200,7 @@ export default function MyAppointmentsPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
           <div>
             <h2 style={{ margin: 0, color: '#0d9488', fontSize: 24 }}>{t('myAppts.title')}</h2>
-            <p style={{ margin: '4px 0 0', color: '#6b7280', fontSize: 14 }}>{t('myAppts.hello')} {user?.userName}</p>
+            <p style={{ margin: '4px 0 0', color: '#6b7280', fontSize: 14 }}>{t('myAppts.hello')} {user?.name}</p>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
             <Link href="/book" style={{ ...outlineBtnStyle }}>{t('myAppts.newBooking')}</Link>
@@ -394,4 +335,3 @@ export default function MyAppointmentsPage() {
 }
 
 const outlineBtnStyle: React.CSSProperties = { padding: '9px 18px', border: '2px solid #0d9488', color: '#0d9488', background: 'white', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 700, textDecoration: 'none' };
-const ghostBtnStyle: React.CSSProperties = { padding: '9px 18px', border: '1px solid #e5e7eb', color: '#6b7280', background: 'white', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontFamily: 'inherit' };

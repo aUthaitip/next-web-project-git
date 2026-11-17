@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getIronSession } from 'iron-session';
 import { cookies } from 'next/headers';
-import { sessionOptions, SessionData } from '@/backend/session';
+import { lineSessionOptions } from '@/backend/line-session';
+import { getMemberUser } from '@/backend/member-session';
+import { randomBytes } from 'node:crypto';
 
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-  if (!session.isLoggedIn || !session.userId) {
+  const user = await getMemberUser();
+  if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -19,7 +21,11 @@ export async function GET() {
     return NextResponse.json({ error: 'LINE_LOGIN_CHANNEL_ID is not configured in .env' }, { status: 500 });
   }
 
-  const state = String(session.userId);
+  const session = await getIronSession<{ state?: string; userId?: number }>(await cookies(), lineSessionOptions);
+  const state = randomBytes(32).toString('hex');
+  session.state = state;
+  session.userId = user.id;
+  await session.save();
   const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=profile%20openid`;
 
   return NextResponse.redirect(lineAuthUrl);
