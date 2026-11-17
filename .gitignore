@@ -33,3 +33,6 @@ Thumbs.db
 
 # User Uploads
 public/uploads/
+
+# Local development database and runtime files
+.local/
